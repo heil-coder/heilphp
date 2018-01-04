@@ -1,12 +1,12 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
+// | HeilPHP 
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2018 http://www.heilphp.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
+// | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
 // [ 应用入口文件 ]
@@ -18,12 +18,16 @@ if(version_compare(PHP_VERSION,'5.4.0','<'))  die('require PHP > 5.4.0 !');
  * 系统调试设置
  * 项目正式部署后请设置为false
  */
+ echo 111;
+define ( 'BIND_MODULE','install');
 
-if(!is_file(APP_PATH . 'User/Conf/config.php')){
-	header('Location: ./install.php');
-	exit;
-}
-// 定义应用目录
+echo 222;
+/**
+ * 应用目录设置
+ * 安全起见，建议安装调试完成后移动到非WEB目录
+ */
 define('APP_PATH', __DIR__ . '/../app/');
+
+echo 33;
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';
