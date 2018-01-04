@@ -18,16 +18,13 @@ if(version_compare(PHP_VERSION,'5.4.0','<'))  die('require PHP > 5.4.0 !');
  * 系统调试设置
  * 项目正式部署后请设置为false
  */
- echo 111;
 define ( 'BIND_MODULE','install');
 
-echo 222;
 /**
  * 应用目录设置
  * 安全起见，建议安装调试完成后移动到非WEB目录
  */
 define('APP_PATH', __DIR__ . '/../app/');
 
-echo 33;
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';
