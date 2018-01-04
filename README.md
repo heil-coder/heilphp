@@ -56,6 +56,39 @@ project  应用部署目录
 
 > 参考[OneThink数据字典](http://document.onethink.cn/manual_1_0.html#onethink_3_3)进行设计。  
 
+## config 系统配置表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |--|否|是| 配置ID,自增主键 |
+| name | varchar(30) |--|否|--| 配置名称 |
+| type | tinyint(3) |0|否|--| 配置类型（0-数字，1-字符，2-文本，3-数组，4-枚举，5-多选） |
+| title | varchar(50) |--|否|--| 配置说明 |
+| group | tinyint(3) |--|否|--| 配置分组（0-无分组，1-基本设置）|
+| extra | varchar(255) |--|否|--| 配置值 如：0:关闭1:开启|
+| remark | varchar(100) |--|否|--| 配置说明 |
+| create_time | bigint(10) unsigned |--|否|--| 创建时间 |
+| update_time | binint(10) unsigned |--|否|--| 更新时间 |
+| status | tinyint(1) |--|否|--| 状态 |	
+| value | text |--|否|--| 配置值 |	
+| sort | smallint(3) unsigned |--|否|--| 排序 |	
+
+
+## member 会员信息表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| uid | int(10) unsigned |否|无|是| 用户ID,自增主键 |
+| nickname | char(30)  |否|无|--| 昵称|
+| sex| tinyint(3) unsigned |否|无|--| 性别(0:未知/保密 1:男 2:女)|
+| birthday| date|否|无|--|生日|
+| qq| char(15)|否|无|--|qq|
+| score| mediumint(1)|否|无|--|用户积分|
+| login| int(1)|否|无|--|登录次数|
+| reg_ip| bigint(20)|否|无|--|注册IP|
+| reg_time| bigint(10) unsigned|否|无|--|注册时间|
+| last_login_ip| bigint(20)|否|无|--|最后登录IP|
+| last_login_time| bigint(10) unsigned|否|无|--|最后登录时间|
+| status| tinyint(1) |否|无|--|会员状态|
+
 ## auth_group 用户组定义表
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
