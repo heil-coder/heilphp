@@ -22,6 +22,7 @@ project  应用部署目录
 │  └─route.php          路由配置文件
 ├─extend                扩展类库目录（可定义）
 ├─public                WEB 部署目录（对外访问目录）
+│  ├─uploads			上传文件存储目录
 │  ├─static             静态资源存放目录(css,js,image)
 │  ├─index.php          应用入口文件
 │  ├─router.php         快速测试文件
