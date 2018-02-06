@@ -26,7 +26,7 @@ function check_env(){
     //PHP环境检测
     if($items['php'][3] < $items['php'][1]){
         $items['php'][4] = 'error';
-        session('error', true);
+		Session::set('error', true);
     }
 
     //附件上传检测
@@ -38,7 +38,7 @@ function check_env(){
     if(empty($tmp['GD Version'])){
         $items['gd'][3] = '未安装';
         $items['gd'][4] = 'error';
-        session('error', true);
+		Session::set('error', true);
     } else {
         $items['gd'][3] = $tmp['GD Version'];
     }
@@ -79,7 +79,7 @@ function check_func(){
             ){
             $val[1] = '不支持';
             $val[2] = 'error';
-            session('error', true);
+			Session::set('error', true);
         }
     }
 

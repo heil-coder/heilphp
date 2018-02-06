@@ -10,7 +10,7 @@
 
 {block name="body"}
     <h1>创建数据库</h1>
-    <form action="__SELF__" method="post" target="_self">
+	<form action="{$url}" method="post" target="_self">
         <div class="create-database">
             <div>
                 <select name="db[]">
@@ -64,10 +64,10 @@
                 <span>邮箱，请填写正确的邮箱便于收取提醒邮件</span>
             </div>
         </div>
+    <button id="submit" type="submit" class="btn btn-primary btn-large">下一步</button>
     </form>
 {/block}
 
 {block name="footer"}
     <a class="btn btn-success btn-large" href="{:url('install/step1')}">上一步</a>
-    <button id="submit" type="button" class="btn btn-primary btn-large">下一步</button>
 {/block}
