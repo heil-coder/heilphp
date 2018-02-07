@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -14,8 +14,6 @@ namespace think;
 use think\exception\ValidateException;
 use traits\controller\Jump;
 
-Loader::import('controller/Jump', TRAIT_PATH, EXT);
-
 class Controller
 {
     use Jump;
@@ -26,37 +24,44 @@ class Controller
     protected $view;
 
     /**
-     * @var \think\Request Request 实例
+     * @var \think\Request Request实例
      */
     protected $request;
 
     /**
-     * @var bool 验证失败是否抛出异常
+     * @var \think\App 应用实例
      */
-    protected $failException = false;
+    protected $app;
 
-    /**
-     * @var bool 是否批量验证
-     */
+    // 验证失败是否抛出异常
+    protected $failException = false;
+    // 是否批量验证
     protected $batchValidate = false;
 
     /**
-     * @var array 前置操作方法列表
+     * 前置操作方法列表
+     * @var array $beforeActionList
+     * @access protected
      */
     protected $beforeActionList = [];
 
     /**
      * 构造方法
+     * @param Request $request Request对象
      * @access public
-     * @param Request $request Request 对象
      */
-    public function __construct(Request $request = null)
+    public function __construct(Request $request, App $app)
     {
-        $this->view = View::instance(Config::get('template'), Config::get('view_replace_str'));
-        $this->request = is_null($request) ? Request::instance() : $request;
+        $this->view = Container::get('view')->init(
+            $app['config']->pull('template'),
+            $app['config']->get('view_replace_str')
+        );
+
+        $this->request = $request;
+        $this->app     = $app;
 
         // 控制器初始化
-        $this->_initialize();
+        $this->initialize();
 
         // 前置操作方法
         if ($this->beforeActionList) {
@@ -68,20 +73,15 @@ class Controller
         }
     }
 
-    /**
-     * 初始化操作
-     * @access protected
-     */
-    protected function _initialize()
-    {
-    }
+    // 初始化
+    protected function initialize()
+    {}
 
     /**
      * 前置操作
      * @access protected
-     * @param  string $method  前置操作方法名
-     * @param  array  $options 调用参数 ['only'=>[...]] 或者 ['except'=>[...]]
-     * @return void
+     * @param string $method  前置操作方法名
+     * @param array  $options 调用参数 ['only'=>[...]] 或者['except'=>[...]]
      */
     protected function beforeAction($method, $options = [])
     {
@@ -89,7 +89,6 @@ class Controller
             if (is_string($options['only'])) {
                 $options['only'] = explode(',', $options['only']);
             }
-
             if (!in_array($this->request->action(), $options['only'])) {
                 return;
             }
@@ -97,7 +96,6 @@ class Controller
             if (is_string($options['except'])) {
                 $options['except'] = explode(',', $options['except']);
             }
-
             if (in_array($this->request->action(), $options['except'])) {
                 return;
             }
@@ -109,10 +107,10 @@ class Controller
     /**
      * 加载模板输出
      * @access protected
-     * @param  string $template 模板文件名
-     * @param  array  $vars     模板输出变量
-     * @param  array  $replace  模板替换
-     * @param  array  $config   模板参数
+     * @param string $template 模板文件名
+     * @param array  $vars     模板输出变量
+     * @param array  $replace  模板替换
+     * @param array  $config   模板参数
      * @return mixed
      */
     protected function fetch($template = '', $vars = [], $replace = [], $config = [])
@@ -123,10 +121,10 @@ class Controller
     /**
      * 渲染内容输出
      * @access protected
-     * @param  string $content 模板内容
-     * @param  array  $vars    模板输出变量
-     * @param  array  $replace 替换内容
-     * @param  array  $config  模板参数
+     * @param string $content 模板内容
+     * @param array  $vars    模板输出变量
+     * @param array  $replace 替换内容
+     * @param array  $config  模板参数
      * @return mixed
      */
     protected function display($content = '', $vars = [], $replace = [], $config = [])
@@ -137,8 +135,8 @@ class Controller
     /**
      * 模板变量赋值
      * @access protected
-     * @param  mixed $name  要显示的模板变量
-     * @param  mixed $value 变量的值
+     * @param mixed $name  要显示的模板变量
+     * @param mixed $value 变量的值
      * @return $this
      */
     protected function assign($name, $value = '')
@@ -177,35 +175,39 @@ class Controller
     /**
      * 验证数据
      * @access protected
-     * @param  array        $data     数据
-     * @param  string|array $validate 验证器名或者验证规则数组
-     * @param  array        $message  提示信息
-     * @param  bool         $batch    是否批量验证
-     * @param  mixed        $callback 回调方法（闭包）
+     * @param array        $data     数据
+     * @param string|array $validate 验证器名或者验证规则数组
+     * @param array        $message  提示信息
+     * @param bool         $batch    是否批量验证
+     * @param mixed        $callback 回调方法（闭包）
      * @return array|string|true
      * @throws ValidateException
      */
     protected function validate($data, $validate, $message = [], $batch = false, $callback = null)
     {
         if (is_array($validate)) {
-            $v = Loader::validate();
+            $v = $this->app->validate();
             $v->rule($validate);
         } else {
-            // 支持场景
             if (strpos($validate, '.')) {
+                // 支持场景
                 list($validate, $scene) = explode('.', $validate);
             }
-
-            $v = Loader::validate($validate);
-
-            !empty($scene) && $v->scene($scene);
+            $v = $this->app->validate($validate);
+            if (!empty($scene)) {
+                $v->scene($scene);
+            }
         }
 
-        // 批量验证
-        if ($batch || $this->batchValidate) $v->batch(true);
-        // 设置错误信息
-        if (is_array($message)) $v->message($message);
-        // 使用回调验证
+        // 是否批量验证
+        if ($batch || $this->batchValidate) {
+            $v->batch(true);
+        }
+
+        if (is_array($message)) {
+            $v->message($message);
+        }
+
         if ($callback && is_callable($callback)) {
             call_user_func_array($callback, [$v, &$data]);
         }
@@ -213,11 +215,11 @@ class Controller
         if (!$v->check($data)) {
             if ($this->failException) {
                 throw new ValidateException($v->getError());
+            } else {
+                return $v->getError();
             }
-
-            return $v->getError();
+        } else {
+            return true;
         }
-
-        return true;
     }
 }

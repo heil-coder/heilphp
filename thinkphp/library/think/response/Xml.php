@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -64,12 +64,14 @@ class Xml extends Response
             }
             $attr = implode(' ', $array);
         }
+
         $attr = trim($attr);
         $attr = empty($attr) ? '' : " {$attr}";
         $xml  = "<?xml version=\"1.0\" encoding=\"{$encoding}\"?>";
         $xml .= "<{$root}{$attr}>";
         $xml .= $this->dataToXml($data, $item, $id);
         $xml .= "</{$root}>";
+
         return $xml;
     }
 
@@ -97,6 +99,7 @@ class Xml extends Response
             $xml .= (is_array($val) || is_object($val)) ? $this->dataToXml($val, $item, $id) : $val;
             $xml .= "</{$key}>";
         }
+
         return $xml;
     }
 }

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -30,7 +30,7 @@ abstract class OneToOne extends Relation
     protected $joinType;
     // 要绑定的属性
     protected $bindAttr = [];
-    // 关联方法名
+    // 关联名
     protected $relation;
 
     /**
@@ -59,17 +59,19 @@ abstract class OneToOne extends Relation
     {
         $name  = Loader::parseName(basename(str_replace('\\', '/', $query->getModel())));
         $alias = $name;
+
         if ($first) {
             $table = $query->getTable();
             $query->table([$table => $alias]);
+
             if ($query->getOptions('field')) {
                 $field = $query->getOptions('field');
                 $query->removeOption('field');
             } else {
                 $field = true;
             }
+
             $query->field($field, false, $table, $alias);
-            $field = null;
         }
 
         // 预载入封装
@@ -78,9 +80,9 @@ abstract class OneToOne extends Relation
         $query->via($joinAlias);
 
         if ($this instanceof BelongsTo) {
-            $query->join([$joinTable => $joinAlias], $alias . '.' . $this->foreignKey . '=' . $joinAlias . '.' . $this->localKey, $this->joinType);
+            $query->join($joinTable . ' ' . $joinAlias, $alias . '.' . $this->foreignKey . '=' . $joinAlias . '.' . $this->localKey, $this->joinType);
         } else {
-            $query->join([$joinTable => $joinAlias], $alias . '.' . $this->localKey . '=' . $joinAlias . '.' . $this->foreignKey, $this->joinType);
+            $query->join($joinTable . ' ' . $joinAlias, $alias . '.' . $this->localKey . '=' . $joinAlias . '.' . $this->foreignKey, $this->joinType);
         }
 
         if ($closure) {
@@ -91,11 +93,16 @@ abstract class OneToOne extends Relation
             if ($query->getOptions('with_field')) {
                 $field = $query->getOptions('with_field');
                 $query->removeOption('with_field');
+            } else {
+                $field = true;
             }
         } elseif (isset($this->option['field'])) {
             $field = $this->option['field'];
+        } else {
+            $field = true;
         }
-        $query->field(isset($field) ? $field : true, false, $joinTable, $joinAlias, $relation . '__');
+
+        $query->field($field, false, $joinTable, $joinAlias, $relation . '__');
     }
 
     /**
@@ -171,9 +178,11 @@ abstract class OneToOne extends Relation
         if ($data instanceof Model) {
             $data = $data->getData();
         }
+
         $model = new $this->model;
         // 保存关联表数据
         $data[$this->foreignKey] = $this->parent->{$this->localKey};
+
         return $model->save($data) ? $model : false;
     }
 
@@ -186,6 +195,7 @@ abstract class OneToOne extends Relation
     public function setEagerlyType($type)
     {
         $this->eagerlyType = $type;
+
         return $this;
     }
 
@@ -211,17 +221,8 @@ abstract class OneToOne extends Relation
             $attr = explode(',', $attr);
         }
         $this->bindAttr = $attr;
-        return $this;
-    }
 
-    /**
-     * 获取绑定属性
-     * @access public
-     * @return array
-     */
-    public function getBindAttr()
-    {
-        return $this->bindAttr;
+        return $this;
     }
 
     /**
@@ -232,8 +233,7 @@ abstract class OneToOne extends Relation
      * @return integer
      */
     public function relationCount($result, $closure)
-    {
-    }
+    {}
 
     /**
      * 一对一 关联模型预查询拼装
@@ -267,6 +267,7 @@ abstract class OneToOne extends Relation
         } else {
             $relationModel = null;
         }
+
         $result->setRelation(Loader::parseName($relation), $relationModel);
     }
 
@@ -311,14 +312,24 @@ abstract class OneToOne extends Relation
                 $model->field($field)->removeOption('with_field');
             }
         }
+
         $list = $model->where($where)->with($subRelation)->select();
 
         // 组装模型数据
         $data = [];
+
         foreach ($list as $set) {
             $data[$set->$key] = $set;
         }
+
         return $data;
     }
 
+    /**
+     * 执行基础查询（仅执行一次）
+     * @access protected
+     * @return void
+     */
+    protected function baseQuery()
+    {}
 }

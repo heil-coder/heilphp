@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -11,9 +11,8 @@
 
 namespace think\response;
 
-use think\Config;
+use think\Container;
 use think\Response;
-use think\View as ViewTemplate;
 
 class View extends Response
 {
@@ -32,7 +31,8 @@ class View extends Response
     protected function output($data)
     {
         // 渲染模板输出
-        return ViewTemplate::instance(Config::get('template'), Config::get('view_replace_str'))
+        return Container::get('view')
+            ->init(Container::get('app')->config('template'), Container::get('app')->config('view_replace_str'))
             ->fetch($data, $this->vars, $this->replace);
     }
 
@@ -66,7 +66,21 @@ class View extends Response
         } else {
             $this->vars[$name] = $value;
         }
+
         return $this;
+    }
+
+    /**
+     * 检查模板是否存在
+     * @access private
+     * @param string|array  $name 参数名
+     * @return bool
+     */
+    public function exists($name)
+    {
+        return Container::get('view')
+            ->init(Container::get('app')->config('template'))
+            ->exists($name);
     }
 
     /**
@@ -83,6 +97,7 @@ class View extends Response
         } else {
             $this->replace[$content] = $replace;
         }
+
         return $this;
     }
 

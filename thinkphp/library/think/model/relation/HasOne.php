@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -18,21 +18,20 @@ use think\Model;
 class HasOne extends OneToOne
 {
     /**
-     * 构造函数
+     * 架构函数
      * @access public
      * @param Model  $parent     上级模型对象
      * @param string $model      模型名
      * @param string $foreignKey 关联外键
      * @param string $localKey   当前模型主键
-     * @param string $joinType   JOIN类型
      */
-    public function __construct(Model $parent, $model, $foreignKey, $localKey, $joinType = 'INNER')
+    public function __construct(Model $parent, $model, $foreignKey, $localKey)
     {
         $this->parent     = $parent;
         $this->model      = $model;
         $this->foreignKey = $foreignKey;
         $this->localKey   = $localKey;
-        $this->joinType   = $joinType;
+        $this->joinType   = 'INNER';
         $this->query      = (new $model)->db();
     }
 
@@ -40,17 +39,21 @@ class HasOne extends OneToOne
      * 延迟获取关联数据
      * @param string   $subRelation 子关联名
      * @param \Closure $closure     闭包查询条件
-     * @return array|false|\PDOStatement|string|Model
+     * @return Model
      */
     public function getRelation($subRelation = '', $closure = null)
     {
-        // 执行关联定义方法
         $localKey = $this->localKey;
+
         if ($closure) {
             call_user_func_array($closure, [ & $this->query]);
         }
+
         // 判断关联类型执行查询
-        $relationModel = $this->query->where($this->foreignKey, $this->parent->$localKey)->relation($subRelation)->find();
+        $relationModel = $this->query
+            ->where($this->foreignKey, $this->parent->$localKey)
+            ->relation($subRelation)
+            ->find();
 
         if ($relationModel) {
             $relationModel->setParent(clone $this->parent);
@@ -71,18 +74,21 @@ class HasOne extends OneToOne
         $relation   = basename(str_replace('\\', '/', $this->model));
         $localKey   = $this->localKey;
         $foreignKey = $this->foreignKey;
+
         return $this->parent->db()
             ->alias($model)
             ->whereExists(function ($query) use ($table, $model, $relation, $localKey, $foreignKey) {
-                $query->table([$table => $relation])->field($relation . '.' . $foreignKey)->whereExp($model . '.' . $localKey, '=' . $relation . '.' . $foreignKey);
+                $query->table([$table => $relation])
+                    ->field($relation . '.' . $foreignKey)
+                    ->whereExp($model . '.' . $localKey, '=' . $relation . '.' . $foreignKey);
             });
     }
 
     /**
      * 根据关联条件查询当前模型
      * @access public
-     * @param  mixed  $where 查询条件（数组或者闭包）
-     * @param  mixed  $fields   字段
+     * @param mixed     $where 查询条件（数组或者闭包）
+     * @param mixed     $fields   字段
      * @return Query
      */
     public function hasWhere($where = [], $fields = null)
@@ -92,18 +98,15 @@ class HasOne extends OneToOne
         $relation = basename(str_replace('\\', '/', $this->model));
 
         if (is_array($where)) {
-            foreach ($where as $key => $val) {
-                if (false === strpos($key, '.')) {
-                    $where[$relation . '.' . $key] = $val;
-                    unset($where[$key]);
-                }
-            }
+            $this->getQueryWhere($where, $relation);
         }
+
         $fields = $this->getRelationQueryFields($fields, $model);
 
-        return $this->parent->db()->alias($model)
+        return $this->parent->db()
+            ->alias($model)
             ->field($fields)
-            ->join([$table => $relation], $model . '.' . $this->localKey . '=' . $relation . '.' . $this->foreignKey, $this->joinType)
+            ->join($table . ' ' . $relation, $model . '.' . $this->localKey . '=' . $relation . '.' . $this->foreignKey, $this->joinType)
             ->where($where);
     }
 
@@ -131,13 +134,12 @@ class HasOne extends OneToOne
 
         if (!empty($range)) {
             $data = $this->eagerlyWhere($this, [
-                $foreignKey => [
-                    'in',
-                    $range,
-                ],
+                [$foreignKey, 'in', $range],
             ], $foreignKey, $relation, $subRelation, $closure);
+
             // 关联属性名
             $attr = Loader::parseName($relation);
+
             // 关联数据封装
             foreach ($resultSet as $result) {
                 // 关联模型
@@ -148,13 +150,14 @@ class HasOne extends OneToOne
                     $relationModel->setParent(clone $result);
                     $relationModel->isUpdate(true);
                 }
+
                 if (!empty($this->bindAttr)) {
                     // 绑定关联属性
                     $this->bindAttr($relationModel, $result, $this->bindAttr);
-                } else {
-                    // 设置关联属性
-                    $result->setRelation($attr, $relationModel);
                 }
+
+                // 设置关联属性
+                $result->setRelation($attr, $relationModel);
             }
         }
     }
@@ -172,7 +175,9 @@ class HasOne extends OneToOne
     {
         $localKey   = $this->localKey;
         $foreignKey = $this->foreignKey;
-        $data       = $this->eagerlyWhere($this, [$foreignKey => $result->$localKey], $foreignKey, $relation, $subRelation, $closure);
+        $data       = $this->eagerlyWhere($this, [
+            [$foreignKey, '=', $result->$localKey],
+        ], $foreignKey, $relation, $subRelation, $closure);
 
         // 关联模型
         if (!isset($data[$result->$localKey])) {
@@ -182,12 +187,13 @@ class HasOne extends OneToOne
             $relationModel->setParent(clone $result);
             $relationModel->isUpdate(true);
         }
+
         if (!empty($this->bindAttr)) {
             // 绑定关联属性
             $this->bindAttr($relationModel, $result, $this->bindAttr);
-        } else {
-            $result->setRelation(Loader::parseName($relation), $relationModel);
         }
+
+        $result->setRelation(Loader::parseName($relation), $relationModel);
     }
 
 }
