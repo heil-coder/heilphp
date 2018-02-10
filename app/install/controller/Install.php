@@ -7,10 +7,10 @@
 namespace app\install\controller;
 
 use think\Controller;
-use think\Request;
-use think\Session;
-use think\Url;
-use think\Db;
+use Request;
+use Session;
+use Url;
+use Db;
 
 class Install extends Controller{
 	/**
@@ -24,7 +24,7 @@ class Install extends Controller{
 
     //安装第一步，检测运行所需的环境设置
     public function step1(){
-        session('error', false);
+		Session::set('error', false);
 
         //环境检测
         $env = check_env();
@@ -38,7 +38,7 @@ class Install extends Controller{
         //函数检测
         $func = check_func();
 
-        session('step', 1);
+		Session::set('step', 1);
 
         $this->assign('env', $env);
         $this->assign('func', $func);
@@ -48,7 +48,7 @@ class Install extends Controller{
 
     //安装第二步，创建数据库
     public function step2($db = null, $admin = null){
-		if (Request::instance()->isPost()){
+		if (Request::isPost()){
             //检测管理员信息
             if(!is_array($admin) || empty($admin[0]) || empty($admin[1]) || empty($admin[3])){
                 $this->error('请填写完整管理员信息');
@@ -67,17 +67,19 @@ class Install extends Controller{
                 $this->error('请填写完整的数据库配置');
             } else {
                 $DB = array();
-                list($DB['DB_TYPE'], $DB['DB_HOST'], $DB['DB_NAME'], $DB['DB_USER'], $DB['DB_PWD'],
-                     $DB['DB_PORT'], $DB['DB_PREFIX']) = $db;
+                list($DB['type'], $DB['hostname'], $DB['database'], $DB['username'], $DB['password'],
+                     $DB['hostport'], $DB['prefix']) = $db;
                 //缓存数据库配置
 				Session::set('db_config', $DB);
 
                 //创建数据库
-                $dbname = $DB['DB_NAME'];
-                unset($DB['DB_NAME']);
-                $db  = Db::connect($DB);
+                $dbname = $DB['database'];
+                //unset($DB['database']);
+                $Db = Db::connect($DB);
                 $sql = "CREATE DATABASE IF NOT EXISTS `{$dbname}` DEFAULT CHARACTER SET utf8";
-                $db->execute($sql) || $this->error($db->getError());
+				$Db->query("select * from think_user where status=1") || $this->error(Db::getError());
+				exit();
+				//$Db->execute($sql) || $this->error(Db::getError());
             }
 
             //跳转到数据库安装页面
@@ -106,6 +108,37 @@ class Install extends Controller{
 
     //安装第三步，安装数据表，创建配置文件
     public function step3(){
+        if(Session::get('step') != 2){
+            $this->redirect('step2');
+        }
 
+        $this->display();
+
+        if(Session::get('update')){
+            $db = Db::connect();
+            //更新数据表
+            update_tables($db, C('DB_PREFIX'));
+        }else{
+            //连接数据库
+            $dbconfig = Session::get('db_config');
+            $db = Db::connect($dbconfig);
+            //创建数据表
+            create_tables($db, $dbconfig['prefix']);
+            //注册创始人帐号
+            $auth  = build_auth_key();
+            $admin = Session::get('admin_info');
+            register_administrator($db, $dbconfig['prefix'], $admin, $auth);
+
+            //创建配置文件
+            $conf   =   write_config($dbconfig, $auth);
+			Session::set('config_file',$conf);
+        }
+
+        if(Session::get('error')){
+            //show_msg();
+        } else {
+			Session::set('step', 3);
+            $this->redirect('Index/complete');
+        }
     }
 }

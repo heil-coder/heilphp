@@ -99,6 +99,34 @@ function write_config($config, $auth){
  * @param  resource $db 数据库连接资源
  */
 function create_tables($db, $prefix = ''){
+    //读取SQL文件
+    $sql = file_get_contents(Env:get('module_path') . 'data/install.sql');
+    $sql = str_replace("\r", "\n", $sql);
+    $sql = explode(";\n", $sql);
+
+    //替换表前缀
+    $orginal = Config::('ORIGINAL_TABLE_PREFIX');
+    $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
+
+    //开始安装
+    show_msg('开始安装数据库...');
+    foreach ($sql as $value) {
+        $value = trim($value);
+        if(empty($value)) continue;
+        if(substr($value, 0, 12) == 'CREATE TABLE') {
+            $name = preg_replace("/^CREATE TABLE `(\w+)` .*/s", "\\1", $value);
+            $msg  = "创建数据表{$name}";
+            if(false !== $db->execute($value)){
+                show_msg($msg . '...成功');
+            } else {
+                show_msg($msg . '...失败！', 'error');
+                session('error', true);
+            }
+        } else {
+            $db->execute($value);
+        }
+
+    }
 }
 
 function register_administrator($db, $prefix, $admin, $auth){
@@ -117,7 +145,12 @@ function update_tables($db, $prefix = ''){
  * @param  string $msg 提示信息
  */
 function show_msg($msg, $class = ''){
+    echo "<script type=\"text/javascript\">showmsg(\"{$msg}\", \"{$class}\")</script>";
+    flush();
+    ob_flush();
 }
+
+
 
 /**
  * 生成系统AUTH_KEY
