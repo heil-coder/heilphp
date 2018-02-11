@@ -184,12 +184,17 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | uid | int(10) unsigned |否|无|是| 用户ID,自增主键 |
+| username| char(16) |否|无|--| 用户名|
+| password| char(32) |否|无|--| 密码 md5(字典排序)|
+| salt| char(10) |否|无|--| 密码salt|
+| email| varchar(50)| 是|无|--|邮箱|
+| mobile| char(15)| 是|无|--|手机|
 | nickname | char(30)  |否|无|--| 昵称|
-| sex| tinyint(3) unsigned |否|无|--| 性别(0:未知/保密 1:男 2:女)|
+| sex| tinyint(1) unsigned |否|无|--| 性别(0:未知/保密 1:男 2:女)|
 | birthday| date|否|无|--|生日|
 | qq| char(15)|否|无|--|qq|
-| score| mediumint(1)|否|无|--|用户积分|
-| login| int(1)|否|无|--|登录次数|
+| score| mediumint(8)|否|无|--|用户积分|
+| login| int(10)|否|无|--|登录次数|
 | reg_ip| bigint(20)|否|无|--|注册IP|
 | reg_time| bigint(10) unsigned|否|无|--|注册时间|
 | last_login_ip| bigint(20)|否|无|--|最后登录IP|
@@ -201,7 +206,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 |:--|:--|:--|:--|:--|:--|
 | id|mediumint(8) unsigned| 否|无|是|用户组id，自增主键|
 | module| varchar(30)| 否| 无|--|用户组所属模块|
-| type| tinyint(4)| 否| 无|否|组类型|
+| type| tinyint(1)| 否| 无|否|组类型|
 | title| char(30)| 否|无|--|用户组中文名称|
 | description| varchar(80)|--|无|否|描述信息|
 | status| tinyint(1)|否|无|否|用户组状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)|
@@ -210,7 +215,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 ## auth_group_access 用户用户组关系对应表 
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
-| uid| int(11) unsigned| 否| 无|否|用户id|
+| uid| int(10) unsigned| 否| 无|否|用户id|
 | group_id| mediumint(8) unsigned| 否| 无|否|用户组id|
 
 ## auth_rule 权限规则表

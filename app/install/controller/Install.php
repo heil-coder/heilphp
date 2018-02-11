@@ -11,15 +11,16 @@ use Request;
 use Session;
 use Url;
 use Db;
+use Env;
 
 class Install extends Controller{
 	/**
 	 * 初始化方法 
 	 */
-    protected function _initialize(){
-        //if('安装锁定文件如存')){
-        //    $this->error('已经成功安装了OneThink，请不要重复安装!');
-        //}
+    protected function initialize(){
+        if(is_file(Env::get('module_path') . 'data/install.lock')){
+            $this->error('已经成功安装了HeilPHP，请不要重复安装!');
+        }
     }
 
     //安装第一步，检测运行所需的环境设置
@@ -74,12 +75,9 @@ class Install extends Controller{
 
                 //创建数据库
                 $dbname = $DB['database'];
-                //unset($DB['database']);
                 $Db = Db::connect($DB);
                 $sql = "CREATE DATABASE IF NOT EXISTS `{$dbname}` DEFAULT CHARACTER SET utf8";
-				$Db->query("select * from think_user where status=1") || $this->error(Db::getError());
-				exit();
-				//$Db->execute($sql) || $this->error(Db::getError());
+				$Db->execute($sql) || $this->error($Db::getError());
             }
 
             //跳转到数据库安装页面
@@ -112,8 +110,8 @@ class Install extends Controller{
             $this->redirect('step2');
         }
 
-        $this->display();
-
+		echo $this->fetch();
+		
         if(Session::get('update')){
             $db = Db::connect();
             //更新数据表
@@ -125,20 +123,21 @@ class Install extends Controller{
             //创建数据表
             create_tables($db, $dbconfig['prefix']);
             //注册创始人帐号
-            $auth  = build_auth_key();
+            $salt= build_salt();
             $admin = Session::get('admin_info');
-            register_administrator($db, $dbconfig['prefix'], $admin, $auth);
+            register_administrator($db, $dbconfig['prefix'], $admin, $salt);
 
             //创建配置文件
-            $conf   =   write_config($dbconfig, $auth);
+            $conf   =   write_config($dbconfig);
 			Session::set('config_file',$conf);
         }
 
         if(Session::get('error')){
-            //show_msg();
+			show_msg('安装错误');
         } else {
 			Session::set('step', 3);
-            $this->redirect('Index/complete');
+			show_msg('安装成功，即将跳转');
+			complete_redirect();
         }
     }
 }

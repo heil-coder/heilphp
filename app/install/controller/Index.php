@@ -7,6 +7,8 @@
 namespace app\install\controller;
 
 use think\Controller;
+use Session;
+use Env;
 
 class Index extends Controller
 {
@@ -15,5 +17,23 @@ class Index extends Controller
 		return view();
 	}
 	
+    //安装完成
+    public function complete(){
+        $step = Session::get('step');
+
+        if(!$step){
+            $this->redirect('index');
+        } elseif($step != 3) {
+            $this->redirect("Install/step{$step}");
+        }
+
+        // 写入安装锁定文件
+        file_put_contents(Env::get('module_path') . 'data/install.lock','lock');
+
+		Session::delete('step');
+		Session::delete('error');
+		Session::delete('update');
+		return view();
+    }
 
 }

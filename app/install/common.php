@@ -90,8 +90,32 @@ function check_func(){
  * 写入配置文件
  * @param  array $config 配置信息
  */
-function write_config($config, $auth){
+function write_config($config){
+    if(is_array($config)){
+        //读取配置内容
+        $conf = file_get_contents(Env::get('module_path'). 'data/database.tpl');
+        //替换配置项
+        foreach ($config as $name => $value) {
+            $conf = str_replace("[{$name}]", $value, $conf);
+        }
 
+        //写入应用配置文件
+        if(!IS_WRITE){
+            return '由于您的环境不可写，请复制下面的配置文件内容覆盖到相关的配置文件，然后再登录后台。<p>'.realpath(APP_PATH).'/Common/Conf/config.php</p>
+            <textarea name="" style="width:650px;height:185px">'.$conf.'</textarea>
+            <p>'.realpath(APP_PATH).'/User/Conf/config.php</p>
+            <textarea name="" style="width:650px;height:125px">'.$user.'</textarea>';
+        }else{
+            if(file_put_contents(Env::get('config_path') . 'database.php', $conf)){
+                show_msg('配置文件写入成功');
+            } else {
+                show_msg('配置文件写入失败！', 'error');
+                session('error', true);
+            }
+            return '';
+        }
+
+    }
 }
 
 /**
@@ -100,13 +124,13 @@ function write_config($config, $auth){
  */
 function create_tables($db, $prefix = ''){
     //读取SQL文件
-    $sql = file_get_contents(Env:get('module_path') . 'data/install.sql');
+    $sql = file_get_contents(Env::get('module_path') . 'data/install.sql');
     $sql = str_replace("\r", "\n", $sql);
     $sql = explode(";\n", $sql);
 
     //替换表前缀
-    $orginal = Config::('ORIGINAL_TABLE_PREFIX');
-    $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
+    $orginal = Config::get('ORIGINAL_TABLE_PREFIX');
+    !empty($orginal) && $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
 
     //开始安装
     show_msg('开始安装数据库...');
@@ -129,13 +153,23 @@ function create_tables($db, $prefix = ''){
     }
 }
 
-function register_administrator($db, $prefix, $admin, $auth){
+function register_administrator($db, $prefix, $admin, $salt){
+    show_msg('开始注册创始人帐号...');
+    $password = encrypt_password($admin['password'], $salt);
+
+    $sql = "INSERT INTO `[PREFIX]member` VALUES ".
+           "('1', '[NAME]','[PASSWORD]','[SALT]','','','[NICK]', '0', '0000-00-00', '', '0', '1', '0', '[TIME]', '0', '[TIME]', '1');";
+    $sql = str_replace(
+        array('[PREFIX]', '[NAME]','[PASSWORD]','[SALT]','[NICK]', '[TIME]'),
+        array($prefix, $admin['username'],$password,$salt,$admin['username'], App::getBeginTime()),
+        $sql);
+    $db->execute($sql);
+    show_msg('创始人帐号注册完成！');
 }
 
 /**
  * 更新数据表
  * @param  resource $db 数据库连接资源
- * @author lyq <605415184@qq.com>
  */
 function update_tables($db, $prefix = ''){
  }
@@ -149,14 +183,24 @@ function show_msg($msg, $class = ''){
     flush();
     ob_flush();
 }
-
-
+/**
+ * 完成后重定向
+ */
+function complete_redirect(){
+    echo "<script type=\"text/javascript\">completRedirect()</script>";
+    flush();
+    ob_flush();
+}
 
 /**
- * 生成系统AUTH_KEY
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+ * 生成用户salt
+ * @author Jason	<1878566968@qq.com>
  */
-function build_auth_key(){
+function build_salt(){
+    $chars  = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $chars .= '`~!@#$%^&*()_+-=[]{};:"|,.<>/?';
+    $chars  = str_shuffle($chars);
+    return substr($chars, 0, 10);
 }
 
 /**
@@ -164,5 +208,6 @@ function build_auth_key(){
  * @param  string $str 要加密的字符串
  * @return string
  */
-function user_md5($str, $key = ''){
+function encrypt_password($str, $salt = ''){
+    return '' === $str ? '' : md5(sha1($str) . $salt);
 }
