@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{$meta_title}|HeilPHP管理平台</title>
+    <link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+	{block name="style"}{/block}
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <!-- Logo -->
+        <span class="logo"></span>
+        <!-- /Logo -->
+
+        <!-- 主导航 -->
+
+        <!-- /主导航 -->
+
+        <!-- 用户栏 -->
+
+    </div>
+    <!-- /头部 -->
+
+    <!-- 边栏 -->
+    <div class="sidebar">
+        <!-- 子导航 -->
+		{block name="sidebar"}
+
+		{/block}
+        <!-- /子导航 -->
+    </div>
+    <!-- /边栏 -->
+
+    <!-- 内容区 -->
+    <div id="main-content">
+        <div id="top-alert" class="fixed alert alert-error" style="display: none;">
+            <button class="close fixed" style="margin-top: 4px;">&times;</button>
+            <div class="alert-content">这是内容</div>
+        </div>
+        <div id="main" class="main">
+			{block name="nav"}
+            <!-- nav -->
+			{notempty name="_show_nav"}
+            <div class="breadcrumb">
+                <span>您的位置:</span>
+                <assign name="i" value="1" />
+                <foreach name="_nav" item="v" key="k">
+                    <if condition="$i eq count($_nav)">
+                    <span>{$v}</span>
+                    <else />
+                    <span><a href="{$k}">{$v}</a>&gt;</span>
+                    </if>
+                    <assign name="i" value="$i+1" />
+                </foreach>
+            </div>
+			{/notempty}
+            <!-- nav -->
+			{/block}
+
+			{block name="body"} {/block}
+        </div>
+        <div class="cont-ft">
+            <div class="copyright">
+                <div class="fl">感谢使用<a href="http://www.heilphp.com" target="_blank">HeilPHP</a>管理平台</div>
+            </div>
+        </div>
+    </div>
+    <!-- /内容区 -->
+    <!--[if lt IE 9]>
+	 <script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
+    <![endif]--><!--[if gte IE 9]><!-->
+	 <script type="text/javascript" src="/static/js/jquery-2.1.4.min.js"></script>
+    <!--<![endif]-->
+	<script type="text/javascript" src="/static/js/{$Request.module}/common.js"></script>
+	{block name="script"}{/block}
+</body>
+</html>

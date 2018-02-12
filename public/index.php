@@ -12,18 +12,19 @@
 // [ 应用入口文件 ]
 
 //检测php版本
-if(version_compare(PHP_VERSION,'5.5.0','<'))  die('require PHP > 5.5.0 !');
+if(version_compare(PHP_VERSION,'5.6.0','<'))  die('require PHP > 5.6.0 !');
 
 /**
  * 系统调试设置
  * 项目正式部署后请设置为false
  */
 
-if(!is_file(APP_PATH . 'User/Conf/config.php')){
+// 定义应用目录
+define('APP_PATH', __DIR__ . '/../app/');
+
+if(!is_file(APP_PATH . 'install/data/install.lock')){
 	header('Location: ./install.php');
 	exit;
 }
-// 定义应用目录
-define('APP_PATH', __DIR__ . '/../app/');
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';
