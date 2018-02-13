@@ -1,14 +1,13 @@
 <?php
 // +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// | HeilPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// | Copyright (c) 2018 http://www.heilphp.com All rights reserved.
 // +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
+// | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
 namespace app\admin\controller;
-
 use Db;
 use Config;
 use Session;
@@ -23,7 +22,6 @@ use heil\Database;
  * @author Jason <1878566968@qq.com>
  */
 class Datamanage extends Admin{
-
     /**
      * 数据库备份/还原列表
      * @param  String $type import-还原，export-备份
