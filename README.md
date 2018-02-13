@@ -182,18 +182,18 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 ## config 系统配置表
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
-| id | int(10) unsigned |--|否|是| 配置ID,自增主键 |
-| name | varchar(30) |--|否|--| 配置名称 |
-| type | tinyint(1) |0|否|--| 配置类型（0-数字，1-字符，2-文本，3-数组，4-枚举，5-多选） |
-| title | varchar(50) |--|否|--| 配置说明 |
-| group | tinyint(1) |--|否|--| 配置分组（0-无分组，1-基本设置）|
-| extra | varchar(255) |--|否|--| 配置值 如：0:关闭1:开启|
-| remark | varchar(100) |--|否|--| 配置说明 |
-| create_time | bigint(10) unsigned |--|0|--| 创建时间 |
-| update_time | binint(10) unsigned |--|0|--| 更新时间 |
-| status | tinyint(1) |--|0|否| 状态 |	
-| value | text |--|否|--| 配置值 |	
-| sort | smallint(3) unsigned |--|0|否| 排序 |	
+| id | int(10) unsigned |否|无|是| 配置ID,自增主键 |
+| name | varchar(30) |否|无|--| 配置名称 |
+| type | tinyint(1) |否|0|--| 配置类型（0-数字，1-字符，2-文本，3-数组，4-枚举，5-多选） |
+| title | varchar(50) |否|无|--| 配置说明 |
+| group | tinyint(1) |否|0|--| 配置分组（0-无分组，1-基本设置）|
+| extra | varchar(255) |否|无|--| 配置值|
+| remark | varchar(100) |否|无|--| 配置说明 |
+| create_time | bigint(10) unsigned |否|0|--| 创建时间 |
+| update_time | binint(10) unsigned |否|0|--| 更新时间 |
+| status | tinyint(1) |否|0|--| 状态 |	
+| value | text |否|无|--| 配置值 |	
+| sort | smallint(3) unsigned |否|0|--| 排序 |	
 
 
 ## member 会员信息表 
@@ -206,26 +206,40 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | email| varchar(50)| 是|无|--|邮箱|
 | mobile| char(15)| 是|无|--|手机|
 | nickname | char(30)  |否|无|--| 昵称|
-| sex| tinyint(1) unsigned |否|无|--| 性别(0:未知/保密 1:男 2:女)|
+| sex| tinyint(1) unsigned |否|0|--| 性别(0:未知/保密 1:男 2:女)|
 | birthday| date|否|无|--|生日|
 | qq| char(15)|否|无|--|qq|
-| score| mediumint(8)|否|无|--|用户积分|
-| login| int(10)|否|无|--|登录次数|
-| reg_ip| bigint(20)|否|无|--|注册IP|
-| reg_time| bigint(10) unsigned|否|无|--|注册时间|
-| last_login_ip| bigint(20)|否|无|--|最后登录IP|
-| last_login_time| bigint(10) unsigned|否|无|--|最后登录时间|
-| status| tinyint(1) |否|无|--|会员状态|
+| score| mediumint(8)|否|0|--|用户积分|
+| login| int(10)|否|0|--|登录次数|
+| reg_ip| bigint(20)|否|0|--|注册IP|
+| reg_time| bigint(10) unsigned|否|0|--|注册时间|
+| last_login_ip| bigint(20)|否|0|--|最后登录IP|
+| last_login_time| bigint(10) unsigned|否|0|--|最后登录时间|
+| status| tinyint(1) |否|0|--|会员状态|
+
+## menu 菜单表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| 菜单ID,自增主键 |
+| title | varchar(50) |否|无|--| 标题 |
+| pid | int(10) unsigned |否| 0 |--| 上级分类ID |
+| sort | int(10) unsigned |否| 0 |--| 排序(同级有效) |
+| url | varchar(255) |否|无|--| 链接地址 |
+| hide | tinyint(1) |否|0|--| 是否隐藏 0:否 1:是|
+| tip | varchar(255) |否|无|--| 提示|
+| group | varchar(50) |是|无|--| 分组 |
+| is_dev | tinyint(1) unsigned |否|0|--| 分组 |
+| status | tinyint(1) unsigned |否|0|--| 状态 |
 
 ## auth_group 用户组定义表
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | id|mediumint(8) unsigned| 否|无|是|用户组id，自增主键|
 | module| varchar(30)| 否| 无|--|用户组所属模块|
-| type| tinyint(1)| 否| 无|否|组类型|
+| type| tinyint(1)| 否| 0 |否|组类型|
 | title| char(30)| 否|无|--|用户组中文名称|
 | description| varchar(80)|--|无|否|描述信息|
-| status| tinyint(1)|否|无|否|用户组状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)|
+| status| tinyint(1)|否| 1 |--|用户组状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)|
 | rules| varchar(500)| 否|无|--|用户组拥有的规则id,过个规则使用','隔开|
 
 ## auth_group_access 用户用户组关系对应表 
@@ -239,10 +253,10 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 |:--|:--|:--|:--|:--|:--|
 | id|mediumint(8) unsigned| 否|无|是|用户组id，自增主键|
 | module| varchar(30)| 否| 无|--|用户组所属模块|
-| type| tinyint(2)| 否| 无|--|1:url ; 2:主菜单|
+| type| tinyint(2)| 否| 1 |--|1:url ; 2:主菜单|
 | name| char(80)| 否|无|--|规则唯一英文标识|
 | title|char(30)|否|无|--|规则中文描述|
-| status| tinyint(1)| 否|无|否|规则状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)|
+| status| tinyint(1)| 否|0|--|规则状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)|
 | condition| varchar(300)|否|无|--|规则附加条件|
 
 ## auth_extend 权限扩展表 

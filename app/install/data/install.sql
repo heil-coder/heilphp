@@ -123,8 +123,28 @@ CREATE TABLE `heilphp_auth_rule` (
   `type` tinyint(2) NOT NULL DEFAULT '1' COMMENT '1-url;2-主菜单',
   `name` char(80) NOT NULL DEFAULT '' COMMENT '规则唯一英文标识',
   `title` char(30) NOT NULL DEFAULT '' COMMENT '规则中文描述',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '规则状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '规则状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)',
   `condition` varchar(300) NOT NULL DEFAULT '' COMMENT '规则附加条件',
   PRIMARY KEY (`id`),
   KEY `module` (`module`,`status`,`type`)
 ) ENGINE=MyISAM AUTO_INCREMENT=217 DEFAULT CHARSET=utf8;
+
+-- -----------------------------
+-- Table structure for `heilphp_menu`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_menu`;
+CREATE TABLE `heilphp_menu` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+  `title` varchar(50) NOT NULL DEFAULT '' COMMENT '标题',
+  `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上级分类ID',
+  `sort` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '排序（同级有效）',
+  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '链接地址',
+  `hide` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否隐藏 0:否 1:是',
+  `tip` varchar(255) NOT NULL DEFAULT '' COMMENT '提示',
+  `group` varchar(50) DEFAULT '' COMMENT '分组',
+  `is_dev` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否仅开发者模式可见',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  KEY `pid` (`pid`),
+  KEY `status` (`status`)
+) ENGINE=MyISAM AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
