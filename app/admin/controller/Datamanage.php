@@ -33,6 +33,41 @@ class Datamanage extends Admin{
         switch ($type) {
             /* 数据还原 */
             case 'import':
+                //列出备份文件列表
+				$path = realpath(Env::get('root_path')) . DIRECTORY_SEPARATOR . 'data';
+                if(!is_dir($path)){
+                    mkdir($path, 0755, true);
+                }
+                $path = realpath($path);
+                $flag = \FilesystemIterator::KEY_AS_FILENAME;
+                $glob = new \FilesystemIterator($path,  $flag);
+
+                $list = array();
+                foreach ($glob as $name => $file) {
+                    if(preg_match('/^\d{8,8}-\d{6,6}-\d+\.sql(?:\.gz)?$/', $name)){
+                        $name = sscanf($name, '%4s%2s%2s-%2s%2s%2s-%d');
+
+                        $date = "{$name[0]}-{$name[1]}-{$name[2]}";
+                        $time = "{$name[3]}:{$name[4]}:{$name[5]}";
+                        $part = $name[6];
+
+                        if(isset($list["{$date} {$time}"])){
+                            $info = $list["{$date} {$time}"];
+                            $info['part'] = max($info['part'], $part);
+                            $info['size'] = $info['size'] + $file->getSize();
+                        } else {
+                            $info['part'] = $part;
+                            $info['size'] = $file->getSize();
+                        }
+                        $extension        = strtoupper(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+                        $info['compress'] = ($extension === 'SQL') ? '-' : $extension;
+                        $info['time']     = strtotime("{$date} {$time}");
+
+                        $list["{$info['time']}"] = $info;
+                    }
+                }
+				krsort($list);
+                $title = '数据还原';
                 break;
 
             /* 数据备份 */
@@ -61,7 +96,7 @@ class Datamanage extends Admin{
      */
     public function export($tables = null, $id = null, $start = null){
         if(Request::isPost() && !empty($tables) && is_array($tables)){ //初始化
-            $path = Env::get('root_path').'data';
+            $path = realpath(Env::get('root_path')) . DIRECTORY_SEPARATOR . 'data';
             if(!is_dir($path)){
                 mkdir($path, 0755, true);
             }
@@ -116,7 +151,7 @@ class Datamanage extends Admin{
                     $tab = array('id' => $id, 'start' => 0);
 					$this->success('备份完成！','',array('tab'=>$tab));
                 } else { //备份完成，清空缓存
-                    unlink(session('backup_config.path') . 'backup.lock');
+                    unlink(Session::get('backup_config.path') . 'backup.lock');
 					Session::delete('backup_tables');
 					Session::delete('backup_file');
 					Session::delete('backup_config');
@@ -190,5 +225,86 @@ class Datamanage extends Admin{
 			$this->error('请指定要修复的表！');
 		}
 	}
+    /**
+     * 还原数据库
+	 * @param Integer $time 备份文件名对应的时间戳
+	 * @param Integer $part 备份文件卷数
+	 * @param Integer $start 开始位置
+     * @author  Jason	<1878566968@qq.com>
+     */
+    public function import($time = 0, $part = null, $start = null){
+        if(is_numeric($time) && is_null($part) && is_null($start)){ //初始化
+            //获取备份文件信息
+            $name  = date('Ymd-His', $time) . '-*.sql*';
+            $path  = realpath(Env::get('root_path')) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $name;
+            $files = glob($path);
+            $list  = array();
+            foreach($files as $name){
+                $basename = basename($name);
+                $match    = sscanf($basename, '%4s%2s%2s-%2s%2s%2s-%d');
+                $gz       = preg_match('/^\d{8,8}-\d{6,6}-\d+\.sql.gz$/', $basename);
+                $list[$match[6]] = array($match[6], $name, $gz);
+            }
+            ksort($list);
 
+            //检测文件正确性
+            $last = end($list);
+            if(count($list) === $last[0]){
+				Session::set('backup_list', $list); //缓存备份列表
+                $this->success('初始化完成！', '', array('part' => 1, 'start' => 0));
+            } else {
+                $this->error('备份文件可能已经损坏，请检查！');
+            }
+        } elseif(is_numeric($part) && is_numeric($start)) {
+            $list  = Session::get('backup_list');
+            $db = new Database($list[$part], array(
+                'path'     => realpath(Env::get('root_path')) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR,
+                'compress' => $list[$part][2]));
+
+            $start = $db->import($start);
+
+            if(false === $start){
+                $this->error('还原数据出错！');
+            } elseif(0 === $start) { //下一卷
+                if(isset($list[++$part])){
+                    $data = array('part' => $part, 'start' => 0);
+                    $this->success("正在还原...#{$part}", '', $data);
+                } else {
+					Session::delete('backup_list');
+                    $this->success('还原完成！');
+                }
+            } else {
+                $data = array('part' => $part, 'start' => $start[0]);
+                if($start[1]){
+                    $rate = floor(100 * ($start[0] / $start[1]));
+                    $this->success("正在还原...#{$part} ({$rate}%)", '', $data);
+                } else {
+                    $data['gz'] = 1;
+                    $this->success("正在还原...#{$part}", '', $data);
+                }
+            }
+
+        } else {
+            $this->error('参数错误！');
+        }
+    }
+    /**
+     * 删除备份文件
+     * @param  Integer $time 备份时间
+     * @author Jason	<1878566968@qq.com>
+     */
+    public function del($time = 0){
+        if($time){
+            $name  = date('Ymd-His', $time) . '-*.sql*';
+            $path  = realpath(Env::get('root_path')) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $name;
+            array_map("unlink", glob($path));
+            if(count(glob($path))){
+                $this->error('备份文件删除失败，请检查权限！');
+            } else {
+                $this->success('备份文件删除成功！');
+            }
+        } else {
+            $this->error('参数错误！');
+        }
+    }
 }
