@@ -26,7 +26,7 @@ class Authmanage extends Admin{
      * @author Jason	<1878566968@qq.com>
      */
     public function index(){
-        $list = $this->getListing('AuthGroup',array('module'=>'admin'),'id asc');
+        $list = $this->getListing('auth_group',array('module'=>'admin'),'id asc');
 
         $this->assign('meta_title', '权限管理');
 		return view();

@@ -8,7 +8,8 @@
 // +----------------------------------------------------------------------
 namespace app\admin\controller;
 use think\Controller;
-use think\Model;
+use Db;
+use Config;
 use Request;
 
 /**
@@ -28,7 +29,7 @@ class Admin extends Controller {
      *  可以通过url空值排序字段和方式,例如: index.html?_field=id&_order=asc
      *  可以通过url参数r指定每页数据条数,例如: index.html?r=5
      *
-     * @param sting|Model  $model   模型名或模型实例
+     * @param sting|Db $Db	表名或数据库实例 模型名或模型实例
      * @param array        $where   where查询条件(优先级: $where>$_REQUEST>模型设定)
      * @param array|string $order   排序条件,传入null时使用sql默认排序或模型属性(优先级最高);
      *                              请求参数中如果指定了_order和_field则据此排序(优先级第二);
@@ -40,17 +41,17 @@ class Admin extends Controller {
      * @return array|false
      * 返回数据集
      */
-    protected function getListing ($model,$where=array(),$order='',$field=true){
+    protected function getListing ($Db,$where=array(),$order='',$field=true){
         $options    =   array();
         $REQUEST    =   (array)Request::param();
-        if(is_string($model)){
-            $model  =   M($model);
+        if(is_string($Db)){
+            $Db =   Db::name($Db);
         }
 
-        $OPT        =   new \ReflectionProperty($model,'options');
+        $OPT        =   new \ReflectionProperty($Db,'options');
         $OPT->setAccessible(true);
 
-        $pk         =   $model->getPk();
+        $pk         =   $Db->getPk();
         if($order===null){
             //order置空
         }else if ( isset($REQUEST['_order']) && isset($REQUEST['_field']) && in_array(strtolower($REQUEST['_order']),array('desc','asc')) ) {
@@ -63,31 +64,29 @@ class Admin extends Controller {
         unset($REQUEST['_order'],$REQUEST['_field']);
 
         if(empty($where)){
-            $where  =   array('status'=>array('egt',0));
+            $where  =   array('status'=>array('>=',0));
         }
         if( !empty($where)){
             $options['where']   =   $where;
         }
-        $options      =   array_merge( (array)$OPT->getValue($model), $options );
-        $total        =   $model->where($options['where'])->count();
+		dump($OPT->getValue($Db));
+        $options      =   array_merge( (array)$OPT->getValue($Db), $options );
+        $total        =   $Db->where($options['where'])->count();
 
         if( isset($REQUEST['r']) ){
             $listRows = (int)$REQUEST['r'];
         }else{
-            $listRows = C('LIST_ROWS') > 0 ? C('LIST_ROWS') : 10;
+            $listRows = Config::get('LIST_ROWS') > 0 ? C('LIST_ROWS') : 10;
         }
-        $page = new \Think\Page($total, $listRows, $REQUEST);
-        if($total>$listRows){
-            $page->setConfig('theme','%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
-        }
-        $p =$page->show();
+		$page = $Db->where($options['where'])->paginate($listRows);
+        $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
         $this->assign('_total',$total);
-        $options['limit'] = $page->firstRow.','.$page->listRows;
+        //$options['limit'] = $page->firstRow.','.$page->listRows;
 
-        $model->setProperty('options',$options);
+        //$model->setProperty('options',$options);
 
-        return $model->field($field)->select();
+        return $Db->field($field)->select();
     }
 
 
