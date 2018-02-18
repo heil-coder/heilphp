@@ -73,24 +73,24 @@ class Admin extends Controller {
         }
         $options      =   array_merge( (array)$OPT->getValue($Db), $options );
 
+		$total        =   $Db->where($options['where'])->count();
+        $this->assign('_total',$total);
+
         if( isset($REQUEST['r']) ){
             $listRows = (int)$REQUEST['r'];
         }else{
             $listRows = Config::get('LIST_ROWS') > 0 ? C('LIST_ROWS') : 10;
         }
 
-		$total        =   $Db->where($options['where'])->count();
-        $this->assign('_total',$total);
-
 		$Db = $Db->newQuery()->table($table);
-		$page = $Db->where($options['where'])->paginate(1,$total);
+		$page = $Db->where($options['where'])->paginate($listRows,$total);
         $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
 
 		$Db = $Db->newQuery()->table($table);
         $Db->setOption('options',$options);
-        $limit = $page->currentPage() * $page->listRows() + 1 .','.$page->listRows();
-		$listing = $Db->where($options['where'])->field(true)->limit($limit)->select();
+        $limit = ($page->currentPage()-1) * $page->listRows() + 1 .','.$page->listRows();
+		$listing = $Db->where($options['where'])->field($field)->limit($limit)->select();
 
 		return $listing;
     }
