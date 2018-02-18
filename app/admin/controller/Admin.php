@@ -89,7 +89,7 @@ class Admin extends Controller {
 
 		$Db = $Db->newQuery()->table($table);
         $Db->setOption('options',$options);
-        $limit = ($page->currentPage()-1) * $page->listRows() + 1 .','.$page->listRows();
+        $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
 		$listing = $Db->where($options['where'])->field($field)->limit($limit)->select();
 
 		return $listing;

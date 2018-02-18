@@ -8,12 +8,6 @@
 // +----------------------------------------------------------------------
 
 namespace app\admin\controller;
-use Db;
-use Config;
-use Session;
-use Request;
-use Env;
-use App;
 use app\admin\controller\Admin;
 
 /**
@@ -27,7 +21,7 @@ class Authmanage extends Admin{
      */
     public function index(){
         $list = $this->getListing('auth_group',array('module'=>'admin'),'id asc');
-        $list = int_to_string($list);
+        int_to_string($list);
 		$this->assign('_list',$list);
 
         $this->assign('meta_title', '权限管理');
