@@ -48,6 +48,8 @@ class Admin extends Controller {
             $Db =   Db::name($Db);
         }
 
+		$table = $Db->getTable();
+
         $OPT        =   new \ReflectionProperty($Db,'options');
         $OPT->setAccessible(true);
 
@@ -69,25 +71,27 @@ class Admin extends Controller {
         if( !empty($where)){
             $options['where']   =   $where;
         }
-		dump($OPT->getValue($Db));
         $options      =   array_merge( (array)$OPT->getValue($Db), $options );
-        $total        =   $Db->where($options['where'])->count();
 
         if( isset($REQUEST['r']) ){
             $listRows = (int)$REQUEST['r'];
         }else{
             $listRows = Config::get('LIST_ROWS') > 0 ? C('LIST_ROWS') : 10;
         }
-		$page = $Db->where($options['where'])->paginate($listRows);
+
+		$total        =   $Db->where($options['where'])->count();
+        $this->assign('_total',$total);
+
+		$Db = $Db->newQuery()->table($table);
+		$page = $Db->where($options['where'])->paginate(1,$total);
         $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
-        $this->assign('_total',$total);
-        //$options['limit'] = $page->firstRow.','.$page->listRows;
 
-        //$model->setProperty('options',$options);
+		$Db = $Db->newQuery()->table($table);
+        $Db->setOption('options',$options);
+        $limit = $page->currentPage() * $page->listRows() + 1 .','.$page->listRows();
+		$listing = $Db->where($options['where'])->field(true)->limit($limit)->select();
 
-        return $Db->field($field)->select();
+		return $listing;
     }
-
-
 }
