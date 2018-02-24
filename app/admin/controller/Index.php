@@ -24,6 +24,7 @@ class Index extends Admin{
      */
     public function index(){
         $this->assign('meta_title','管理首页');
+
 		dump(Hook::listen('admin_index'));
 		//return view();
     }

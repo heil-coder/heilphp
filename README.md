@@ -4,7 +4,7 @@ heilphp
 
 ##  问题记录
 > 安装时判断sae(不可写入)，并做相应处理 暂不考虑
-
+> win,linux 目录斜杠不同带来的兼容性影响问题
 
 # 数据返回
 > 使用ThinkPHP 5.1 控制器的success()和error()方法返回数据,可以对get、post或ajax请求方式都可以做适合的响应。
@@ -270,3 +270,17 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | type| tinyint(1) unsigned| 否|无|否|扩展类型标识 1:栏目分类权限|
 
 > 索引定义：UNIQUE KEYgroup_extend_type(group_id,extend_id,type)  
+
+## addons 插件表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|插件id，自增主键| 
+| name| varchar(40)|否|无|--|插件名或标识| 
+| title| varchar(20)|否|无|--|名称| 
+| description| text|否|无|--|插件描述| 
+| status| tinyint(1)|否|无|--|状态| 
+| config| text|否|无|--|配置| 
+| author| varchar(40)|否|''|--|作者| 
+| version| varchar(40)|否|''|--|版本号| 
+| create_time| bigint(10)|否|0|--|安装时间| 
+| has_adminlist| tinyint(1)|否|0|--|是否有后台列表| 
