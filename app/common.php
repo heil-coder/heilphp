@@ -22,4 +22,25 @@ function time_format($time = NULL,$format='Y-m-d H:i'){
 	$time = is_numeric($time) ? $time : strtotime($time);
     return date($format, $time);
 }
+/**
+ * 获取插件类的类名
+ * @param strng $name 插件名
+ */
+function get_addon_class($name){
+    $class = "Addons\\{$name}\\{$name}Addon";
+    return $class;
+}
 
+/**
+ * 获取插件类的配置文件数组
+ * @param string $name 插件名
+ */
+function get_addon_config($name){
+    $class = get_addon_class($name);
+    if(class_exists($class)) {
+        $addon = new $class();
+        return $addon->getConfig();
+    }else {
+        return array();
+    }
+}

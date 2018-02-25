@@ -29,7 +29,6 @@ class SiteStatistics extends Addon{
     //实现的AdminIndex钩子方法
     public function AdminIndex($param){
         $config = $this->getConfig();
-		dump($config);
         $this->assign('addons_config', $config);
         if($config['display']){
             $info['user']		=	db('Member')->count();
@@ -37,7 +36,7 @@ class SiteStatistics extends Addon{
             //$info['document']	=	db('Document')->count();
             //$info['category']	=	db('Category')->count();
             //$info['model']		=	db('Model')->count();
-			return $info;
+			$this->display();
         }
     }
 }

@@ -175,3 +175,35 @@ INSERT INTO `heilphp_addons` VALUES ('3', 'DevTeam', '开发团队信息', '开�
 INSERT INTO `heilphp_addons` VALUES ('4', 'SystemInfo', '系统环境信息', '用于显示一些服务器的信息', '1', '{\"title\":\"\\u7cfb\\u7edf\\u4fe1\\u606f\",\"width\":\"2\",\"display\":\"1\"}', 'thinkphp', '0.1', '1379512036', '0');
 
 
+-- -----------------------------
+-- Table structure for `heilphp_hooks`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_hooks`;
+CREATE TABLE `heilphp_hooks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(40) NOT NULL DEFAULT '' COMMENT '钩子名称',
+  `description` text NULL  COMMENT '描述',
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '类型',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `addons` varchar(255) NOT NULL DEFAULT '' COMMENT '钩子挂载的插件 ''，''分割',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+
+-- -----------------------------
+-- Records of `heilphp_hooks`
+-- -----------------------------
+INSERT INTO `heilphp_hooks` VALUES ('1', 'pageHeader', '页面header钩子，一般用于加载插件CSS文件和代码', '1', '0', '', '1');
+INSERT INTO `heilphp_hooks` VALUES ('2', 'pageFooter', '页面footer钩子，一般用于加载插件JS文件和JS代码', '1', '0', 'ReturnTop', '1');
+INSERT INTO `heilphp_hooks` VALUES ('3', 'documentEditForm', '添加编辑表单的 扩展内容钩子', '1', '0', 'Attachment', '1');
+INSERT INTO `heilphp_hooks` VALUES ('4', 'documentDetailAfter', '文档末尾显示', '1', '0', 'Attachment,SocialComment', '1');
+INSERT INTO `heilphp_hooks` VALUES ('5', 'documentDetailBefore', '页面内容前显示用钩子', '1', '0', '', '1');
+INSERT INTO `heilphp_hooks` VALUES ('6', 'documentSaveComplete', '保存文档数据后的扩展钩子', '2', '0', 'Attachment', '1');
+INSERT INTO `heilphp_hooks` VALUES ('7', 'documentEditFormContent', '添加编辑表单的内容显示钩子', '1', '0', 'Editor', '1');
+INSERT INTO `heilphp_hooks` VALUES ('8', 'adminArticleEdit', '后台内容编辑页编辑器', '1', '1378982734', 'EditorForAdmin', '1');
+INSERT INTO `heilphp_hooks` VALUES ('13', 'AdminIndex', '首页小格子个性化显示', '1', '1382596073', 'SiteStat,SystemInfo,DevTeam', '1');
+INSERT INTO `heilphp_hooks` VALUES ('14', 'topicComment', '评论提交方式扩展钩子。', '1', '1380163518', 'Editor', '1');
+INSERT INTO `heilphp_hooks` VALUES ('16', 'app_begin', '应用开始', '2', '1384481614', '', '1');
+
+

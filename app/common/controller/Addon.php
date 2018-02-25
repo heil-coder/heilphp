@@ -11,6 +11,7 @@
 namespace app\common\controller;
 use Config;
 use Env;
+use Request;
 
 /**
  * 插件类
@@ -67,7 +68,7 @@ abstract class Addon{
     //显示方法
     final protected function display($template=''){
         if($template == '')
-            $template = CONTROLLER_NAME;
+            $template = Request::controller();
         echo ($this->fetch($template));
     }
 
@@ -85,9 +86,11 @@ abstract class Addon{
 
 
     //用于显示模板的方法
-    final protected function fetch($templateFile = CONTROLLER_NAME){
+    final protected function fetch($templateFile){
+		$templateFile  = empty($templateFile) ? Request::controller() : $templateFile;
         if(!is_file($templateFile)){
-            $templateFile = $this->addon_path.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
+            $templateFile = $this->addon_path.$templateFile.Config::get('TMPL_TEMPLATE_SUFFIX');
+			dump($templateFile);
             if(!is_file($templateFile)){
                 throw new \Exception("模板不存在:$templateFile");
             }

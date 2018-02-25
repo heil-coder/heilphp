@@ -271,6 +271,18 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 
 > 索引定义：UNIQUE KEYgroup_extend_type(group_id,extend_id,type)  
 
+
+## hoods 钩子表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|插件id，自增主键| 
+| name| varchar(40)|否|''|--|钩子名称| 
+| description| text|是|null|--|描述| 
+| type| tinyint(1) unsigned|否|1|--|类型 ?| 
+| update_time| bigint(10) unsigned|否|0|--|更新时间| 
+| addons|varchar(255)|否|''|钩子挂载的插件 ''，''分割|
+| status|tinyint(1) unsigned|否|1|状态|
+
 ## addons 插件表 
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
