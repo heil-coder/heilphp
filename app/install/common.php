@@ -93,20 +93,22 @@ function check_func(){
 function write_config($config){
     if(is_array($config)){
         //读取配置内容
-        $conf = file_get_contents(Env::get('module_path'). 'data/database.tpl');
+        $database = file_get_contents(Env::get('module_path'). 'data/database.tpl');
         //替换配置项
         foreach ($config as $name => $value) {
-            $conf = str_replace("[{$name}]", $value, $conf);
+            $database = str_replace("[{$name}]", $value, $database);
         }
+        $app = file_get_contents(Env::get('module_path'). 'data/app.tpl');
 
         //写入应用配置文件
         if(!IS_WRITE){
-            return '由于您的环境不可写，请复制下面的配置文件内容覆盖到相关的配置文件，然后再登录后台。<p>'.realpath(APP_PATH).'/Common/Conf/config.php</p>
-            <textarea name="" style="width:650px;height:185px">'.$conf.'</textarea>
-            <p>'.realpath(APP_PATH).'/User/Conf/config.php</p>
-            <textarea name="" style="width:650px;height:125px">'.$user.'</textarea>';
+            return '由于您的环境不可写，请复制下面的配置文件内容覆盖到相关的配置文件，然后再登录后台。<p>'.realpath(Env::get('config_path')).'/database.php</p>
+            <textarea name="" style="width:650px;height:185px">'.$database.'</textarea>
+            <p>'.realpath(Env::get('config_path')).'/app.php</p>
+            <textarea name="" style="width:650px;height:125px">'.$app.'</textarea>';
         }else{
-            if(file_put_contents(Env::get('config_path') . 'database.php', $conf)){
+            if(file_put_contents(Env::get('config_path') . 'database.php', $database) &&
+               file_put_contents(Env::get('config_path') . 'app.php', $app)){
                 show_msg('配置文件写入成功');
             } else {
                 show_msg('配置文件写入失败！', 'error');

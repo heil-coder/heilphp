@@ -36,7 +36,7 @@ class SiteStatistics extends Addon{
             //$info['document']	=	db('Document')->count();
             //$info['category']	=	db('Category')->count();
             //$info['model']		=	db('Model')->count();
-			$this->display();
+			//$this->display('info');
         }
     }
 }

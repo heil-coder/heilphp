@@ -9,6 +9,7 @@ namespace app\install\controller;
 use think\Controller;
 use Session;
 use Env;
+use Url;
 
 class Index extends Controller
 {
@@ -30,9 +31,11 @@ class Index extends Controller
         // 写入安装锁定文件
         file_put_contents(Env::get('module_path') . 'data/install.lock','lock');
 
+
 		Session::delete('step');
 		Session::delete('error');
 		Session::delete('update');
+		url::root('index.php');
 		return view();
     }
 

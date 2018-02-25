@@ -17,7 +17,7 @@ class InitHookBehavior{
 
     // 行为扩展的执行入口必须是run
     public static function run(/*&$content*/){
-        if(defined('BIND_MODULE') && BIND_MODULE === 'Install') return;
+        if(defined('BIND_MODULE') && BIND_MODULE === 'install') return;
         
 		cache('hooks',null);
         $data = cache('hooks');
