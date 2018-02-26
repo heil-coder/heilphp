@@ -27,7 +27,7 @@ function time_format($time = NULL,$format='Y-m-d H:i'){
  * @param strng $name 插件名
  */
 function get_addon_class($name){
-    $class = "Addons\\{$name}\\{$name}Addon";
+    $class = "addons\\".lcfirst($name)."\\{$name}";
     return $class;
 }
 

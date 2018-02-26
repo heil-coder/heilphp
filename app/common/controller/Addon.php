@@ -89,8 +89,7 @@ abstract class Addon{
     final protected function fetch($templateFile){
 		$templateFile  = empty($templateFile) ? Request::controller() : $templateFile;
         if(!is_file($templateFile)){
-            $templateFile = $this->addon_path.$templateFile.Config::get('TMPL_TEMPLATE_SUFFIX');
-			dump($templateFile);
+            $templateFile = Config::get('TMPL_PARSE_STRING')['__ADDONROOT__'].'/'.$templateFile.'.'.Config::get('url_html_suffix');
             if(!is_file($templateFile)){
                 throw new \Exception("模板不存在:$templateFile");
             }
@@ -100,7 +99,7 @@ abstract class Addon{
 
     final public function getName(){
         $class = get_class($this);
-        return substr($class,strrpos($class, '\\')+1);
+        return lcfirst(substr($class,strrpos($class, '\\')+1));
     }
 
     final public function checkInfo(){
