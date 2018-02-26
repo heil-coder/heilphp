@@ -10,8 +10,6 @@
 // +----------------------------------------------------------------------
 
 return [
-
-    //'AUTOLOAD_NAMESPACE' => array('addons' => HEILPHP_ADDON_PATH), //扩展模块列表
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace

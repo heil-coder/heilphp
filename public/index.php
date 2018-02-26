@@ -20,7 +20,7 @@ if(version_compare(PHP_VERSION,'5.6.0','<'))  die('require PHP > 5.6.0 !');
  */
 
 // 定义应用目录
-define('APP_PATH', __DIR__ . '/../app/');
+define('APP_PATH',realpath(__DIR__ . '/../app/').'/');
 
 if(!is_file(APP_PATH . 'install/data/install.lock')){
 	header('Location: ./install.php');

@@ -45,9 +45,9 @@ abstract class Addon{
 
     public function __construct(){
         $this->view         =   \think\Facade::make('think\View');
-        $this->addon_path   =   $this->getName().'/';
+        $this->addon_path   =   HEILPHP_ADDON_PATH . $this->getName().'/';
         $TMPL_PARSE_STRING = Config::get('TMPL_PARSE_STRING');
-        $TMPL_PARSE_STRING['__ADDONROOT__'] = Env::get('root_path') . 'Addons/'.$this->getName();
+        $TMPL_PARSE_STRING['__ADDONROOT__'] = Env::get('root_path') . HEILPHP_ADDON_PATH .$this->getName();
 		Config::set('TMPL_PARSE_STRING', $TMPL_PARSE_STRING);
         if(is_file('./config.php')){
             $this->config_file = $this->addon_path.'config.php';

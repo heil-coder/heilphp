@@ -99,16 +99,20 @@ function write_config($config){
             $database = str_replace("[{$name}]", $value, $database);
         }
         $app = file_get_contents(Env::get('module_path'). 'data/app.tpl');
+        $heilphp = file_get_contents(Env::get('module_path'). 'data/heilphp.tpl');
 
         //写入应用配置文件
         if(!IS_WRITE){
             return '由于您的环境不可写，请复制下面的配置文件内容覆盖到相关的配置文件，然后再登录后台。<p>'.realpath(Env::get('config_path')).'/database.php</p>
             <textarea name="" style="width:650px;height:185px">'.$database.'</textarea>
             <p>'.realpath(Env::get('config_path')).'/app.php</p>
-            <textarea name="" style="width:650px;height:125px">'.$app.'</textarea>';
+            <textarea name="" style="width:650px;height:125px">'.$app.'</textarea>
+            <p>'.realpath(Env::get('config_path')).'/heilphp.php</p>
+            <textarea name="" style="width:650px;height:125px">'.$heilphp.'</textarea>';
         }else{
             if(file_put_contents(Env::get('config_path') . 'database.php', $database) &&
-               file_put_contents(Env::get('config_path') . 'app.php', $app)){
+               file_put_contents(Env::get('config_path') . 'app.php', $app) &&
+               file_put_contents(Env::get('config_path') . 'heilphp.php', $heilphp)){
                 show_msg('配置文件写入成功');
             } else {
                 show_msg('配置文件写入失败！', 'error');
