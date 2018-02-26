@@ -9,6 +9,8 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 namespace app\common\behavior;
+use Config;
+use think\Loader;
 use Hook;
 //defined('THINK_PATH') or exit();
 
@@ -18,6 +20,18 @@ class InitHookBehavior{
     // 行为扩展的执行入口必须是run
     public static function run(/*&$content*/){
         if(defined('BIND_MODULE') && BIND_MODULE === 'install') return;
+        $path = dirname($_SERVER['SCRIPT_FILENAME']);
+
+        if (PHP_SAPI == 'cli') {
+            $rootPath = realpath($path) . '/';
+        } else {
+            $rootPath = realpath($path . '/../') . '/';
+        }
+
+		$autoloadNamespace = config::get('heilphp.AUTOLOAD_NAMESPACE');
+		foreach($autoloadNamespace as $key => $value){
+			Loader::addAutoLoadDir($rootPath . $value);
+		}
         
 		cache('hooks',null);
         $data = cache('hooks');
@@ -33,7 +47,6 @@ class InitHookBehavior{
                     if($data){
                         $addons = array_intersect($names, $data);
                         Hook::add($key,array_map('get_addon_class',$addons));
-
                     }
                 }
             }

@@ -202,7 +202,7 @@ INSERT INTO `heilphp_hooks` VALUES ('5', 'documentDetailBefore', '页面内容�
 INSERT INTO `heilphp_hooks` VALUES ('6', 'documentSaveComplete', '保存文档数据后的扩展钩子', '2', '0', 'Attachment', '1');
 INSERT INTO `heilphp_hooks` VALUES ('7', 'documentEditFormContent', '添加编辑表单的内容显示钩子', '1', '0', 'Editor', '1');
 INSERT INTO `heilphp_hooks` VALUES ('8', 'adminArticleEdit', '后台内容编辑页编辑器', '1', '1378982734', 'EditorForAdmin', '1');
-INSERT INTO `heilphp_hooks` VALUES ('13', 'AdminIndex', '首页小格子个性化显示', '1', '1382596073', 'SiteStat,SystemInfo,DevTeam', '1');
+INSERT INTO `heilphp_hooks` VALUES ('13', 'adminIndex', '首页小格子个性化显示', '1', '1382596073', 'SiteStat,SystemInfo,DevTeam', '1');
 INSERT INTO `heilphp_hooks` VALUES ('14', 'topicComment', '评论提交方式扩展钩子。', '1', '1380163518', 'Editor', '1');
 INSERT INTO `heilphp_hooks` VALUES ('16', 'app_begin', '应用开始', '2', '1384481614', '', '1');
 
