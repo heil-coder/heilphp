@@ -12,7 +12,11 @@
     <!-- 主体 -->
     <div id="indexMain" class="index-main">
        <!-- 插件块 -->
-       <div class="container-span">{:Hook::listen('adminIndex')}</div>
+	   <div class="container-span">
+		   {php}
+		   Hook::listen('adminIndex');
+		   {/php}
+	   </div>
     </div>
 {/block}
 
