@@ -130,4 +130,24 @@ class Config extends Admin{
         $this->success('保存成功！');
     }
 
+    /**
+     * 删除配置
+     */
+    public function del(){
+        $id = array_unique(Request::param('id/a',0));
+
+        if ( empty($id) ) {
+            $this->error('请选择要操作的数据!');
+        }
+
+        if(model('Config')->where('id','in',$id)->delete()){
+            cache('DB_CONFIG_DATA',null);
+            //记录行为
+            //action_log('update_config','config',$id,UID);
+            $this->success('删除成功');
+        } else {
+            $this->error('删除失败！');
+        }
+    }
+
 }
