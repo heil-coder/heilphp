@@ -9,26 +9,18 @@
 
 namespace app\admin\model;
 use think\Model;
-use App;
 /**
  * 配置模型
  * @author Jason	<1878566968@qq.com>
  */
 
 class Config extends Model {
-    protected $_validate = array(
-        array('name', 'require', '标识不能为空', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
-        array('name', '', '标识已经存在', self::VALUE_VALIDATE, 'unique', self::MODEL_BOTH),
-        array('title', 'require', '名称不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
-    );
+	protected $autoWriteTimestamp = true;
 
-    protected $_auto = array(
-        array('name', 'strtoupper', self::MODEL_BOTH, 'function'),
-        array('create_time', App::getBeginTime(), self::MODEL_INSERT),
-        array('update_time', App::getBeginTime(), self::MODEL_BOTH),
-        array('status', '1', self::MODEL_BOTH),
-    );
-
+	protected $auto = ['name','status'=>1];
+	protected function setNameAttr($value){
+		return strtoupper($value);	
+	}
     /**
      * 获取配置列表
      * @return array 配置数组

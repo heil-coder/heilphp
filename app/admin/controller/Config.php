@@ -9,7 +9,6 @@
 
 namespace app\admin\controller;
 use Request;
-use app\admin\model\Config;
 
 /**
  * 后台配置控制器
@@ -70,16 +69,11 @@ class Config extends Admin{
      */
     public function edit($id = 0){
         if(Request::isPost()){
-            $dbConfig = db('Config');
-            $data = Request::param();
+            $mConfig = model('Config');
+            $data = Request::only(['id','name','type','title','group','extra','remark','value','sort']);
             if($data){
-				if(empty($data['id'])){
-					$result = $dbConfig->insert($data);
-				}
-				else{
-					$result = $dbConfig->update($data);
-				}
-                if($result === false){
+				!empty($data['id']) && $mConfig->where('id','=',$data['id']);
+                if($mConfig->save($data) === false){
                     $this->error('更新失败');
                 } else {
                     cache('DB_CONFIG_DATA',null);
@@ -88,7 +82,7 @@ class Config extends Admin{
                     $this->success('更新成功', Cookie('__forward__'));
                 }
             } else {
-                $this->error($dbConfig->getError());
+                $this->error($mConfig->getError());
             }
         } else {
             $info = array();
