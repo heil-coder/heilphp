@@ -82,7 +82,8 @@ class Config extends Admin{
     public function group() {
         $id     =   Request::get('id/d',1);
         $type   =   config('CONFIG_GROUP_LIST');
-		$list   =   db("Config")->where([
+		$test = db('Config');
+		$list   =   $test->where([
 			['status','=',1]
 			,['group','=',$id]
 		])
