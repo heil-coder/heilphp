@@ -9,6 +9,7 @@
 
 namespace app\admin\controller;
 use Request;
+use app\admin\model\Config;
 
 /**
  * 后台配置控制器
