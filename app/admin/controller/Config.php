@@ -42,29 +42,6 @@ class Config extends Admin{
 		return view();
     }
     /**
-     * 新增配置
-     */
-    //public function add(){
-    //    if(IS_POST){
-    //        $Config = D('Config');
-    //        $data = $Config->create();
-    //        if($data){
-    //            if($Config->add()){
-    //                S('DB_CONFIG_DATA',null);
-    //                $this->success('新增成功', U('index'));
-    //            } else {
-    //                $this->error('新增失败');
-    //            }
-    //        } else {
-    //            $this->error($Config->getError());
-    //        }
-    //    } else {
-    //        $this->meta_title = '新增配置';
-    //        $this->assign('info',null);
-    //        $this->display('edit');
-    //    }
-    //}
-    /**
      * 编辑配置
      */
     public function edit($id = 0){
@@ -149,5 +126,40 @@ class Config extends Admin{
             $this->error('删除失败！');
         }
     }
+    /**
+     * 配置排序
+     */
+    public function sort(){
+        if(Request::isGet()){
+            $ids = Request::param('ids');//I('get.ids');
 
+            //获取排序的数据
+			$map = [];//array('status'=>array('gt',-1));
+			$map[] = ['status','>',-1];
+
+            if(!empty($ids)){
+                $map['id'] = ['id','in',$ids];
+            }elseif(Request::param('group')){
+                $map['group']	=	Request::param('group');
+            }
+            $list = model('Config')->where($map)->field('id,title')->order('sort asc,id asc')->select();
+
+            $this->assign('list', $list);
+			$this->assign('meta_title','配置排序');
+			return view();
+        }elseif (Request::isPost()){
+            $ids = Request::post('ids');
+            $ids = explode(',', $ids);
+            foreach ($ids as $key=>$value){
+                $res = model('Config')->where('id','=',$value)->setField('sort', $key+1);
+            }
+            if($res !== false){
+                $this->success('排序成功！',Cookie('__forward__'));
+            }else{
+                $this->error('排序失败！');
+            }
+        }else{
+            $this->error('非法请求！');
+        }
+    }
 }
