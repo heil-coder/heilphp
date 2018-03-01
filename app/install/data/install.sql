@@ -104,16 +104,17 @@ CREATE TABLE `heilphp_auth_group` (
   `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '组类型',
   `title` char(30) NOT NULL DEFAULT '' COMMENT '用户组中文名称',
   `description` varchar(80) NOT NULL DEFAULT '' COMMENT '描述信息',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户组状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)',
   `rules` varchar(500) NOT NULL DEFAULT '' COMMENT '用户组拥有的规则id，多个规则 , 隔开',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户组状态 0:禁用 1:可用',
+  `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- -----------------------------
 -- Records of `heilphp_auth_group`
 -- -----------------------------
-INSERT INTO `heilphp_auth_group` VALUES ('1', 'admin', '1', '默认用户组', '', '1', '1,2,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,79,80,81,82,83,84,86,87,88,89,90,91,92,93,94,95,96,97,100,102,103,105,106');
-INSERT INTO `heilphp_auth_group` VALUES ('2', 'admin', '1', '测试用户', '测试用户', '1', '1,2,5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,79,80,82,83,84,88,89,90,91,92,93,96,97,100,102,103,195');
+INSERT INTO `heilphp_auth_group` VALUES ('1', 'admin', '1', '默认用户组', '','','1',null);
+INSERT INTO `heilphp_auth_group` VALUES ('2', 'admin', '1', '测试用户', '测试用户', '','1',null);
 
 -- -----------------------------
 -- Table structure for `heilphp_auth_group_access`
@@ -177,7 +178,7 @@ CREATE TABLE `heilphp_addons` (
   `config` text COMMENT '配置',
   `author` varchar(40) DEFAULT '' COMMENT '作者',
   `version` varchar(20) DEFAULT '' COMMENT '版本号',
-  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '安装时间',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '安装时间',
   `has_adminlist` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否有后台列表',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='插件表';
@@ -199,7 +200,7 @@ CREATE TABLE `heilphp_hooks` (
   `name` varchar(40) NOT NULL DEFAULT '' COMMENT '钩子名称',
   `description` text NULL  COMMENT '描述',
   `type` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '类型',
-  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `addons` varchar(255) NOT NULL DEFAULT '' COMMENT '钩子挂载的插件 ''，''分割',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),

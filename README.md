@@ -20,13 +20,23 @@ heilphp
 请按此格式返回数据，以便于统一的开发。
 * * * * *
 
+## 自动时间戳
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| create_time| bigint(10) unsigned|否|无|--|创建时间| 
+| update_time| bigint(10) unsigned|否|无|--|更新时间| 
+
+```
+被系统统一使用ThinkPHP5的自动时间戳记录创建时间和更新时间
+```
+
 ## 数据软删除
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | delete_time| bigint(10) unsigned|是|null|--|软删除标记 null:未删除 时间戳:删除时间| 
 
 ```
-软删除标识字段统一为delete_time,数据表中的唯一字段由于删除引起的唯一冲突问题通过设置联合索引唯一解决，如：UNIQUE KEY un_id_card (id_card,delete_time)
+软删除标识字段统一为delete_time,数据表中的唯一字段由于删除引起的唯一冲突问题通过设置联合唯一索引解决，如：UNIQUE KEY un_id_card (id_card,delete_time)
 ```
 
 
@@ -249,8 +259,9 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | type| tinyint(1)| 否| 0 |否|组类型|
 | title| char(30)| 否|无|--|用户组中文名称|
 | description| varchar(80)|--|无|否|描述信息|
-| status| tinyint(1)|否| 1 |--|用户组状态 第2位(0:未删除 1:已删除) 第1位(0:禁用 1:可用)|
 | rules| varchar(500)| 否|无|--|用户组拥有的规则id,过个规则使用','隔开|
+| status| tinyint(1)|否| 1 |--|用户组状态 0:禁用 1:可用|
+| delete_time| bigint(10) unsigned|是|null|-- 删除时间 如未删除则为null||
 
 ## auth_group_access 用户用户组关系对应表 
 |字段|类型|允许为空|默认值|自动递增|注释|

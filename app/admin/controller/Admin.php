@@ -102,4 +102,17 @@ class Admin extends Controller {
 
 		return $listing;
     }
+    /**
+     * 条目假删除
+     * @param string $model 模型名称,供D函数使用的参数
+     * @param array  $where 查询时的where()方法的参数
+     * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
+     *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
+     *
+     * @author 朱亚杰  <zhuyajie@topthink.net>
+     */
+    protected function delete ( $model , $where = array() , $msg = array( 'success'=>'删除成功！', 'error'=>'删除失败！')) {
+        $data['status']         =   -1;
+        $this->editRow(   $model , $data, $where, $msg);
+    }
 }
