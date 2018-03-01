@@ -80,10 +80,9 @@ class Config extends Admin{
     }
     // 获取某个标签的配置参数
     public function group() {
-        $id     =   Request::get('id/d',1);
+        $id     =   Request::param('id/d',1);
         $type   =   config('CONFIG_GROUP_LIST');
-		$test = db('Config');
-		$list   =   $test->where([
+		$list   =   db('Config')->where([
 			['status','=',1]
 			,['group','=',$id]
 		])

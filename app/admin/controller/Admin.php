@@ -23,12 +23,11 @@ class Admin extends Controller {
     protected function initialize(){
         /* 读取数据库中的配置 */
         $config =   cache('DB_CONFIG_DATA');
-        $config =   api('Config/getListing');
         if(!$config){
             $config =   api('Config/getListing');
             cache('DB_CONFIG_DATA',$config);
         }
-		config($config); //添加配置
+		config($config,'app'); //添加配置
     }
     /**
      * 通用分页列表数据集获取方法
