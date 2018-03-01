@@ -86,7 +86,7 @@ class Admin extends Controller {
         if( isset($REQUEST['r']) ){
             $listRows = (int)$REQUEST['r'];
         }else{
-            $listRows = Config::get('LIST_ROWS') > 0 ? C('LIST_ROWS') : 10;
+            $listRows = Config::get('LIST_ROWS') > 0 ? Config::get('LIST_ROWS') : 10;
         }
 
 		$Db = $Db->newQuery()->table($table);
