@@ -87,4 +87,25 @@ class Authmanage extends Admin{
         }
 		exit();
     }
+    /**
+     * 状态修改
+     */
+    public function changeStatus($method=null){
+        if ( empty(Request::has('id')) ) {
+            $this->error('请选择要操作的数据!');
+        }
+        switch ( strtolower($method) ){
+            case 'forbidgroup':
+                $this->forbid('AuthGroup');
+                break;
+            case 'resumegroup':
+                $this->resume('AuthGroup');
+                break;
+            case 'deletegroup':
+                $this->delete('AuthGroup');
+                break;
+            default:
+                $this->error($method.'参数非法');
+        }
+    }
 }
