@@ -36,7 +36,7 @@ class Config extends Admin{
         Cookie('__forward__',$_SERVER['REQUEST_URI']);
 
         $this->assign('group',config('CONFIG_GROUP_LIST'));
-        $this->assign('group_id',Request::get('group/d',0));
+        $this->assign('group_id',Request::param('group/d',0));
         $this->assign('list', $list);
         $this->assign('meta_title', '配置管理');
 		return view();
@@ -83,8 +83,8 @@ class Config extends Admin{
         $id     =   Request::param('id/d',1);
         $type   =   config('CONFIG_GROUP_LIST');
 		$list   =   db('Config')->where([
-			['status',1]
-			,['group',$id]
+			['status','=',1]
+			,['group','=',$id]
 		])
 		->field('id,name,title,extra,value,remark,type')->order('sort')->select();
         if($list) {
@@ -100,7 +100,7 @@ class Config extends Admin{
     public function save($config){
         if($config && is_array($config)){
             foreach ($config as $name => $value) {
-				db('Config')->where('name',$name)->setField('value', $value);
+				db('Config')->where('name','=',$name)->setField('value', $value);
             }
         }
         cache('DB_CONFIG_DATA',null);
@@ -131,7 +131,7 @@ class Config extends Admin{
      */
     public function sort(){
         if(Request::isGet()){
-            $ids = Request::param('ids');//I('get.ids');
+            $ids = Request::param('ids');
 
             //获取排序的数据
 			$map[] = ['status','>',-1];
@@ -139,7 +139,7 @@ class Config extends Admin{
             if(!empty($ids)){
                 $map['id'] = ['id','in',$ids];
             }elseif(Request::param('group')){
-                $map['group']	=	['group',Request::param('group')];
+                $map['group']	=	['group','=',Request::param('group')];
             }
             $list = model('Config')->where($map)->field('id,title')->order('sort asc,id asc')->select();
 
