@@ -49,7 +49,7 @@ class Config extends Admin{
             $mConfig = model('Config');
             $data = Request::only(['id','name','type','title','group','extra','remark','value','sort']);
             if($data){
-				!empty($data['id']) && $mConfig->where('id','=',$data['id']);
+				!empty($data['id']) && $mConfig->where('id',$data['id']);
                 if($mConfig->save($data) === false){
                     $this->error('更新失败');
                 } else {
@@ -83,8 +83,8 @@ class Config extends Admin{
         $id     =   Request::param('id/d',1);
         $type   =   config('CONFIG_GROUP_LIST');
 		$list   =   db('Config')->where([
-			['status','=',1]
-			,['group','=',$id]
+			['status',1]
+			,['group',$id]
 		])
 		->field('id,name,title,extra,value,remark,type')->order('sort')->select();
         if($list) {
@@ -100,7 +100,7 @@ class Config extends Admin{
     public function save($config){
         if($config && is_array($config)){
             foreach ($config as $name => $value) {
-				db('Config')->where('name','=',$name)->setField('value', $value);
+				db('Config')->where('name',$name)->setField('value', $value);
             }
         }
         cache('DB_CONFIG_DATA',null);
@@ -134,13 +134,12 @@ class Config extends Admin{
             $ids = Request::param('ids');//I('get.ids');
 
             //获取排序的数据
-			$map = [];//array('status'=>array('gt',-1));
 			$map[] = ['status','>',-1];
 
             if(!empty($ids)){
                 $map['id'] = ['id','in',$ids];
             }elseif(Request::param('group')){
-                $map['group']	=	Request::param('group');
+                $map['group']	=	['group',Request::param('group')];
             }
             $list = model('Config')->where($map)->field('id,title')->order('sort asc,id asc')->select();
 
@@ -151,7 +150,7 @@ class Config extends Admin{
             $ids = Request::post('ids');
             $ids = explode(',', $ids);
             foreach ($ids as $key=>$value){
-                $res = model('Config')->where('id','=',$value)->setField('sort', $key+1);
+                $res = model('Config')->where('id',$value)->setField('sort', $key+1);
             }
             if($res !== false){
                 $this->success('排序成功！',Cookie('__forward__'));

@@ -47,8 +47,8 @@ class Authmanage extends Admin{
 		//如果传入id
 		else{
 			$auth_group = model('AuthGroup')->where([
-				['module','=','admin']	
-				,['type','=',AuthGroup::TYPE_ADMIN]
+				['module','admin']	
+				,['type',AuthGroup::TYPE_ADMIN]
 			])
 			->find($id);
 			$this->assign('auth_group',$auth_group);
