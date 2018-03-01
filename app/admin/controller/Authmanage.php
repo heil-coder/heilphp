@@ -10,6 +10,7 @@
 namespace app\admin\controller;
 use app\admin\controller\Admin;
 use Request;
+use app\admin\model\AuthGroup;
 
 /**
  * 权限管理控制器
@@ -35,21 +36,22 @@ class Authmanage extends Admin{
 		if(Request::isPost()){
 			$this->writeGroup();
 		}
+		$id = Request::param('id/d',null);
 		//如果没有传入id
-		if(!empty($id)){
-			$auth_group = model('AuthGroup')->where([
-				['module','=','admin']	
-				,['type','=',AuthGroup::TYPE_ADMIN]
-			])
-			->find( (int)$_GET['id'] );
-			$this->assign('auth_group',$auth_group);
+		if(empty($id)){
+			if ( empty($this->auth_group) ) {
+				$this->assign('auth_group',array('title'=>null,'id'=>null,'description'=>null,'rules'=>null,));//排除notice信息
+			}
 			$actionName = '新增';
 		}
 		//如果传入id
 		else{
-			if ( empty($this->auth_group) ) {
-				$this->assign('auth_group',array('title'=>null,'id'=>null,'description'=>null,'rules'=>null,));//排除notice信息
-			}
+			$auth_group = model('AuthGroup')->where([
+				['module','=','admin']	
+				,['type','=',AuthGroup::TYPE_ADMIN]
+			])
+			->find($id);
+			$this->assign('auth_group',$auth_group);
 			$actionName = '编辑';
 		}
 		$this->assign('meta_title',$actionName.'用户组');
@@ -64,23 +66,24 @@ class Authmanage extends Admin{
             sort($_POST['rules']);
             $_POST['rules']  = implode( ',' , array_unique($_POST['rules']));
         }
-        $_POST['module'] =  'admin';
-        $_POST['type']   =  AuthGroupModel::TYPE_ADMIN;
-        $AuthGroup       =  model('AuthGroup');
-        $data = $AuthGroup->create();
+        $mAuthGroup       =  model('AuthGroup');
+        $data = Request::only(['id','module','type','title','description','status','rules']);
+		$data['module'] = 'admin';
+		$data['type'] =  AuthGroup::TYPE_ADMIN;
         if ( $data ) {
-            if ( empty($data['id']) ) {
-                $r = $AuthGroup->add();
-            }else{
-                $r = $AuthGroup->save();
-            }
-            if($r===false){
-                $this->error('操作失败'.$AuthGroup->getError());
+			if(empty($data['id'])){
+				$result = $mAuthGroup->save($data);
+			}
+			else{
+				$result = $mAuthGroup->where('id',$data['id'])->find()->save($data);
+			}
+            if($result === false){
+                $this->error('操作失败'.$mAuthGroup->getError());
             } else{
-                $this->success('操作成功!',U('index'));
+                $this->success('操作成功!',Url('index'));
             }
         }else{
-            $this->error('操作失败'.$AuthGroup->getError());
+            $this->error('操作失败'.$mAuthGroup->getError());
         }
 		exit();
     }

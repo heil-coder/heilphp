@@ -30,21 +30,21 @@
 		{volist name="_list" id="vo"}
 		<tr>
             <td><input class="ids" type="checkbox" name="id[]" value="{$vo.id}" /></td>
-			<td><a href="{:Url('AuthManager/editgroup?id='.$vo['id'])}">{$vo.title}</a> </td>
+			<td><a href="{:Url('authmanage/editgroup?id='.$vo['id'])}">{$vo.title}</a> </td>
 			<td><span>{:mb_strimwidth($vo['description'],0,60,"...","utf-8")}</span></td>
 
 
-			<td><a href="{:Url('AuthManager/access?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >访问授权</a>
-			<a href="{:Url('AuthManager/category?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >分类授权</a>
-			<a href="{:Url('AuthManager/user?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >成员授权</a>
+			<td><a href="{:Url('authmanage/access?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >访问授权</a>
+			<a href="{:Url('authmanage/category?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >分类授权</a>
+			<a href="{:Url('authmanage/user?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >成员授权</a>
 			</td>
 			<td>{$vo.status_text}</td>
 			<td>{eq name="vo.status" value="1"}
-				<a href="{:Url('AuthManager/changeStatus?method=forbidGroup&id='.$vo['id'])}" class="ajax-get">禁用</a>
+				<a href="{:Url('authmanage/changeStatus?method=forbidGroup&id='.$vo['id'])}" class="ajax-get">禁用</a>
 				{else/}
-				<a href="{:Url('AuthManager/changeStatus?method=resumeGroup&id='.$vo['id'])}" class="ajax-get">启用</a>
+				<a href="{:Url('authmanage/changeStatus?method=resumeGroup&id='.$vo['id'])}" class="ajax-get">启用</a>
 				{/eq}
-				<a href="{:Url('AuthManager/changeStatus?method=deleteGroup&id='.$vo['id'])}" class="confirm ajax-get">删除</a>
+				<a href="{:Url('authmanage/changeStatus?method=deleteGroup&id='.$vo['id'])}" class="confirm ajax-get">删除</a>
                 </td>
 		</tr>
 		{/volist}
@@ -63,6 +63,6 @@
 {block name="script"}
 <script type="text/javascript" charset="utf-8">
     //导航高亮
-    highlight_subnav('{:Url('AuthManager/index')}');
+    //highlight_subnav('{:Url('authmanage/index')}');
 </script>
 {/block}
