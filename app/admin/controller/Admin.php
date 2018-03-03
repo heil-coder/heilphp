@@ -56,6 +56,9 @@ class Admin extends Controller {
         }
 
 		$table = $Db->getTable();
+		$tableFields = $Db->getConnection()->getTableFields($table);
+		//如果存在软删除字段
+		$isSoftDelete = in_array('delete_time',$tableFields) ? true : false;
 
         $OPT        =   new \ReflectionProperty($Db,'options');
         $OPT->setAccessible(true);
@@ -72,15 +75,12 @@ class Admin extends Controller {
         }
         unset($REQUEST['_order'],$REQUEST['_field']);
 
-        if(empty($where)){
-            $where  =   array('status'=>array('>=',0));
-        }
         if( !empty($where)){
             $options['where']   =   $where;
         }
         $options      =   array_merge( (array)$OPT->getValue($Db), $options );
 
-		$total        =   $Db->where($options['where'])->count();
+		$total        =   $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->count() : $Db->where($options['where'])->count();
         $this->assign('_total',$total);
 
         if( isset($REQUEST['r']) ){
@@ -89,19 +89,47 @@ class Admin extends Controller {
             $listRows = Config::get('LIST_ROWS') > 0 ? Config::get('LIST_ROWS') : 10;
         }
 
-		$Db = $Db->newQuery()->table($table);
-		$page = $Db->where($options['where'])->paginate($listRows,$total);
+		$Db = $Db->removeOption(true);
+		$page = $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->paginate($listRows,$total) : $Db->where($options['where'])->paginate($listRows,$total);
         $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
 
-		$Db = $Db->newQuery()->table($table);
+		$Db = $Db->removeOption(true);
         //$Db->setOption('options',$options);
 
         $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
-		$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
+		$listing = $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->field($field)->order($options['order'])->limit($limit)->select() : $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
 
 		return $listing;
     }
+    /**
+     * 对数据表中的单行或多行记录执行修改 GET参数id为数字或逗号分隔的数字
+     *
+     * @param string $model 模型名称,供M函数使用的参数
+     * @param array  $data  修改的数据
+     * @param array  $where 查询时的where()方法的参数
+     * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
+     *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
+     *
+     */
+    final protected function editRow ( $model ,$data, $where , $msg ){
+        $id    = array_unique(Request::param('id/a',0));
+        $id    = is_array($id) ? implode(',',$id) : $id;
+        //如存在id字段，则加入该条件
+        $pk = model($model)->getPk();
+        if($pk == 'id' && !empty($id)){
+			$where[] =  ['id','in', $id];
+        }
+
+        $msg   = array_merge( array( 'success'=>'操作成功！', 'error'=>'操作失败！', 'url'=>'' ,'ajax'=>Request::isAjax()) , (array)$msg );
+        if( model($model)->where($where)->update($data)!==false ) {
+            $this->success($msg['success'],$msg['url'],$msg['ajax']);
+        }else{
+            $this->error($msg['error'],$msg['url'],$msg['ajax']);
+        }
+    }
+
+
     /**
      * 条目假删除
      * @param string $model 模型名称,供D函数使用的参数
@@ -109,10 +137,9 @@ class Admin extends Controller {
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      *
-     * @author 朱亚杰  <zhuyajie@topthink.net>
      */
-    protected function delete ( $model , $where = array() , $msg = array( 'success'=>'删除成功！', 'error'=>'删除失败！')) {
-        $data['status']         =   -1;
+    protected function delete ( $model , $where = [] , $msg = array( 'success'=>'删除成功！', 'error'=>'删除失败！')) {
+        $data['delete_time']         =   Request::time();
         $this->editRow(   $model , $data, $where, $msg);
     }
 }
