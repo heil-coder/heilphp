@@ -11,6 +11,7 @@ namespace app\admin\controller;
 use app\admin\controller\Admin;
 use Request;
 use app\admin\model\AuthGroup;
+use app\admin\model\AuthRule;
 
 /**
  * 权限管理控制器
@@ -57,7 +58,6 @@ class Authmanage extends Admin{
 		$this->assign('meta_title',$actionName.'用户组');
 		return view();
     }
-	
     /**
      * 管理员用户组数据写入/更新
      */
@@ -106,6 +106,99 @@ class Authmanage extends Admin{
                 break;
             default:
                 $this->error($method.'参数非法');
+        }
+    }
+    /**
+     * 访问授权页面
+     */
+    public function access(){
+        $this->updateRules();
+		$auth_group = db('AuthGroup')->where([
+			['status','>=',0]
+			,['module','=','admin']
+			,['type','=',AuthGroup::TYPE_ADMIN] 			
+		])
+		->column('id,id,title,rules');
+        $node_list   = $this->returnNodes();
+		$map         = [];
+		$map[]		 = ['module','=','admin'];
+		$map[]		 = ['type','=',AuthRule::RULE_MAIN];
+		$map[]		 = ['status','=',1];
+        $main_rules  = db('AuthRule')->where($map)->column('name,id');
+		$map['type'] = ['type','=',AuthRule::RULE_URL];
+        $child_rules = db('AuthRule')->where($map)->column('name,id');
+
+        $this->assign('main_rules', $main_rules);
+        $this->assign('auth_rules', $child_rules);
+        $this->assign('node_list',  $node_list);
+        $this->assign('auth_group', $auth_group);
+        $this->assign('this_group', $auth_group[Request::param('group_id/d')]);
+        $this->assign('meta_title','访问授权');
+        return view('managegroup');
+    }
+    /**
+     * 后台节点配置的url作为规则存入auth_rule
+     * 执行新节点的插入,已有节点的更新,无效规则的删除三项任务
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function updateRules(){
+        //需要新增的节点必然位于$nodes
+        $nodes    = $this->returnNodes(false);
+
+        $AuthRule = db('AuthRule');
+        $map      = [['module','=','admin'],['type','in','1,2']];//status全部取出,以进行更新
+        //需要更新和删除的节点必然位于$rules
+        $rules    = $AuthRule->where($map)->order('name')->select();
+
+        //构建insert数据
+        $data     = array();//保存需要插入和更新的新节点
+        foreach ($nodes as $value){
+            $temp['name']   = $value['url'];
+            $temp['title']  = $value['title'];
+            $temp['module'] = 'admin';
+            if($value['pid'] >0){
+                $temp['type'] = AuthRuleModel::RULE_URL;
+            }else{
+                $temp['type'] = AuthRuleModel::RULE_MAIN;
+            }
+            $temp['status']   = 1;
+            $data[strtolower($temp['name'].$temp['module'].$temp['type'])] = $temp;//去除重复项
+        }
+
+        $update = array();//保存需要更新的节点
+        $ids    = array();//保存需要删除的节点的id
+        foreach ($rules as $index=>$rule){
+            $key = strtolower($rule['name'].$rule['module'].$rule['type']);
+            if ( isset($data[$key]) ) {//如果数据库中的规则与配置的节点匹配,说明是需要更新的节点
+                $data[$key]['id'] = $rule['id'];//为需要更新的节点补充id值
+                $update[] = $data[$key];
+                unset($data[$key]);
+                unset($rules[$index]);
+                unset($rule['condition']);
+                $diff[$rule['id']]=$rule;
+            }elseif($rule['status']==1){
+                $ids[] = $rule['id'];
+            }
+        }
+        if ( count($update) ) {
+            foreach ($update as $k=>$row){
+                if ( $row!=$diff[$row['id']] ) {
+                    $AuthRule->where(array('id'=>$row['id']))->save($row);
+                }
+            }
+        }
+        if ( count($ids) ) {
+            $AuthRule->where( array( 'id'=>array('IN',implode(',',$ids)) ) )->save(array('status'=>-1));
+            //删除规则是否需要从每个用户组的访问授权表中移除该规则?
+        }
+        if( count($data) ){
+            $AuthRule->addAll(array_values($data));
+        }
+        if ( $AuthRule->getConnection()->getError() ) {
+            trace('['.__METHOD__.']:'.$AuthRule->getConnection()->getError());
+            return false;
+        }else{
+            return true;
         }
     }
 }
