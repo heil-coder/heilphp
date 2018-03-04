@@ -128,8 +128,30 @@ class Admin extends Controller {
             $this->error($msg['error'],$msg['url'],$msg['ajax']);
         }
     }
-
-
+    /**
+     * 禁用条目
+     * @param string $model 模型名称,供D函数使用的参数
+     * @param array  $where 查询时的 where()方法的参数
+     * @param array  $msg   执行正确和错误的消息,可以设置四个元素 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
+     *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
+     *
+     */
+    protected function forbid ( $model , $where = array() , $msg = array( 'success'=>'状态禁用成功！', 'error'=>'状态禁用失败！')){
+        $data    =  array('status' => 0);
+        $this->editRow( $model , $data, $where, $msg);
+    }
+    /**
+     * 恢复条目
+     * @param string $model 模型名称,供D函数使用的参数
+     * @param array  $where 查询时的where()方法的参数
+     * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
+     *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
+     *
+     */
+    protected function resume (  $model , $where = array() , $msg = array( 'success'=>'状态恢复成功！', 'error'=>'状态恢复失败！')){
+        $data    =  array('status' => 1);
+        $this->editRow(   $model , $data, $where, $msg);
+    }
     /**
      * 条目假删除
      * @param string $model 模型名称,供D函数使用的参数
