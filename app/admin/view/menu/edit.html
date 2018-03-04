@@ -28,7 +28,7 @@
             <div class="controls">
                 <select name="pid">
 					{volist name="Menus" id="menu"}
-                        <option value="{$menu.id}">{$menu.title_show}</option>
+					<option value="{$menu.id}" {if $Request.param.pid == $menu.id || $info.pid == $menu.id}selected{/if}>{$menu.title_show}</option>
 					{/volist}
                 </select>
             </div>
