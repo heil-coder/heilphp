@@ -145,7 +145,7 @@ class Authmanage extends Admin{
         //需要新增的节点必然位于$nodes
         $nodes    = $this->returnNodes(false);
 
-        $AuthRule = db('AuthRule');
+        $AuthRule = model('AuthRule');
         $map      = [['module','=','admin'],['type','in','1,2']];//status全部取出,以进行更新
         //需要更新和删除的节点必然位于$rules
         $rules    = $AuthRule->where($map)->order('name')->select();
@@ -157,9 +157,9 @@ class Authmanage extends Admin{
             $temp['title']  = $value['title'];
             $temp['module'] = 'admin';
             if($value['pid'] >0){
-                $temp['type'] = AuthRuleModel::RULE_URL;
+                $temp['type'] = AuthRule::RULE_URL;
             }else{
-                $temp['type'] = AuthRuleModel::RULE_MAIN;
+                $temp['type'] = AuthRule::RULE_MAIN;
             }
             $temp['status']   = 1;
             $data[strtolower($temp['name'].$temp['module'].$temp['type'])] = $temp;//去除重复项
@@ -192,7 +192,7 @@ class Authmanage extends Admin{
             //删除规则是否需要从每个用户组的访问授权表中移除该规则?
         }
         if( count($data) ){
-            $AuthRule->addAll(array_values($data));
+            $AuthRule->saveAll(array_values($data));
         }
         if ( $AuthRule->getConnection()->getError() ) {
             trace('['.__METHOD__.']:'.$AuthRule->getConnection()->getError());
