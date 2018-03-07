@@ -1,5 +1,5 @@
 <?php
-namespace app\user\model;
+namespace app\common\model;
 use think\Model;
 /**
  * 会员模型
@@ -50,17 +50,16 @@ class Member extends Model{
 	 */
 	public function register($username, $password, $email, $mobile){
 		$data = array(
-			'username' => $username
-			,'password' => $password
-			,'email'    => $email
-			,'mobile'   => $mobile
-			,'nickname'	=> $username
-			,'status'	=>1
+			'username' => $username,
+			'password' => $password,
+			'email'    => $email,
+			'mobile'   => $mobile,
 		);
 
 		//验证手机
 		if(empty($data['mobile'])) unset($data['mobile']);
 
+		dump($data);
 		/* 添加用户 */
 		$uid = $this->save($data);
 		return $uid ? $uid : false; //0-未知错误，大于0-注册成功
