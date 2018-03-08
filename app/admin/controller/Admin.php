@@ -113,16 +113,17 @@ class Admin extends Controller {
      *
      */
     final protected function editRow ( $model ,$data, $where , $msg ){
-        $id    = array_unique(Request::param('id/a',0));
+        $id    = array_unique(Request::param('id/a',[]));
         $id    = is_array($id) ? implode(',',$id) : $id;
         //如存在id字段，则加入该条件
 		$table = model($model)->getTable();
 		$fields = model($model)->getConnection()->getTableFields($table);
-        if(in_array('id',$fields)){
-			$where[] =  ['id','in', $id];
+        if(in_array('id',$fields) && !empty($id)){
+			$where['id'] =  ['id','in', $id];
         }
 
         $msg   = array_merge( array( 'success'=>'操作成功！', 'error'=>'操作失败！', 'url'=>'' ,'ajax'=>Request::isAjax()) , (array)$msg );
+		$test = model($model);
         if( model($model)->where($where)->update($data)!==false ) {
             $this->success($msg['success'],$msg['url'],$msg['ajax']);
         }else{
@@ -202,5 +203,32 @@ class Admin extends Controller {
         }
         $tree_nodes[(int)$tree]   = $nodes;
         return $nodes;
+    }
+    /**
+     * 设置一条或者多条数据的状态
+     */
+    public function setStatus($Model){
+		empty($model) && $model = Request::module();
+        $ids    =   Request::param('ids');
+        $status =   Request::param('status/d');
+        if(empty($ids)){
+            $this->error('请选择要操作的数据');
+        }
+
+        $map[] = ['id','in',$ids];
+        switch ($status){
+            case -1 :
+                $this->delete($Model, $map, array('success'=>'删除成功','error'=>'删除失败'));
+                break;
+            case 0  :
+                $this->forbid($Model, $map, array('success'=>'禁用成功','error'=>'禁用失败'));
+                break;
+            case 1  :
+                $this->resume($Model, $map, array('success'=>'启用成功','error'=>'启用失败'));
+                break;
+            default :
+                $this->error('参数错误');
+                break;
+        }
     }
 }

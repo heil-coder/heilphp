@@ -16,7 +16,7 @@ use think\Model;
 
 class Config extends Model {
 	protected $autoWriteTimestamp = true;
-
+    /* 自动完成规则 */
 	protected $auto = ['name','status'=>1];
 	protected function setNameAttr($value){
 		return strtoupper($value);	

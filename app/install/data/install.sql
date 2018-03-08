@@ -237,17 +237,19 @@ CREATE TABLE `heilphp_action` (
   `type` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '类型',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
+  `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统行为表';
 
 -- -----------------------------
 -- Records of `heilphp_action`
 -- -----------------------------
-INSERT INTO `heilphp_action` VALUES ('1', 'user_login', '用户登录', '积分+10，每天一次', 'table:member|field:score|condition:uid={$self} AND status>-1|rule:score+10|cycle:24|max:1;', '[user|get_nickname]在[time|time_format]登录了后台', '1', '1', '1387181220');
-INSERT INTO `heilphp_action` VALUES ('2', 'update_config', '更新配置', '新增或修改或删除配置', '', '', '1', '1', '1383294988');
-INSERT INTO `heilphp_action` VALUES ('3', 'update_model', '更新模型', '新增或修改模型', '', '', '1', '1', '1383295057');
-INSERT INTO `heilphp_action` VALUES ('4', 'update_channel', '更新导航', '新增或修改或删除导航', '', '', '1', '1', '1383296301');
-INSERT INTO `heilphp_action` VALUES ('5', 'update_menu', '更新菜单', '新增或修改或删除菜单', '', '', '1', '1', '1383296392');
+INSERT INTO `heilphp_action` (`id`, `name`, `title`, `remark`, `rule`, `log`, `type`, `status`, `update_time`, `delete_time`) VALUES
+(1, 'user_login', '用户登录', '积分+10，每天一次', 'table:member|field:score|condition:uid={$self} AND status>-1|rule:score+10|cycle:24|max:1;', '[user|get_nickname]在[time|time_format]登录了后台', 1, 1, 1520551087, NULL),
+(2, 'update_config', '更新配置', '新增或修改或删除配置', '', '', 1, 1, 1520551087, NULL),
+(3, 'update_model', '更新模型', '新增或修改模型', '', '', 1, 1, 1520551087, NULL),
+(4, 'update_channel', '更新导航', '新增或修改或删除导航', '', '', 1, 1, 1520551087, NULL),
+(5, 'update_menu', '更新菜单', '新增或修改或删除菜单', '', '', 1, 1, 1520551087, NULL);
 
 -- -----------------------------
 -- Table structure for `heilphp_action_log`

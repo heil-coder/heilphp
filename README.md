@@ -328,9 +328,10 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | remark| varchar(140) |否|''|--|行为描述| 
 | rule | text |是|null|--|行为规则| 
 | log| text |是|null|--|日志规则| 
-| type| tinyint(1) unsigned|否|1|--|类型| 
+| type| tinyint(1) unsigned|否|1|--|类型 1:系统　2:用户| 
 | status| tinyint(1) unsigned|否|0|--|状态| 
 | update_time| bigint(10) unsigned|否|0|--|修改时间| 
+| delete_time| bigint(10) unsigned|是|null|--|软删除标记 null:未删除 时间戳:删除时间| 
 
 ## action_log 行为日志表
 |字段|类型|允许为空|默认值|自动递增|注释|

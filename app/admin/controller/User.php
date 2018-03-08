@@ -90,4 +90,41 @@ class User extends Admin{
                 $this->error('参数非法');
         }
     }
+    /**
+     * 用户行为列表
+     */
+    public function action(){
+        //获取列表数据
+		$map = [];
+		$map[] = ['status','>=',0];
+        $list   =   $this->getListing('Action',$map);
+        int_to_string($list);
+        // 记录当前列表页的cookie
+        Cookie('__forward__',$_SERVER['REQUEST_URI']);
+
+        $this->assign('_list', $list);
+        $this->assign('meta_title','用户行为');
+		return view();
+    }
+    /**
+     * 新增行为
+     */
+    public function addAction(){
+        $this->assign('meta_title','新增行为');
+        $this->assign('data',null);
+        return view('editaction');
+    }
+
+    /**
+     * 编辑行为
+     */
+    public function editAction(){
+        $id = Request::param('id/d');
+        empty($id) && $this->error('参数不能为空！');
+        $data = model('Action')->field(true)->find($id);
+
+        $this->assign('data',$data);
+        $this->assign('meta_title','编辑行为');
+        return view('editaction');
+    }
 }
