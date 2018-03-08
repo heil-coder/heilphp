@@ -236,6 +236,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | last_login_ip| bigint(20)|否|0|--|最后登录IP|
 | last_login_time| bigint(10) unsigned|否|0|--|最后登录时间|
 | status| tinyint(1) |否|0|--|会员状态|
+| delete_time| bigint(10) unsigned|是|null|-- 删除时间 如未删除则为null||
 
 ## menu 菜单表 
 |字段|类型|允许为空|默认值|自动递增|注释|

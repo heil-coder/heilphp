@@ -164,7 +164,7 @@ function register_administrator($db, $prefix, $admin, $salt){
     $password = encrypt_password($admin['password'], $salt);
 
     $sql = "INSERT INTO `[PREFIX]member` VALUES ".
-           "('1', '[NAME]','[PASSWORD]','[SALT]','','','[NICK]', '0', '0000-00-00', '', '0', '1', '0', '[TIME]', '0', '[TIME]', '1');";
+           "('1', '[NAME]','[PASSWORD]','[SALT]','','','[NICK]', '0', '0000-00-00', '', '0', '1', '0', '[TIME]', '0', '[TIME]', '1',null);";
     $sql = str_replace(
         array('[PREFIX]', '[NAME]','[PASSWORD]','[SALT]','[NICK]', '[TIME]'),
         array($prefix, $admin['username'],$password,$salt,$admin['username'], App::getBeginTime()),
