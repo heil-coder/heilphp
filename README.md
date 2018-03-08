@@ -318,3 +318,29 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | version| varchar(40)|否|''|--|版本号| 
 | create_time| bigint(10)|否|0|--|安装时间| 
 | has_adminlist| tinyint(1)|否|0|--|是否有后台列表| 
+
+## action 行为表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|插件id，自增主键| 
+| name | varchar(30) |否|''|--|行为唯一标识| 
+| title| varchar(80) |否|''|--|行为说明| 
+| remark| varchar(140) |否|''|--|行为描述| 
+| rule | text |是|null|--|行为规则| 
+| log| text |是|null|--|日志规则| 
+| type| tinyint(1) unsigned|否|1|--|类型| 
+| status| tinyint(1) unsigned|否|0|--|状态| 
+| update_time| bigint(10) unsigned|否|0|--|修改时间| 
+
+## action_log 行为日志表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|插件id，自增主键| 
+| action_id|int(10) unsigned |否｜0|--|行为id|
+| user_id|int(10) unsigned |否｜0|--|执行用户id|
+| action_ip|bigint(20)|否｜无｜--｜执行行为者id|
+| model|varchar(50)|否｜''｜--｜触发行为的表|
+| record_id|int(10) unsigned|否｜0｜--｜触发行为的数据id|
+| remark| varchar(255)|否|''|--|日志备注｜
+| status| tinyint(1) unsigned|否|1|--|状态｜
+| create_time| bigint(10) unsigned|否|0|--|执行行为的时间｜

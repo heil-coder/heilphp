@@ -223,4 +223,48 @@ INSERT INTO `heilphp_hooks` VALUES ('13', 'adminIndex', '首页小格子个性�
 INSERT INTO `heilphp_hooks` VALUES ('14', 'topicComment', '评论提交方式扩展钩子。', '1', '1380163518', 'Editor', '1');
 INSERT INTO `heilphp_hooks` VALUES ('16', 'app_begin', '应用开始', '2', '1384481614', '', '1');
 
+-- -----------------------------
+-- Table structure for `heilphp_action`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_action`;
+CREATE TABLE `heilphp_action` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(30) NOT NULL DEFAULT '' COMMENT '行为唯一标识',
+  `title` varchar(80) NOT NULL DEFAULT '' COMMENT '行为说明',
+  `remark` varchar(140) NOT NULL DEFAULT '' COMMENT '行为描述',
+  `rule` text NULL  COMMENT '行为规则',
+  `log` text NULL  COMMENT '日志规则',
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '类型',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统行为表';
 
+-- -----------------------------
+-- Records of `heilphp_action`
+-- -----------------------------
+INSERT INTO `heilphp_action` VALUES ('1', 'user_login', '用户登录', '积分+10，每天一次', 'table:member|field:score|condition:uid={$self} AND status>-1|rule:score+10|cycle:24|max:1;', '[user|get_nickname]在[time|time_format]登录了后台', '1', '1', '1387181220');
+INSERT INTO `heilphp_action` VALUES ('2', 'update_config', '更新配置', '新增或修改或删除配置', '', '', '1', '1', '1383294988');
+INSERT INTO `heilphp_action` VALUES ('3', 'update_model', '更新模型', '新增或修改模型', '', '', '1', '1', '1383295057');
+INSERT INTO `heilphp_action` VALUES ('4', 'update_channel', '更新导航', '新增或修改或删除导航', '', '', '1', '1', '1383296301');
+INSERT INTO `heilphp_action` VALUES ('5', 'update_menu', '更新菜单', '新增或修改或删除菜单', '', '', '1', '1', '1383296392');
+
+-- -----------------------------
+-- Table structure for `heilphp_action_log`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_action_log`;
+CREATE TABLE `heilphp_action_log` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `action_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '行为id',
+  `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '执行用户id',
+  `action_ip` bigint(20) NOT NULL COMMENT '执行行为者ip',
+  `model` varchar(50) NOT NULL DEFAULT '' COMMENT '触发行为的表',
+  `record_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '触发行为的数据id',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '日志备注',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '执行行为的时间',
+  PRIMARY KEY (`id`),
+  KEY `action_ip_ix` (`action_ip`),
+  KEY `action_id_ix` (`action_id`),
+  KEY `user_id_ix` (`user_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='行为日志表';
