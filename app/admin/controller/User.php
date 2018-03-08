@@ -60,4 +60,34 @@ class User extends Admin{
 			return view();
         }
     }
+
+    /**
+     * 会员状态修改
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function changeStatus($method=null){
+        $id = array_unique(Request::param('id/a',0));
+        if( in_array(config('heilphp.USER_ADMINISTRATOR'), $id)){
+            $this->error("不允许对超级管理员执行该操作!");
+        }
+        $id = is_array($id) ? implode(',',$id) : $id;
+        if ( empty($id) ) {
+            $this->error('请选择要操作的数据!');
+        }
+		$map = [];
+        $map[] =   ['uid','in',$id];
+        switch ( strtolower($method) ){
+            case 'forbiduser':
+                $this->forbid('Member', $map );
+                break;
+            case 'resumeuser':
+                $this->resume('Member', $map );
+                break;
+            case 'deleteuser':
+                $this->delete('Member', $map );
+                break;
+            default:
+                $this->error('参数非法');
+        }
+    }
 }

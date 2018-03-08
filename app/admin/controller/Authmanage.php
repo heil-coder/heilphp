@@ -183,12 +183,12 @@ class Authmanage extends Admin{
         if ( count($update) ) {
             foreach ($update as $k=>$row){
                 if ( $row!=$diff[$row['id']] ) {
-                    $AuthRule->where(array('id'=>$row['id']))->save($row);
+                    $AuthRule->where(array('id'=>$row['id']))->find()->save($row);
                 }
             }
         }
         if ( count($ids) ) {
-            $AuthRule->where( array( 'id'=>array('IN',implode(',',$ids)) ) )->save(array('status'=>-1));
+            $AuthRule->where( array( 'id'=>array('IN',implode(',',$ids)) ) )->select()->save(array('status'=>-1));
             //删除规则是否需要从每个用户组的访问授权表中移除该规则?
         }
         if( count($data) ){

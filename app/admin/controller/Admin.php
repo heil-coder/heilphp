@@ -105,7 +105,7 @@ class Admin extends Controller {
     /**
      * 对数据表中的单行或多行记录执行修改 GET参数id为数字或逗号分隔的数字
      *
-     * @param string $model 模型名称,供M函数使用的参数
+     * @param string $model 模型名称,供model函数使用的参数
      * @param array  $data  修改的数据
      * @param array  $where 查询时的where()方法的参数
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
@@ -116,8 +116,9 @@ class Admin extends Controller {
         $id    = array_unique(Request::param('id/a',0));
         $id    = is_array($id) ? implode(',',$id) : $id;
         //如存在id字段，则加入该条件
-        $pk = model($model)->getPk();
-        if($pk == 'id' && !empty($id)){
+		$table = model($model)->getTable();
+		$fields = model($model)->getConnection()->getTableFields($table);
+        if(in_array('id',$fields)){
 			$where[] =  ['id','in', $id];
         }
 
