@@ -28,6 +28,16 @@ class Addons extends Admin {
      */
     public function index(){
         $this->assign('meta_title','插件列表');
+		$mAddons = model('Addons');
+		$mAddons = $mAddons->updateAddonsInstallStatus();
+		$dirs = $mAddons->getAddonsDirs();
+		if($dirs === false){
+			$list = false;
+		}
+		else{
+			$map = ['name','in',$dirs];
+			$list = $this->getListing('Addons',$map,'uninstall desc');
+		}
         $list       =   model('Addons')->getList();
         $request    =   (array)Request::param();
         $total      =   $list? count($list) : 1 ;
