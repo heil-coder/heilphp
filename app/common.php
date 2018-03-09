@@ -116,3 +116,42 @@ function tree_to_list($tree, $child = '_child', $order='id', &$list = array()){
     }
     return $list;
 }
+
+/**
+ * 根据用户ID获取用户昵称
+ * @param  integer $uid 用户ID
+ * @return string       用户昵称
+ */
+function get_nickname($uid = 0){
+    static $list;
+    if(!($uid && is_numeric($uid))){ //获取当前登录用户名
+        return session('user_auth.username');
+    }
+
+    /* 获取缓存数据 */
+    if(empty($list)){
+        $list = cache('sys_user_nickname_list');
+    }
+
+    /* 查找用户信息 */
+    $key = "u{$uid}";
+    if(isset($list[$key])){ //已缓存，直接使用
+        $name = $list[$key];
+    } else { //调用接口获取用户信息
+        $info = db('Member')->field('nickname')->find($uid);
+        if($info !== false && $info['nickname'] ){
+            $nickname = $info['nickname'];
+            $name = $list[$key] = $nickname;
+            /* 缓存用户 */
+            $count = count($list);
+            $max   = config('USER_MAX_CACHE');
+            while ($count-- > $max) {
+                array_shift($list);
+            }
+            cache('sys_user_nickname_list', $list);
+        } else {
+            $name = '';
+        }
+    }
+    return $name;
+}

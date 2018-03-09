@@ -42,7 +42,7 @@ class Action extends Admin {
     public function detail($id = 0){
         empty($id) && $this->error('参数错误！');
 
-        $info = model('ActionLog')->field(true)->find($id);
+        $info = db('ActionLog')->field(true)->find($id);
 
         $this->assign('info', $info);
         $this->assign('meta_title','查看行为日志');

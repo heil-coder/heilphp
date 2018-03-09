@@ -148,3 +148,23 @@ function get_model_field($value = null, $condition = 'id', $field = null){
     }
     return $info;
 }
+
+/**
+ * 获取行为数据
+ * @param string $id 行为id
+ * @param string $field 需要获取的字段
+ */
+function get_action($id = null, $field = null){
+    if(empty($id) && !is_numeric($id)){
+        return false;
+    }
+    $list = cache('action_list');
+    if(empty($list[$id])){
+		$map = [
+			['status','>=',0]
+			,['id','=',$id]
+		];
+        $list[$id] = model('Action')->where($map)->field(true)->find();
+    }
+    return empty($field) ? $list[$id] : $list[$id][$field];
+}
