@@ -78,6 +78,9 @@ class Admin extends Controller {
         if( !empty($where)){
             $options['where']   =   $where;
         }
+		else{
+            $options['where']   =  1; 
+		}
         $options      =   array_merge( (array)$OPT->getValue($Db), $options );
 
 		$total        =   $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->count() : $Db->where($options['where'])->count();

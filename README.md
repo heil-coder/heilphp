@@ -294,7 +294,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 > 索引定义：UNIQUE KEYgroup_extend_type(group_id,extend_id,type)  
 
 
-## hoods 钩子表 
+## hooks 钩子表 
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | id | int(10) unsigned|否|无|是|插件id，自增主键| 

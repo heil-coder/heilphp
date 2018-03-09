@@ -1,11 +1,11 @@
 <?php
 // +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// | HeilPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// | Copyright (c) 2018 http://www.heilphp.com All rights reserved.
 // +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
-// +----------------------------------------------------------------------
+// | Author: Jason <1878566968@qq.com>
+// +---------------------------------------------------------------------------------------
 
 /**
  * 格式化字节大小
@@ -28,7 +28,6 @@ function format_bytes($size, $delimiter = '') {
  *                                          '字段名2'=>array(映射关系数组),
  *                                           ......
  *                                       )
- * @author 朱亚杰 <zhuyajie@topthink.net>
  * @return array
  *
  *  array(
@@ -41,11 +40,10 @@ function int_to_string(&$data,$map=array('status'=>array(1=>'正常',-1=>'删除
     if($data === false || $data === null ){
         return $data;
     }
-    $data = (array)$data;
-    foreach ($data as $key => $row){
+    foreach ($data as $key => &$row){
         foreach ($map as $col=>$pair){
             if(isset($row[$col]) && isset($pair[$row[$col]])){
-                $data[$key][$col.'_text'] = $pair[$row[$col]];
+                $row[$col.'_text'] = $pair[$row[$col]];
             }
         }
     }
