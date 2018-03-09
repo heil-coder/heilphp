@@ -9,6 +9,7 @@
 
 namespace app\admin\model;
 use think\Model;
+use Env;
 
 /**
  * 插件模型
@@ -38,7 +39,7 @@ class Addons extends Model {
      */
     public function getList($addon_dir = ''){
         if(!$addon_dir)
-            $addon_dir = HEILPHP_ADDON_PATH;
+            $addon_dir = Env::get('root_path').HEILPHP_ADDON_PATH;
         $dirs = array_map('basename',glob($addon_dir.'*', GLOB_ONLYDIR));
         if($dirs === FALSE || !file_exists($addon_dir)){
             $this->error = '插件目录不可读或者不存在';
@@ -46,7 +47,7 @@ class Addons extends Model {
         }
 		$addons			=	array();
 		$where[]	=	['name','in',$dirs];
-		$list			=	$this->where($where)->field(true)->select();
+		$list			=	$this->where($where)->field(true)->select()->toArray();
 		foreach($list as $addon){
 			$addon['uninstall']		=	0;
 			$addons[$addon['name']]	=	$addon;
@@ -55,7 +56,7 @@ class Addons extends Model {
             if(!isset($addons[$value])){
 				$class = get_addon_class($value);
 				if(!class_exists($class)){ // 实例化插件失败忽略执行
-					\Think\Log::record('插件'.$value.'的入口文件不存在！');
+					//\Think\Log::record('插件'.$value.'的入口文件不存在！');
 					continue;
 				}
                 $obj    =   new $class;

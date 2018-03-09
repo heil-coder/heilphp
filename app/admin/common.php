@@ -40,6 +40,7 @@ function int_to_string(&$data,$map=array('status'=>array(1=>'正常',-1=>'删除
     if($data === false || $data === null ){
         return $data;
     }
+	$data = (array)$data;
     foreach ($data as $key => &$row){
         foreach ($map as $col=>$pair){
             if(isset($row[$col]) && isset($pair[$row[$col]])){
