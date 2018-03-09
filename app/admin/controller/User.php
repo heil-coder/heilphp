@@ -127,4 +127,16 @@ class User extends Admin{
         $this->assign('meta_title','编辑行为');
         return view('editaction');
     }
+    /**
+     * 更新行为
+     * @author huajie <banhuajie@163.com>
+     */
+    public function saveAction(){
+        $res = model('Action')->edit();
+        if(!$res){
+            $this->error(model('Action')->getError());
+        }else{
+            $this->success($res['id']?'更新成功！':'新增成功！', Cookie('__forward__'));
+        }
+    }
 }
