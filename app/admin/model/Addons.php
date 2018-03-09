@@ -60,7 +60,6 @@ class Addons extends Model {
 					continue;
 				}
                 $obj    =   new $class;
-				dump($obj->info);
 				$addons[$value]	= $obj->info;
 				if($addons[$value]){
 					$addons[$value]['uninstall'] = 1;
@@ -68,7 +67,6 @@ class Addons extends Model {
 				}
 			}
         }
-		dump($addons);
         int_to_string($addons, array('status'=>array(-1=>'损坏', 0=>'禁用', 1=>'启用', null=>'未安装')));
         $addons = list_sort_by($addons,'uninstall','desc');
         return $addons;
@@ -87,29 +85,6 @@ class Addons extends Model {
 		else{
 			return $dirs;
 		}
-		$addons			=	array();
-		$where[]	=	['name','in',$dirs];
-		$list			=	$this->where($where)->field(true)->select()->toArray();
-		foreach($list as $addon){
-			$addon['uninstall']		=	0;
-			$addons[$addon['name']]	=	$addon;
-		}
-        foreach ($dirs as $value) {
-            if(!isset($addons[$value])){
-				$class = get_addon_class($value);
-				if(!class_exists($class)){ // 实例化插件失败忽略执行
-					\think\facade\Log::record('插件'.$value.'的入口文件不存在！');
-					continue;
-				}
-                $obj    =   new $class;
-				$addons[$value]	= $obj->info;
-				if($addons[$value]){
-					$addons[$value]['uninstall'] = 1;
-                    unset($addons[$value]['status']);
-				}
-			}
-        }
-
 	}
 	/**
 	 * 更新插件安装状态
