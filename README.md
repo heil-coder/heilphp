@@ -322,7 +322,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 ## action 行为表
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
-| id | int(10) unsigned|否|无|是|插件id，自增主键| 
+| id | int(10) unsigned|否|无|是|行为id，自增主键| 
 | name | varchar(30) |否|''|--|行为唯一标识| 
 | title| varchar(80) |否|''|--|行为说明| 
 | remark| varchar(140) |否|''|--|行为描述| 
@@ -336,7 +336,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 ## action_log 行为日志表
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
-| id | int(10) unsigned|否|无|是|插件id，自增主键| 
+| id | int(10) unsigned|否|无|是|行为日志id，自增主键| 
 | action_id|int(10) unsigned |否｜0|--|行为id|
 | user_id|int(10) unsigned |否｜0|--|执行用户id|
 | action_ip|bigint(20)|否｜无｜--｜执行行为者id|
@@ -345,3 +345,29 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | remark| varchar(255)|否|''|--|日志备注｜
 | status| tinyint(1) unsigned|否|1|--|状态｜
 | create_time| bigint(10) unsigned|否|0|--|执行行为的时间｜
+
+
+## action_log 行为日志表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|模型id，自增主键| 
+  `name` char(30) NOT NULL DEFAULT '' COMMENT '模型标识',
+  `title` char(30) NOT NULL DEFAULT '' COMMENT '模型名称',
+  `extend` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '继承的模型',
+  `relation` varchar(30) NOT NULL DEFAULT '' COMMENT '继承与被继承模型的关联字段',
+  `need_pk` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '新建表时是否需要主键字段',
+  `field_sort` text NULL  COMMENT '表单字段排序',
+  `field_group` varchar(255) NOT NULL DEFAULT '1:基础' COMMENT '字段分组',
+  `attribute_list` text NULL  COMMENT '属性列表（表的字段）',
+  `attribute_alias` varchar(255) NOT NULL DEFAULT '' COMMENT '属性别名定义',
+  `template_list` varchar(100) NOT NULL DEFAULT '' COMMENT '列表模板',
+  `template_add` varchar(100) NOT NULL DEFAULT '' COMMENT '新增模板',
+  `template_edit` varchar(100) NOT NULL DEFAULT '' COMMENT '编辑模板',
+  `list_grid` text NULL  COMMENT '列表定义',
+  `list_row` smallint(2) unsigned NOT NULL DEFAULT '10' COMMENT '列表数据长度',
+  `search_key` varchar(50) NOT NULL DEFAULT '' COMMENT '默认搜索字段',
+  `search_list` varchar(255) NOT NULL DEFAULT '' COMMENT '高级搜索的字段',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
+  `engine_type` varchar(25) NOT NULL DEFAULT 'MyISAM' COMMENT '数据库引擎',
