@@ -49,7 +49,7 @@ INSERT INTO `heilphp_config` VALUES ('30', 'DATA_BACKUP_COMPRESS', '4', '数据�
 INSERT INTO `heilphp_config` VALUES ('31', 'DATA_BACKUP_COMPRESS_LEVEL', '4', '数据库备份文件压缩级别', '4', '1:普通\r\n4:一般\r\n9:最高', '数据库备份文件的压缩级别，该配置在开启压缩时生效', '1381713408', '1381713408', '1', '9', '10');
 INSERT INTO `heilphp_config` VALUES ('32', 'DEVELOP_MODE', '4', '开启开发者模式', '4', '0:关闭\r\n1:开启', '是否开启开发者模式', '1383105995', '1383291877', '1', '1', '11');
 INSERT INTO `heilphp_config` VALUES ('33', 'ALLOW_VISIT', '3', '不受限控制器方法', '0', '', '', '1386644047', '1386644741', '1', '0:article/draftbox\r\n1:article/mydocument\r\n2:Category/tree\r\n3:Index/verify\r\n4:file/upload\r\n5:file/download\r\n6:user/updatePassword\r\n7:user/updateNickname\r\n8:user/submitPassword\r\n9:user/submitNickname\r\n10:file/uploadpicture', '0');
-INSERT INTO `heilphp_config` VALUES ('34', 'DENY_VISIT', '3', '超管专限控制器方法', '0', '', '仅超级管理员可访问的控制器方法', '1386644141', '1386644659', '1', '0:Addons/addhook\r\n1:Addons/edithook\r\n2:Addons/delhook\r\n3:Addons/updateHook\r\n4:Admin/getMenus\r\n5:Admin/recordList\r\n6:AuthManager/updateRules\r\n7:AuthManager/tree', '0');
+INSERT INTO `heilphp_config` VALUES ('34', 'DENY_VISIT', '3', '超管专限控制器方法', '0', '', '仅超级管理员可访问的控制器方法', '1386644141', '1386644659', '1', '0:Addons/addhook\r\n1:Addons/edithook\r\n2:Addons/delhook\r\n3:Addons/updateHook\r\n4:Admin/getMenus\r\n5:Admin/recordList\r\n6:Authmanager/updateRules\r\n7:Authmanager/tree', '0');
 INSERT INTO `heilphp_config` VALUES ('36', 'ADMIN_ALLOW_IP', '2', '后台允许访问IP', '4', '', '多个用逗号分隔，如果不配置表示不限制IP访问', '1387165454', '1387165553', '1', '', '12');
 
 
@@ -195,22 +195,22 @@ INSERT INTO `heilphp_menu` VALUES ('23', '变更行为状态', '19', '0', 'User/
 INSERT INTO `heilphp_menu` VALUES ('24', '禁用会员', '19', '0', 'User/changeStatus?method=forbidUser', '0', '\"用户->用户信息\"中的禁用', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('25', '启用会员', '19', '0', 'User/changeStatus?method=resumeUser', '0', '\"用户->用户信息\"中的启用', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('26', '删除会员', '19', '0', 'User/changeStatus?method=deleteUser', '0', '\"用户->用户信息\"中的删除', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('27', '权限管理', '16', '0', 'AuthManager/index', '0', '', '用户管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('28', '删除', '27', '0', 'AuthManager/changeStatus?method=deleteGroup', '0', '删除用户组', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('29', '禁用', '27', '0', 'AuthManager/changeStatus?method=forbidGroup', '0', '禁用用户组', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('30', '恢复', '27', '0', 'AuthManager/changeStatus?method=resumeGroup', '0', '恢复已禁用的用户组', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('31', '新增', '27', '0', 'AuthManager/createGroup', '0', '创建新的用户组', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('32', '编辑', '27', '0', 'AuthManager/editGroup', '0', '编辑用户组名称和描述', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('33', '保存用户组', '27', '0', 'AuthManager/writeGroup', '0', '新增和编辑用户组的\"保存\"按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('34', '授权', '27', '0', 'AuthManager/group', '0', '\"后台 \\ 用户 \\ 用户信息\"列表页的\"授权\"操作按钮,用于设置用户所属用户组', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('35', '访问授权', '27', '0', 'AuthManager/access', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"访问授权\"操作按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('36', '成员授权', '27', '0', 'AuthManager/user', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"成员授权\"操作按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('37', '解除授权', '27', '0', 'AuthManager/removeFromGroup', '0', '\"成员授权\"列表页内的解除授权操作按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('38', '保存成员授权', '27', '0', 'AuthManager/addToGroup', '0', '\"用户信息\"列表页\"授权\"时的\"保存\"按钮和\"成员授权\"里右上角的\"添加\"按钮)', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('39', '分类授权', '27', '0', 'AuthManager/category', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"分类授权\"操作按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('40', '保存分类授权', '27', '0', 'AuthManager/addToCategory', '0', '\"分类授权\"页面的\"保存\"按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('41', '模型授权', '27', '0', 'AuthManager/modelauth', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"模型授权\"操作按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('42', '保存模型授权', '27', '0', 'AuthManager/addToModel', '0', '\"分类授权\"页面的\"保存\"按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('27', '权限管理', '16', '0', 'Authmanage/index', '0', '', '用户管理', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('28', '删除', '27', '0', 'Authmanage/changeStatus?method=deleteGroup', '0', '删除用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('29', '禁用', '27', '0', 'Authmanage/changeStatus?method=forbidGroup', '0', '禁用用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('30', '恢复', '27', '0', 'Authmanage/changeStatus?method=resumeGroup', '0', '恢复已禁用的用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('31', '新增', '27', '0', 'Authmanage/createGroup', '0', '创建新的用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('32', '编辑', '27', '0', 'Authmanage/editGroup', '0', '编辑用户组名称和描述', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('33', '保存用户组', '27', '0', 'Authmanage/writeGroup', '0', '新增和编辑用户组的\"保存\"按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('34', '授权', '27', '0', 'Authmanage/group', '0', '\"后台 \\ 用户 \\ 用户信息\"列表页的\"授权\"操作按钮,用于设置用户所属用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('35', '访问授权', '27', '0', 'Authmanage/access', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"访问授权\"操作按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('36', '成员授权', '27', '0', 'Authmanage/user', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"成员授权\"操作按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('37', '解除授权', '27', '0', 'Authmanage/removeFromGroup', '0', '\"成员授权\"列表页内的解除授权操作按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('38', '保存成员授权', '27', '0', 'Authmanage/addToGroup', '0', '\"用户信息\"列表页\"授权\"时的\"保存\"按钮和\"成员授权\"里右上角的\"添加\"按钮)', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('39', '分类授权', '27', '0', 'Authmanage/category', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"分类授权\"操作按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('40', '保存分类授权', '27', '0', 'Authmanage/addToCategory', '0', '\"分类授权\"页面的\"保存\"按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('41', '模型授权', '27', '0', 'Authmanage/modelauth', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"模型授权\"操作按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('42', '保存模型授权', '27', '0', 'Authmanage/addToModel', '0', '\"分类授权\"页面的\"保存\"按钮', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('43', '扩展', '0', '7', 'Addons/index', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('44', '插件管理', '43', '1', 'Addons/index', '0', '', '扩展', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('45', '创建', '44', '0', 'Addons/create', '0', '服务器上创建插件结构向导', '', '0','1');
@@ -264,7 +264,7 @@ INSERT INTO `heilphp_menu` VALUES ('92', '删除', '90', '0', 'Datamanage/del', 
 INSERT INTO `heilphp_menu` VALUES ('93', '其他', '0', '5', 'other', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('96', '新增', '75', '0', 'Menu/add', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('98', '编辑', '75', '0', 'Menu/edit', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('106', '行为日志', '16', '0', 'Action/actionlog', '0', '', '行为管理', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('106', '行为日志', '16', '0', 'Action/log', '0', '', '行为管理', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('108', '修改密码', '16', '0', 'User/updatePassword', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('109', '修改昵称', '16', '0', 'User/updateNickname', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('110', '查看行为日志', '106', '0', 'action/edit', '1', '', '', '0','1');
