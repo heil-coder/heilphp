@@ -49,8 +49,8 @@ abstract class Addon{
         $TMPL_PARSE_STRING = Config::get('TMPL_PARSE_STRING');
         $TMPL_PARSE_STRING['__ADDONROOT__'] = Env::get('root_path') . HEILPHP_ADDON_PATH .$this->getName();
 		Config::set('TMPL_PARSE_STRING', $TMPL_PARSE_STRING);
-        if(is_file('./config.php')){
-            $this->config_file = $this->addon_path.'config.php';
+        if(is_file($TMPL_PARSE_STRING['__ADDONROOT__'].'/config.php')){
+            $this->config_file = $TMPL_PARSE_STRING['__ADDONROOT__'].'/config.php';
         }
     }
 
