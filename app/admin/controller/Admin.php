@@ -11,6 +11,7 @@ use think\Controller;
 use Db;
 use Config;
 use Request;
+use app\admin\model\AuthRule;
 
 /**
  * 后台基础控制器
@@ -28,6 +29,8 @@ class Admin extends Controller {
             cache('DB_CONFIG_DATA',$config);
         }
 		config($config,'app'); //添加配置
+
+        $this->assign('__MENU__', $this->getMenus());
     }
     /**
      * 通用分页列表数据集获取方法
@@ -233,5 +236,113 @@ class Admin extends Controller {
                 $this->error('参数错误');
                 break;
         }
+    }
+    /**
+     * 获取控制器菜单数组,二级菜单元素位于一级菜单的'_child'元素中
+     */
+    final public function getMenus($controller=''){
+		empty($controlle) && $controller = Request::controller();
+        $menus  =   session('ADMIN_MENU_LIST.'.$controller);
+        if(empty($menus) || 1){
+            // 获取主菜单
+            $where['pid']   =   0;
+            $where['hide']  =   0;
+            if(!config('DEVELOP_MODE')){ // 是否开发者模式
+                $where['is_dev']    =   0;
+            }
+            $menus['main']  =   db('Menu')->where($where)->order('sort asc')->field('id,title,url')->select();
+            $menus['child'] =   array(); //设置子节点
+            foreach ($menus['main'] as $key => $item) {
+                // 判断主菜单权限
+                if ( !is_administrator() && !$this->checkRule(strtolower(Request::module().'/'.$item['url']),AuthRule::RULE_MAIN,null) ) {
+                    unset($menus['main'][$key]);
+                    continue;//继续循环
+                }
+                if(strtolower(Request::controller().'/'.Request::action())  == strtolower($item['url'])){
+                    $menus['main'][$key]['class']='current';
+                }
+            }
+
+            // 查找当前子菜单
+            $pid = db('Menu')->where("pid !=0 AND url like '%{$controller}/".Request::action()."%'")->value('pid');
+			dump($pid);
+            if($pid){
+                // 查找当前主菜单
+                $nav =  db('Menu')->find($pid);
+                if($nav['pid']){
+                    $nav    =   db('Menu')->find($nav['pid']);
+                }
+                foreach ($menus['main'] as $key => $item) {
+                    // 获取当前主菜单的子菜单项
+                    if($item['id'] == $nav['id']){
+                        $menus['main'][$key]['class']='current';
+                        //生成child树
+						$groups = db('Menu')->where([
+													['group','<>','']
+													,['pid','=',$item['id']]
+												])->distinct(true)->column("group");
+                        //获取二级分类的合法url
+                        $where          =   array();
+                        $where['pid']   =   $item['id'];
+                        $where['hide']  =   0;
+                        if(!config('DEVELOP_MODE')){ // 是否开发者模式
+                            $where['is_dev']    =   0;
+                        }
+                        $second_urls = db('Menu')->where($where)->column('id,url');
+
+                        if(!is_administrator()){
+                            // 检测菜单权限
+                            $to_check_urls = array();
+                            foreach ($second_urls as $key=>$to_check_url) {
+                                if( stripos($to_check_url,Request::module())!==0 ){
+                                    $rule = Request::module().'/'.$to_check_url;
+                                }else{
+                                    $rule = $to_check_url;
+                                }
+                                if($this->checkRule($rule, AuthRule::RULE_URL,null))
+                                    $to_check_urls[] = $to_check_url;
+                            }
+                        }
+                        // 按照分组生成子菜单树
+                        foreach ($groups as $g) {
+                            $map[] = ['group','=',$g];
+                            if(isset($to_check_urls)){
+                                if(empty($to_check_urls)){
+                                    // 没有任何权限
+                                    continue;
+                                }else{
+                                    $map[] = ['url','in',$to_check_urls];
+                                }
+                            }
+                            $map[]     =   ['pid','=',$item['id']];
+                            $map[]    =   ['hide','=',0];
+                            if(!config('DEVELOP_MODE')){ // 是否开发者模式
+								$map[] = ['is_dev','=',0];
+                            }
+                            $menuList = db('Menu')->where($map)->field('id,pid,title,url,tip')->order('sort asc')->select();
+                            $menus['child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
+                        }
+                    }
+                }
+            }
+            session('ADMIN_MENU_LIST.'.$controller,$menus);
+        }
+        return $menus;
+    }
+    /**
+     * 权限检测
+     * @param string  $rule    检测的规则
+     * @param string  $mode    check模式
+     * @return boolean
+     */
+    final protected function checkRule($rule, $type=AuthRule::RULE_URL, $mode='url'){
+        static $Auth    =   null;
+        //if (!$Auth) {
+        //    $Auth       =   new \think\Auth();
+        //}
+        //if(!$Auth->check($rule,UID,$type,$mode)){
+        //    return false;
+        //}
+        return true;
     }
 }
