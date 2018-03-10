@@ -10,6 +10,7 @@
 namespace app\admin\controller;
 use Request;
 use app\admin\controller\Admin;
+use Env;
 
 /**
  * 扩展插件后台管理页面
@@ -238,5 +239,15 @@ class Addons extends Admin {
         }else{
             $this->error('删除失败');
         }
+    }
+    //创建向导首页
+    public function create(){
+        if(!is_writable(Env::get('root_path').HEILPHP_ADDON_PATH))
+            $this->error('您没有创建目录写入权限，无法使用此功能');
+
+        $hooks = db('Hooks')->field('name,description')->select();
+        $this->assign('Hooks',$hooks);
+        $this->assign('meta_title','创建向导');
+		return view();
     }
 }
