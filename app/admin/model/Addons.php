@@ -71,52 +71,6 @@ class Addons extends Model {
         $addons = list_sort_by($addons,'uninstall','desc');
         return $addons;
     }
-	/***
-	 * 获取插件目录可用插件列表
-	 */
-	public function getAddonsDirs($addon_dir = ''){
-        if(!$addon_dir)
-            $addon_dir = Env::get('root_path').HEILPHP_ADDON_PATH;
-        $dirs = array_map('basename',glob($addon_dir.'*', GLOB_ONLYDIR));
-        if($dirs === FALSE || !file_exists($addon_dir)){
-            $this->error = '插件目录不可读或者不存在';
-            return FALSE;
-        }
-		else{
-			return $dirs;
-		}
-	}
-	/**
-	 * 更新插件安装状态
-	 */
-	public function updateAddonsInstallStatus($addon_dir = ''){
-		$dirs = $this->getAddonsDirs($addon_dir);
-		if($dirs === false){
-			return false;
-		}
-		$addons			=	array();
-		$where[]	=	['name','in',$dirs];
-		$list			=	$this->where($where)->field(true)->select()->toArray();
-		foreach($list as $addon){
-			$addon['uninstall']		=	0;
-			$addons[lcfirst($addon['name'])]	=	$addon;
-		}
-        foreach ($dirs as $value) {
-            if(!isset($addons[$value])){
-				$class = get_addon_class(ucfirst($value));
-				if(!class_exists($class)){ // 实例化插件失败忽略执行
-					\think\facade\Log::record('插件'.$value.'的入口文件不存在！');
-					continue;
-				}
-                $obj    =   new $class;
-				$addons[$value]	= $obj->info;
-				if($addons[$value]){
-					$addons[$value]['uninstall'] = 1;
-                    unset($addons[$value]['status']);
-				}
-			}
-        }
-	}
 
     /**
      * 获取插件的后台列表

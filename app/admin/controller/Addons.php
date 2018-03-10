@@ -28,26 +28,15 @@ class Addons extends Admin {
      */
     public function index(){
         $this->assign('meta_title','插件列表');
-		$mAddons = model('Addons');
-		$mAddons = $mAddons->updateAddonsInstallStatus();
-		$dirs = $mAddons->getAddonsDirs();
-		if($dirs === false){
-			$list = false;
-		}
-		else{
-			$map = ['name','in',$dirs];
-			$list = $this->getListing('Addons',$map,'uninstall desc');
-		}
         $list       =   model('Addons')->getList();
         $request    =   (array)Request::param();
         $total      =   $list? count($list) : 1 ;
         $listRows   =   config('LIST_ROWS') > 0 ? config('LIST_ROWS') : 10;
-        //$page       =   new \think\Page($total, $listRows, $request);
-        //$voList     =   array_slice($list, $page->firstRow, $page->listRows);
-        //$p          =   $page->show();
-        //$this->assign('_list', $voList);
-        $this->assign('_list', $list);
-        $this->assign('_page', '');//$p? $p: '');
+        $page       =   model('Addons')->paginate($listRows,$total);
+        $voList     =   array_slice($list, $listRows *($page->getCurrentPage()-1), $listRows);
+        $p          =   $page->render();
+        $this->assign('_list', $voList);
+        $this->assign('_page', $p? $p: '');
         // 记录当前列表页的cookie
         Cookie('__forward__',$_SERVER['REQUEST_URI']);
 		return view();
