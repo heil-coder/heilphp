@@ -265,7 +265,6 @@ class Admin extends Controller {
 
             // 查找当前子菜单
             $pid = db('Menu')->where("pid !=0 AND url like '%{$controller}/".Request::action()."%'")->value('pid');
-			dump($pid);
             if($pid){
                 // 查找当前主菜单
                 $nav =  db('Menu')->find($pid);
@@ -283,10 +282,10 @@ class Admin extends Controller {
 												])->distinct(true)->column("group");
                         //获取二级分类的合法url
                         $where          =   array();
-                        $where['pid']   =   $item['id'];
-                        $where['hide']  =   0;
+                        $where[]   =   ['pid','=',$item['id']];
+                        $where[]  =   ['hide','=',0];
                         if(!config('DEVELOP_MODE')){ // 是否开发者模式
-                            $where['is_dev']    =   0;
+                            $where[]    =   ['is_dev','=',0];
                         }
                         $second_urls = db('Menu')->where($where)->column('id,url');
 
@@ -305,6 +304,7 @@ class Admin extends Controller {
                         }
                         // 按照分组生成子菜单树
                         foreach ($groups as $g) {
+							$map = [];
                             $map[] = ['group','=',$g];
                             if(isset($to_check_urls)){
                                 if(empty($to_check_urls)){
