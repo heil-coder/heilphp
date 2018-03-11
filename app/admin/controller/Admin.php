@@ -213,8 +213,8 @@ class Admin extends Controller {
     /**
      * 设置一条或者多条数据的状态
      */
-    public function setStatus($Model){
-		empty($model) && $model = Request::module();
+    public function setStatus($model = ''){
+		empty($model) && $model = Request::controller();
         $ids    =   Request::param('ids');
         $status =   Request::param('status/d');
         if(empty($ids)){
@@ -224,13 +224,13 @@ class Admin extends Controller {
         $map[] = ['id','in',$ids];
         switch ($status){
             case -1 :
-                $this->delete($Model, $map, array('success'=>'删除成功','error'=>'删除失败'));
+                $this->delete($model, $map, array('success'=>'删除成功','error'=>'删除失败'));
                 break;
             case 0  :
-                $this->forbid($Model, $map, array('success'=>'禁用成功','error'=>'禁用失败'));
+                $this->forbid($model, $map, array('success'=>'禁用成功','error'=>'禁用失败'));
                 break;
             case 1  :
-                $this->resume($Model, $map, array('success'=>'启用成功','error'=>'启用失败'));
+                $this->resume($model, $map, array('success'=>'启用成功','error'=>'启用失败'));
                 break;
             default :
                 $this->error('参数错误');
