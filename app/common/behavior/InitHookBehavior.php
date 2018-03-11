@@ -28,11 +28,6 @@ class InitHookBehavior{
             $rootPath = realpath($path . '/../') . '/';
         }
 
-		$autoloadNamespace = config::get('heilphp.AUTOLOAD_NAMESPACE');
-		foreach($autoloadNamespace as $key => $value){
-			Loader::addAutoLoadDir($rootPath . $value);
-		}
-        
 		cache('hooks',null);
         $data = cache('hooks');
         if(!$data){

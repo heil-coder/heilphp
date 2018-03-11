@@ -12,7 +12,3 @@
 // HeilPHP常量定义
 const HEILPHP_VERSION    = '0.01';
 const HEILPHP_ADDON_PATH = './addons/';
-
-return [
-    'AUTOLOAD_NAMESPACE' => array('addons' => HEILPHP_ADDON_PATH), //扩展模块列表
-];
