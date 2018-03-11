@@ -346,28 +346,52 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | status| tinyint(1) unsigned|否|1|--|状态｜
 | create_time| bigint(10) unsigned|否|0|--|执行行为的时间｜
 
-
-## action_log 行为日志表
+## model 模型表
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | id | int(10) unsigned|否|无|是|模型id，自增主键| 
-  `name` char(30) NOT NULL DEFAULT '' COMMENT '模型标识',
-  `title` char(30) NOT NULL DEFAULT '' COMMENT '模型名称',
-  `extend` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '继承的模型',
-  `relation` varchar(30) NOT NULL DEFAULT '' COMMENT '继承与被继承模型的关联字段',
-  `need_pk` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '新建表时是否需要主键字段',
-  `field_sort` text NULL  COMMENT '表单字段排序',
-  `field_group` varchar(255) NOT NULL DEFAULT '1:基础' COMMENT '字段分组',
-  `attribute_list` text NULL  COMMENT '属性列表（表的字段）',
-  `attribute_alias` varchar(255) NOT NULL DEFAULT '' COMMENT '属性别名定义',
-  `template_list` varchar(100) NOT NULL DEFAULT '' COMMENT '列表模板',
-  `template_add` varchar(100) NOT NULL DEFAULT '' COMMENT '新增模板',
-  `template_edit` varchar(100) NOT NULL DEFAULT '' COMMENT '编辑模板',
-  `list_grid` text NULL  COMMENT '列表定义',
-  `list_row` smallint(2) unsigned NOT NULL DEFAULT '10' COMMENT '列表数据长度',
-  `search_key` varchar(50) NOT NULL DEFAULT '' COMMENT '默认搜索字段',
-  `search_list` varchar(255) NOT NULL DEFAULT '' COMMENT '高级搜索的字段',
-  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
-  `engine_type` varchar(25) NOT NULL DEFAULT 'MyISAM' COMMENT '数据库引擎',
+| name| varchar(30) |否|''|--|模型标识| 
+| title| varchar(30) |否|''|--|模型名称| 
+| extend| int(10) |否|0|--|继承的模型| 
+| relation| varchar(30) |否|''|--|继承与被继承模型的关联字段| 
+| need_pk| tinyint(1) unsigned|否|1|--|新建表时是否需要主键字段| 
+| field_sort| text|是|null|--|表单字段排序| 
+| field_group| varchar(255)|否|1:基础|--|字段分组| 
+| attribute_list|text |是|null|--|属性列表（表的字段）| 
+| attribute_alias|varchar(255)|否|''|--|属性别名定义| 
+| template_list|varchar(100)|否|''|--|列表模板| 
+| template_add|varchar(100)|否|''|--|新增模板| 
+| template_edit|varchar(100)|否|''|--|编辑模板| 
+| list_grid|text|是|null|--|列表定义| 
+| list_row|smallint(2) unsigned|否|10|--|列表数据长度| 
+| search_key|varchar(50) |否|''|--|默认搜索字段| 
+| search_list|varchar(255|否|''|--｜高级搜索的字段|
+| create_time|bigint(10) unsigned|否|0|--｜创建时间|
+| update_time|bigint(10) unsigned|否|0|--｜更新时间|
+| status |tinyint(1) unsigned|否|0|--｜状态|
+| engine_type|varchar(25)|否|'MyISAM'|--｜数据库引擎|
+
+## attribute 模型属性表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|属性id，自增主键| 
+| name| varchar(30) |否|''|--|字段名| 
+| title| varchar(100) |否|''|--|字段注释| 
+| field| varchar(100) |否|''|--|字段定义| 
+| type| varchar(20) |否|''|--|数据类型| 
+| value| varchar(100) |否|''|--|字段默认值| 
+| remark| varchar(100) |否|''|--|备注| 
+| is_show| tinyint(1) unsigned|否|1|--|是否显示 0:不显示　1:显示| 
+| extra| varchar(255) |否|''|--|参数| 
+| model_id| int(10) unsigned|否|0|--|模型id| 
+| is_must| tinyint(1) unsigned|否|0|--|是否必填 0:选填　1:必填| 
+| status| tinyint(1) unsigned|否|0|--|状态| 
+| create_time| bigint(10) unsigned|否|0|--|创建时间| 
+| update_time| bigint(10) unsigned|否|0|--|更新时间| 
+| validate_rule| varchar(255)|否|''|--|验证规则| 
+| validate_time| tinyint(1) unsigned|否|0|--|验证时间 1:新增 2:编辑 3:始终| 
+| error_info| varchar(100)|否|''|--|错误提示| 
+| validate_type| varchar(25)|否|''|--|验证方式| 
+| auto_rule| varchar(100)|否|''|--|自动完成规则| 
+| auto_time| tinyint(1) unsigned|否|0|--|自动完成时间 1:新增 2:编辑 3:始终| 
+| auto_type| varchar(25)|否|''|--|自动完成方式| 

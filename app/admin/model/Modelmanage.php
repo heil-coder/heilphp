@@ -144,7 +144,7 @@ class Modelmanage extends Model{
         //删除属性数据
         db('Attribute')->where('model_id',$id)->delete();
         //删除模型数据
-        $this->delete($id);
+        $this->get($id)->delete();
         //删除该表
         $sql = <<<sql
                 DROP TABLE {$table_name};

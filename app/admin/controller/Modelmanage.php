@@ -29,4 +29,23 @@ class Modelmanage extends Admin {
         $this->assign('meta_title','模型管理');
 		return view();
     }
+    /**
+     * 删除一条数据
+     */
+    public function del(){
+        $ids = Request::param('ids');
+        empty($ids) && $this->error('参数不能为空！');
+        $ids = explode(',', $ids);
+        foreach ($ids as $value){
+            $res = model('Modelmanage')->del($value);
+            if(!$res){
+                break;
+            }
+        }
+        if(!$res){
+            $this->error(model('Modelmanage')->getError());
+        }else{
+            $this->success('删除模型成功！');
+        }
+    }
 }

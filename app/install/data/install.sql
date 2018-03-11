@@ -392,8 +392,8 @@ CREATE TABLE `heilphp_action_log` (
 DROP TABLE IF EXISTS `heilphp_model`;
 CREATE TABLE `heilphp_model` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '模型ID',
-  `name` char(30) NOT NULL DEFAULT '' COMMENT '模型标识',
-  `title` char(30) NOT NULL DEFAULT '' COMMENT '模型名称',
+  `name` varchar(30) NOT NULL DEFAULT '' COMMENT '模型标识',
+  `title` varchar(30) NOT NULL DEFAULT '' COMMENT '模型名称',
   `extend` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '继承的模型',
   `relation` varchar(30) NOT NULL DEFAULT '' COMMENT '继承与被继承模型的关联字段',
   `need_pk` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '新建表时是否需要主键字段',
@@ -421,3 +421,69 @@ CREATE TABLE `heilphp_model` (
 INSERT INTO `heilphp_model` VALUES ('1', 'document', '基础文档', '0', '', '1', '{\"1\":[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\",\"10\",\"11\",\"12\",\"13\",\"14\",\"15\",\"16\",\"17\",\"18\",\"19\",\"20\",\"21\",\"22\"]}', '1:基础', '', '','', '', '', 'id:编号\r\ntitle:标题:[EDIT]\r\ntype:类型\r\nupdate_time:最后更新\r\nstatus:状态\r\nview:浏览\r\nid:操作:[EDIT]|编辑,[DELETE]|删除', '0', '', '', '1383891233', '1384507827', '1', 'MyISAM');
 INSERT INTO `heilphp_model` VALUES ('2', 'article', '文章', '1', '', '1', '{\"1\":[\"3\",\"24\",\"2\",\"5\"],\"2\":[\"9\",\"13\",\"19\",\"10\",\"12\",\"16\",\"17\",\"26\",\"20\",\"14\",\"11\",\"25\"]}', '1:基础,2:扩展', '','', '', '', '', '', '0', '', '', '1383891243', '1387260622', '1', 'MyISAM');
 INSERT INTO `heilphp_model` VALUES ('3', 'download', '下载', '1', '', '1', '{\"1\":[\"3\",\"28\",\"30\",\"32\",\"2\",\"5\",\"31\"],\"2\":[\"13\",\"10\",\"27\",\"9\",\"12\",\"16\",\"17\",\"19\",\"11\",\"20\",\"14\",\"29\"]}', '1:基础,2:扩展', '', '','', '', '', '', '0', '', '', '1383891252', '1387260449', '1', 'MyISAM');
+
+-- -----------------------------
+-- Table structure for `heilphp_attribute`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_attribute`;
+CREATE TABLE `heilphp_attribute` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL DEFAULT '' COMMENT '字段名',
+  `title` varchar(100) NOT NULL DEFAULT '' COMMENT '字段注释',
+  `field` varchar(100) NOT NULL DEFAULT '' COMMENT '字段定义',
+  `type` varchar(20) NOT NULL DEFAULT '' COMMENT '数据类型',
+  `value` varchar(100) NOT NULL DEFAULT '' COMMENT '字段默认值',
+  `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
+  `is_show` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否显示',
+  `extra` varchar(255) NOT NULL DEFAULT '' COMMENT '参数',
+  `model_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型id',
+  `is_must` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否必填',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `validate_rule` varchar(255) NOT NULL DEFAULT '',
+  `validate_time` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `error_info` varchar(100) NOT NULL DEFAULT '',
+  `validate_type` varchar(25) NOT NULL DEFAULT '',
+  `auto_rule` varchar(100) NOT NULL DEFAULT '',
+  `auto_time` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `auto_type` varchar(25) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+    KEY `model_id` (`model_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8 COMMENT='模型属性表';
+
+-- -----------------------------
+-- Records of `heilphp_attribute`
+-- -----------------------------
+INSERT INTO `heilphp_attribute` VALUES ('1', 'uid', '用户ID', 'int(10) unsigned NOT NULL ', 'num', '0', '', '0', '', '1', '0', '1', '1383891233', '1384508362','', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('2', 'name', '标识', 'char(40) NOT NULL ', 'string', '', '同一根节点下标识不重复', '1', '', '1', '0', '1', '1383891233', '1383894743', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('3', 'title', '标题', 'char(80) NOT NULL ', 'string', '', '文档标题', '1', '', '1', '0', '1', '1383891233', '1383894778', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('4', 'category_id', '所属分类', 'int(10) unsigned NOT NULL ', 'string', '', '', '0', '', '1', '0', '1', '1383891233', '1384508336', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('5', 'description', '描述', 'char(140) NOT NULL ', 'textarea', '', '', '1', '', '1', '0', '1', '1383891233', '1383894927', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('6', 'root', '根节点', 'int(10) unsigned NOT NULL ', 'num', '0', '该文档的顶级文档编号', '0', '', '1', '0', '1', '1383891233', '1384508323', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('7', 'pid', '所属ID', 'int(10) unsigned NOT NULL ', 'num', '0', '父文档编号', '0', '', '1', '0', '1', '1383891233', '1384508543', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('8', 'model_id', '内容模型ID', 'tinyint(3) unsigned NOT NULL ', 'num', '0', '该文档所对应的模型', '0', '', '1', '0', '1', '1383891233', '1384508350', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('9', 'type', '内容类型', 'tinyint(3) unsigned NOT NULL ', 'select', '2', '', '1', '1:目录\r\n2:主题\r\n3:段落', '1', '0', '1', '1383891233', '1384511157', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('10', 'position', '推荐位', 'smallint(5) unsigned NOT NULL ', 'checkbox', '0', '多个推荐则将其推荐值相加', '1', '[DOCUMENT_POSITION]', '1', '0', '1', '1383891233', '1383895640', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('11', 'link_id', '外链', 'int(10) unsigned NOT NULL ', 'num', '0', '0-非外链，大于0-外链ID,需要函数进行链接与编号的转换', '1', '', '1', '0', '1', '1383891233', '1383895757', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('12', 'cover_id', '封面', 'int(10) unsigned NOT NULL ', 'picture', '0', '0-无封面，大于0-封面图片ID，需要函数处理', '1', '', '1', '0', '1', '1383891233', '1384147827', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('13', 'display', '可见性', 'tinyint(3) unsigned NOT NULL ', 'radio', '1', '', '1', '0:不可见\r\n1:所有人可见', '1', '0', '1', '1383891233', '1386662271', '', '0', '', 'regex', '', '0', 'function');
+INSERT INTO `heilphp_attribute` VALUES ('14', 'deadline', '截至时间', 'int(10) unsigned NOT NULL ', 'datetime', '0', '0-永久有效', '1', '', '1', '0', '1', '1383891233', '1387163248', '', '0', '', 'regex', '', '0', 'function');
+INSERT INTO `heilphp_attribute` VALUES ('15', 'attach', '附件数量', 'tinyint(3) unsigned NOT NULL ', 'num', '0', '', '0', '', '1', '0', '1', '1383891233', '1387260355', '', '0', '', 'regex', '', '0', 'function');
+INSERT INTO `heilphp_attribute` VALUES ('16', 'view', '浏览量', 'int(10) unsigned NOT NULL ', 'num', '0', '', '1', '', '1', '0', '1', '1383891233', '1383895835', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('17', 'comment', '评论数', 'int(10) unsigned NOT NULL ', 'num', '0', '', '1', '', '1', '0', '1', '1383891233', '1383895846', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('18', 'extend', '扩展统计字段', 'int(10) unsigned NOT NULL ', 'num', '0', '根据需求自行使用', '0', '', '1', '0', '1', '1383891233', '1384508264', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('19', 'level', '优先级', 'int(10) unsigned NOT NULL ', 'num', '0', '越高排序越靠前', '1', '', '1', '0', '1', '1383891233', '1383895894', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('20', 'create_time', '创建时间', 'int(10) unsigned NOT NULL ', 'datetime', '0', '', '1', '', '1', '0', '1', '1383891233', '1383895903', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('21', 'update_time', '更新时间', 'int(10) unsigned NOT NULL ', 'datetime', '0', '', '0', '', '1', '0', '1', '1383891233', '1384508277', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('22', 'status', '数据状态', 'tinyint(4) NOT NULL ', 'radio', '0', '', '0', '-1:删除\r\n0:禁用\r\n1:正常\r\n2:待审核\r\n3:草稿', '1', '0', '1', '1383891233', '1384508496', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('23', 'parse', '内容解析类型', 'tinyint(3) unsigned NOT NULL ', 'select', '0', '', '0', '0:html\r\n1:ubb\r\n2:markdown', '2', '0', '1', '1383891243', '1384511049', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('24', 'content', '文章内容', 'text NOT NULL ', 'editor', '', '', '1', '', '2', '0', '1', '1383891243', '1383896225', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('25', 'template', '详情页显示模板', 'varchar(100) NOT NULL ', 'string', '', '参照display方法参数的定义', '1', '', '2', '0', '1', '1383891243', '1383896190', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('26', 'bookmark', '收藏数', 'int(10) unsigned NOT NULL ', 'num', '0', '', '1', '', '2', '0', '1', '1383891243', '1383896103', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('27', 'parse', '内容解析类型', 'tinyint(3) unsigned NOT NULL ', 'select', '0', '', '0', '0:html\r\n1:ubb\r\n2:markdown', '3', '0', '1', '1383891252', '1387260461', '', '0', '', 'regex', '', '0', 'function');
+INSERT INTO `heilphp_attribute` VALUES ('28', 'content', '下载详细描述', 'text NOT NULL ', 'editor', '', '', '1', '', '3', '0', '1', '1383891252', '1383896438', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('29', 'template', '详情页显示模板', 'varchar(100) NOT NULL ', 'string', '', '', '1', '', '3', '0', '1', '1383891252', '1383896429', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('30', 'file_id', '文件ID', 'int(10) unsigned NOT NULL ', 'file', '0', '需要函数处理', '1', '', '3', '0', '1', '1383891252', '1383896415', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('31', 'download', '下载次数', 'int(10) unsigned NOT NULL ', 'num', '0', '', '1', '', '3', '0', '1', '1383891252', '1383896380', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('32', 'size', '文件大小', 'bigint(20) unsigned NOT NULL ', 'num', '0', '单位bit', '1', '', '3', '0', '1', '1383891252', '1383896371', '', '0', '', '', '', '0', '');
