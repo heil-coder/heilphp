@@ -30,6 +30,29 @@ class Modelmanage extends Admin {
 		return view();
     }
     /**
+     * 新增页面初始化
+     */
+    public function add(){
+        //获取所有的模型
+        $models = db('Model')->where('extend',0)->field('id,title')->select();
+
+        $this->assign('models', $models);
+        $this->assign('meta_title','新增模型');
+		return view();
+    }
+    /**
+     * 更新一条数据
+     */
+    public function update(){
+        $res = model('Modelmanage')->edit();
+
+        if(!$res){
+            $this->error(model('Modelmanage')->getError());
+        }else{
+            $this->success($res['id']?'更新成功':'新增成功', Cookie('__forward__'));
+        }
+    }
+    /**
      * 删除一条数据
      */
     public function del(){

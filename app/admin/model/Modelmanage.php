@@ -9,6 +9,7 @@
 
 namespace app\admin\model;
 use think\Model;
+use Request;
 
 /**
  * 文档基础模型
@@ -44,20 +45,21 @@ class Modelmanage extends Model{
      */
     public function edit(){
         /* 获取数据对象 */
-        $data = $this->create();
+        $data = Request::only('id,name,title,extend,engine_type,need_pk');
         if(empty($data)){
             return false;
         }
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = $this->add(); //添加基础内容
+            $id = $this->save($data); //添加基础内容
             if(!$id){
                 $this->error = '新增模型出错！';
                 return false;
             }
+			$data['id'] = $this->id;
         } else { //更新数据
-            $status = $this->save(); //更新基础内容
+            $status = $this->get($data['id'])->save($data); //更新基础内容
             if(false === $status){
                 $this->error = '更新模型出错！';
                 return false;
