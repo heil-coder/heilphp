@@ -125,7 +125,7 @@ class Admin extends Controller {
 		$table = model($model)->getTable();
 		$fields = model($model)->getConnection()->getTableFields($table);
         if(in_array('id',$fields) && !empty($id)){
-			$where['id'] =  ['id','in', $id];
+			$where[] =  ['id','in', $id];
         }
 
         $msg   = array_merge( array( 'success'=>'操作成功！', 'error'=>'操作失败！', 'url'=>'' ,'ajax'=>Request::isAjax()) , (array)$msg );
