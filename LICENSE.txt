@@ -2,7 +2,12 @@ HeilPHP 遵循Apache2开源协议发布，并提供免费使用。
 版权所有Copyright © 2018 by HeilPHP (http://www.heilphp.com)
 All rights reserved。
 HeilPHP 著作权所有者为HeilPHP开发团队所有。
-HeilPHP基于ThinkPHP开发。
+HeilPHP基于ThinkPHP和OneThink开发。
+
+——————————————————————————
+OneThink遵循Apache2开源协议发布，并提供免费使用。
+版权所有Copyright © 2013 上海顶想信息科技有限公司 (http://www.onethink.cn)
+OneThink 商标和著作权所有者为上海顶想信息科技有限公司。
 
 ———————————————————————————————————————————————
 ThinkPHP遵循Apache2开源协议发布，并提供免费使用。
