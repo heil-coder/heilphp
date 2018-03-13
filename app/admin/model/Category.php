@@ -146,7 +146,7 @@ class Category extends Model{
 
         /* 添加或更新数据 */
         if(empty($data['id'])){
-            $res = $this->add($data);
+            $res = $this->save($data);
         }else{
 			$res = $this->get($data['id'])->save($data);
         }
