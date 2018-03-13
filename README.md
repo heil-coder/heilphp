@@ -337,14 +337,14 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | id | int(10) unsigned|否|无|是|行为日志id，自增主键| 
-| action_id|int(10) unsigned |否｜0|--|行为id|
-| user_id|int(10) unsigned |否｜0|--|执行用户id|
-| action_ip|bigint(20)|否｜无｜--｜执行行为者id|
-| model|varchar(50)|否｜''｜--｜触发行为的表|
-| record_id|int(10) unsigned|否｜0｜--｜触发行为的数据id|
-| remark| varchar(255)|否|''|--|日志备注｜
-| status| tinyint(1) unsigned|否|1|--|状态｜
-| create_time| bigint(10) unsigned|否|0|--|执行行为的时间｜
+| action_id|int(10) unsigned |否|0|--|行为id|
+| user_id|int(10) unsigned |否|0|--|执行用户id|
+| action_ip|bigint(20)|否|无|--|执行行为者id|
+| model|varchar(50)|否|''|--|触发行为的表|
+| record_id|int(10) unsigned|否|0|--|触发行为的数据id|
+| remark| varchar(255)|否|''|--|日志备注|
+| status| tinyint(1) unsigned|否|1|--|状态|
+| create_time| bigint(10) unsigned|否|0|--|执行行为的时间|
 
 ## model 模型表
 |字段|类型|允许为空|默认值|自动递增|注释|
@@ -365,11 +365,11 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | list_grid|text|是|null|--|列表定义| 
 | list_row|smallint(2) unsigned|否|10|--|列表数据长度| 
 | search_key|varchar(50) |否|''|--|默认搜索字段| 
-| search_list|varchar(255|否|''|--｜高级搜索的字段|
-| create_time|bigint(10) unsigned|否|0|--｜创建时间|
-| update_time|bigint(10) unsigned|否|0|--｜更新时间|
-| status |tinyint(1) unsigned|否|0|--｜状态|
-| engine_type|varchar(25)|否|'MyISAM'|--｜数据库引擎|
+| search_list|varchar(255|否|''|--|高级搜索的字段|
+| create_time|bigint(10) unsigned|否|0|--|创建时间|
+| update_time|bigint(10) unsigned|否|0|--|更新时间|
+| status |tinyint(1) unsigned|否|0|--|状态|
+| engine_type|varchar(25)|否|'MyISAM'|--|数据库引擎|
 
 ## attribute 模型属性表
 |字段|类型|允许为空|默认值|自动递增|注释|
