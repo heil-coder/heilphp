@@ -478,7 +478,7 @@ label.textarea ~ .check-tips {
     text-decoration: none;
     background-color: #387C0B;
 }
-.page .current {
+.page .active span{
 	border-top: 1px solid #387C0B;
 }
 .page .next,
