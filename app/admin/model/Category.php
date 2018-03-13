@@ -9,6 +9,7 @@
 
 namespace app\admin\model;
 use think\Model;
+use Request;
 
 /**
  * 分类模型
@@ -19,19 +20,24 @@ class Category extends Model{
     /* 自动完成规则 */
 	protected $auto = ['model','model_sub','type','reply_model','extend','status'=>1];
 	protected function setModelAttr($value){
-		return is_null($value) ? null : arr2str($value);
+		if (is_null($value)) return null;
+		return is_array($value) ? arr2str($value) : $value;
 	}
 	protected function setModel_subAttr($value){
-		return is_null($value) ? null : arr2str($value);
+		if (is_null($value)) return null;
+		return is_array($value) ? arr2str($value) : $value;
 	}
 	protected function setTypeAttr($value){
-		return is_null($value) ? null : arr2str($value);
+		if (is_null($value)) return null;
+		return is_array($value) ? arr2str($value) : $value;
 	}
 	protected function setReply_modelAttr($value){
-		return is_null($value) ? null : arr2str($value);
+		if (is_null($value)) return null;
+		return is_array($value) ? arr2str($value) : $value;
 	}
 	protected function setExtendAttr($value){
-		return is_null($value) ? null : json_encode($value);
+		if (is_null($value)) return null;
+		return is_array($value) ? arr2str($value) : $value;
 	}
 
 
@@ -123,9 +129,9 @@ class Category extends Model{
 
         /* 添加或更新数据 */
         if(empty($data['id'])){
-            $res = $this->add();
+            $res = $this->add($data);
         }else{
-            $res = $this->save();
+            $res = $this->get($data['id'])->save($data);
         }
 
         //更新分类缓存

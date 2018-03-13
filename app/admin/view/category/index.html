@@ -54,7 +54,7 @@
 						function(data){
 							/* 提示信息 */
 							var name = data.status ? "success" : "error", msg;
-							msg = self.find(".msg").addClass(name).text(data.info)
+							msg = self.find(".msg").addClass(name).text(data.msg)
 									  .css("display", "inline-block");
 							setTimeout(function(){
 								msg.fadeOut(function(){
