@@ -19,6 +19,7 @@ class Category extends Model{
 
     /* 自动完成规则 */
 	protected $auto = ['model','model_sub','type','reply_model','extend','status'=>1];
+	//修改器
 	protected function setModelAttr($value){
 		if (is_null($value)) return null;
 		return is_array($value) ? arr2str($value) : $value;
@@ -38,6 +39,22 @@ class Category extends Model{
 	protected function setExtendAttr($value){
 		if (is_null($value)) return null;
 		return is_array($value) ? arr2str($value) : $value;
+	}
+	//获取器
+	protected function getModelAttr($value){
+        return empty($value) ? $value : explode(',', $value);
+	}
+	protected function getModel_subAttr($value){
+        return empty($value) ? $value : explode(',', $value);
+	}
+	protected function getTypeAttr($value){
+        return empty($value) ? $value : explode(',', $value);
+	}
+	protected function getReplyAttr($value){
+        return empty($value) ? $value : explode(',', $value);
+	}
+	protected function getExtendAttr($value){
+        return empty($value) ? $value : explode(',', $value);
 	}
 
 
@@ -142,41 +159,4 @@ class Category extends Model{
 
         return $res;
     }
-
-    /**
-     * 查询后解析扩展信息
-     * @param  array $data 分类数据
-     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
-     */
-    protected function _after_find(&$data, $options){
-        /* 分割模型 */
-        if(!empty($data['model'])){
-            $data['model'] = explode(',', $data['model']);
-        }
-
-        if(!empty($data['model_sub'])){
-            $data['model_sub'] = explode(',', $data['model_sub']);
-        }
-
-        /* 分割文档类型 */
-        if(!empty($data['type'])){
-            $data['type'] = explode(',', $data['type']);
-        }
-
-        /* 分割模型 */
-        if(!empty($data['reply_model'])){
-            $data['reply_model'] = explode(',', $data['reply_model']);
-        }
-
-        /* 分割文档类型 */
-        if(!empty($data['reply_type'])){
-            $data['reply_type'] = explode(',', $data['reply_type']);
-        }
-
-        /* 还原扩展数据 */
-        if(!empty($data['extend'])){
-            $data['extend'] = json_decode($data['extend'], true);
-        }
-    }
-
 }

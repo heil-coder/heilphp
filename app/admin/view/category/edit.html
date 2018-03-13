@@ -238,8 +238,8 @@ function uploadPicture(file, data){
 		{present name="info.id"}
 		Think.setValue("allow_publish", {$info.allow_publish|default=1});
 		Think.setValue("check", {$info.check|default=0});
-		Think.setValue("model[]", {$info.model} || [1]);
-		Think.setValue("model_sub[]", {$info.model_sub} || [1]);
+		Think.setValue("model[]", {$info.model|json_encode} || [1]);
+		Think.setValue("model_sub[]", {$info.model_sub|json_encode} || [1]);
 		Think.setValue("type[]", {$info.type|json_encode} || [2]);
 		Think.setValue("display", {$info.display|default=1});
 		Think.setValue("reply", {$info.reply|default=0});
