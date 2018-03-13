@@ -219,14 +219,14 @@ $("#upload_picture").uploadify({
 function uploadPicture(file, data){
 	var data = $.parseJSON(data);
 	var src = '';
-	if(data.status){
+	if(data.code){
 		$("#icon").val(data.id);
 		src = data.url || '__ROOT__' + data.path;
 		$("#icon").parent().find('.upload-img-box').html(
 				'<div class="upload-pre-item"><img src="' + src + '"/></div>'
 				);
 	} else {
-		updateAlert(data.info);
+		updateAlert(data.msg);
 		setTimeout(function(){
 			$('#top-alert').find('button').click();
 			$(that).removeClass('disabled').prop('disabled',false);
