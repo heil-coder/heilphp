@@ -24,7 +24,7 @@ class Category extends Model{
 		if (is_null($value)) return null;
 		return is_array($value) ? arr2str($value) : $value;
 	}
-	protected function setModel_subAttr($value){
+	protected function setModelSubAttr($value){
 		if (is_null($value)) return null;
 		return is_array($value) ? arr2str($value) : $value;
 	}
@@ -139,7 +139,7 @@ class Category extends Model{
      * @return boolean 更新状态
      */
     public function edit(){
-        $data = Request::param('');//$this->create();
+        $data = Request::param();
         if(!$data){ //数据对象创建错误
             return false;
         }
@@ -148,7 +148,7 @@ class Category extends Model{
         if(empty($data['id'])){
             $res = $this->add($data);
         }else{
-            $res = $this->get($data['id'])->save($data);
+			$res = $this->get($data['id'])->save($data);
         }
 
         //更新分类缓存

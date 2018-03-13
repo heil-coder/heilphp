@@ -24,10 +24,10 @@ class Modelmanage extends Model{
 	protected function setNameAttr($value){
 		return strtolower($value);
 	}
-	protected function setField_sortAttr($value){
+	protected function setFieldSortAttr($value){
         return empty($value) ? '' : json_encode($value);
 	}
-	protected function setAttribute_listAttr($value){
+	protected function setAttributeListAttr($value){
         return empty($value) ? '' : implode(',', $value);
 	}
 
