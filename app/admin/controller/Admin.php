@@ -22,6 +22,13 @@ class Admin extends Controller {
      * 后台控制器初始化
      */
     protected function initialize(){
+        // 获取当前用户ID
+        if(defined('UID')) return ;
+        define('UID',is_login() ? 1 : 1);
+        if( !UID ){// 还没登录 跳转到登录页面
+            $this->redirect('Public/login');
+        }
+
         /* 读取数据库中的配置 */
         $config =   cache('DB_CONFIG_DATA');
         if(!$config){
@@ -344,5 +351,39 @@ class Admin extends Controller {
         //    return false;
         //}
         return true;
+    }
+    /**
+     * 处理文档列表显示
+     * @param array $list 列表数据
+     * @param integer $model_id 模型id
+     */
+    protected function parseDocumentList($list,$model_id=null){
+        $model_id = $model_id ? $model_id : 1;
+        $attrList = get_model_attribute($model_id,false,'id,name,type,extra');
+        // 对列表数据进行显示处理
+        if(is_array($list)){
+            foreach ($list as $k=>$data){
+                foreach($data as $key=>$val){
+                    if(isset($attrList[$key])){
+                        $extra      =   $attrList[$key]['extra'];
+                        $type       =   $attrList[$key]['type'];
+                        if('select'== $type || 'checkbox' == $type || 'radio' == $type || 'bool' == $type) {
+                            // 枚举/多选/单选/布尔型
+                            $options    =   parse_field_attr($extra);
+                            if($options && array_key_exists($val,$options)) {
+                                $data[$key]    =   $options[$val];
+                            }
+                        }elseif('date'==$type){ // 日期型
+                            $data[$key]    =   date('Y-m-d',$val);
+                        }elseif('datetime' == $type){ // 时间型
+                            $data[$key]    =   date('Y-m-d H:i',$val);
+                        }
+                    }
+                }
+                $data['model_id'] = $model_id;
+                $list[$k]   =   $data;
+            }
+        }
+        return $list;
     }
 }

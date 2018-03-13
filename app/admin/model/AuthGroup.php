@@ -28,4 +28,48 @@ class AuthGroup extends Model {
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
 
+    /**
+     * 返回用户拥有管理权限的扩展数据id列表
+     *
+     * @param int     $uid  用户id
+     * @param int     $type 扩展数据标识
+     * @param int     $session  结果缓存标识
+     * @return array
+     *
+     *  array(2,4,8,13)
+     *
+     */
+    static public function getAuthExtend($uid,$type,$session){
+        if ( !$type ) {
+            return false;
+        }
+        if ( $session ) {
+            $result = session($session);
+        }
+        if ( $uid == UID && !empty($result) ) {
+            return $result;
+        }
+        $prefix = config('database.prefix');
+        $result = db()
+            ->table($prefix.self::AUTH_GROUP_ACCESS.' g')
+            ->join($prefix.self::AUTH_EXTEND.' c ','g.group_id=c.group_id')
+            ->where("g.uid='$uid' and c.type='$type' and !isnull(extend_id)")
+            ->column('extend_id');
+        if ( $uid == UID && $session ) {
+            session($session,$result);
+        }
+        return $result;
+    }
+    /**
+     * 返回用户拥有管理权限的分类id列表
+     *
+     * @param int     $uid  用户id
+     * @return array
+     *
+     *  array(2,4,8,13)
+     *
+     */
+    static public function getAuthCategories($uid){
+        return self::getAuthExtend($uid,self::AUTH_EXTEND_CATEGORY_TYPE,'AUTH_CATEGORY');
+    }
 }

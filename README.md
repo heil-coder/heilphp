@@ -395,3 +395,67 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | auto_rule| varchar(100)|否|''|--|自动完成规则| 
 | auto_time| tinyint(1) unsigned|否|0|--|自动完成时间 1:新增 2:编辑 3:始终| 
 | auto_type| varchar(25)|否|''|--|自动完成方式| 
+
+
+## category 模型属性表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|分类id，自增主键| 
+
+  `name` varchar(30) NOT NULL COMMENT '标志',
+  `title` varchar(50) NOT NULL COMMENT '标题',
+  `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上级分类ID',
+  `sort` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '排序（同级有效）',
+  `list_row` tinyint(3) unsigned NOT NULL DEFAULT '10' COMMENT '列表每页行数',
+  `meta_title` varchar(50) NOT NULL DEFAULT '' COMMENT 'SEO的网页标题',
+  `keywords` varchar(255) NOT NULL DEFAULT '' COMMENT '关键字',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+  `template_index` varchar(100) NOT NULL DEFAULT '' COMMENT '频道页模板',
+  `template_lists` varchar(100) NOT NULL DEFAULT '' COMMENT '列表页模板',
+  `template_detail` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页模板',
+  `template_edit` varchar(100) NOT NULL DEFAULT '' COMMENT '编辑页模板',
+  `model` varchar(100) NOT NULL DEFAULT '' COMMENT '列表绑定模型',
+  `model_sub` varchar(100) NOT NULL DEFAULT '' COMMENT '子文档绑定模型',
+  `type` varchar(100) NOT NULL DEFAULT '' COMMENT '允许发布的内容类型',
+  `link_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '外链',
+  `allow_publish` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否允许发布内容',
+  `display` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '可见性',
+  `reply` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否允许回复',
+  `check` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '发布的文章是否需要审核',
+  `reply_model` varchar(100) NOT NULL DEFAULT '',
+  `extend` text NULL  COMMENT '扩展设置',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据状态',
+  `icon` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '分类图标',
+  `groups` varchar(255) NOT NULL DEFAULT '' COMMENT '分组定义',
+  PRIMARY KEY (`id`),
+
+## document 文档模型基础表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|无|是|文档id，自增主键| 
+
+  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `name` char(40) NOT NULL DEFAULT '' COMMENT '标识',
+  `title` char(80) NOT NULL DEFAULT '' COMMENT '标题',
+  `category_id` int(10) unsigned NOT NULL COMMENT '所属分类',
+  `group_id` smallint(3) unsigned NOT NULL COMMENT '所属分组',
+  `description` char(140) NOT NULL DEFAULT '' COMMENT '描述',
+  `root` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '根节点',
+  `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '所属ID',
+  `model_id` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '内容模型ID',
+  `type` tinyint(3) unsigned NOT NULL DEFAULT '2' COMMENT '内容类型',
+  `position` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '推荐位',
+  `link_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '外链',
+  `cover_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '封面',
+  `display` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '可见性',
+  `deadline` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '截至时间',
+  `attach` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '附件数量',
+  `view` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览量',
+  `comment` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论数',
+  `extend` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '扩展统计字段',
+  `level` int(10) NOT NULL DEFAULT '0' COMMENT '优先级',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据状态',

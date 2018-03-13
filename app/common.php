@@ -272,3 +272,113 @@ function get_document_model($id = null, $field = null){
         return $list[$id][$field];
     }
 }
+
+/**
+ * 获取分类信息并缓存分类
+ * @param  integer $id    分类ID
+ * @param  string  $field 要获取的字段名
+ * @return string         分类信息
+ */
+function get_category($id, $field = null){
+    static $list;
+
+    /* 非法分类ID */
+    if(empty($id) || !is_numeric($id)){
+        return '';
+    }
+
+    /* 读取缓存数据 */
+    if(empty($list)){
+        $list = cache('sys_category_list');
+    }
+
+    /* 获取分类名称 */
+    if(!isset($list[$id])){
+        $cate = db('Category')->find($id);
+        if(!$cate || 1 != $cate['status']){ //不存在分类，或分类被禁用
+            return '';
+        }
+        $list[$id] = $cate;
+        cache('sys_category_list', $list); //更新缓存
+    }
+    return is_null($field) ? $list[$id] : $list[$id][$field];
+}
+
+/**
+ * 获取属性信息并缓存
+ * @param  integer $id    属性ID
+ * @param  string  $field 要获取的字段名
+ * @return string         属性信息
+ */
+function get_model_attribute($model_id, $group = true,$fields=true){
+    static $list;
+
+    /* 非法ID */
+    if(empty($model_id) || !is_numeric($model_id)){
+        return '';
+    }
+
+    /* 获取属性 */
+    if(!isset($list[$model_id])){
+        $map = [['model_id','=',$model_id]];
+        $extend = db('Model')->getFieldById($model_id,'extend');
+
+        if($extend){
+            $map['model_id'] = ['model_id','in', [$model_id,$extend]];
+        }
+        $info = db('Attribute')->where($map)->field($fields)->select();
+        $list[$model_id] = $info;
+    }
+
+    $attr = array();
+    if($group){
+        foreach ($list[$model_id] as $value) {
+            $attr[$value['id']] = $value;
+        }
+        $model     = db("Model")->field("field_sort,attribute_list,attribute_alias")->find($model_id);
+        $attribute = explode(",", $model['attribute_list']);
+        if (empty($model['field_sort'])) { //未排序
+            $group = array(1 => array_merge($attr));
+        } else {
+            $group = json_decode($model['field_sort'], true);
+
+            $keys = array_keys($group);
+            foreach ($group as &$value) {
+                foreach ($value as $key => $val) {
+                    $value[$key] = $attr[$val];
+                    unset($attr[$val]);
+                }
+            }
+
+            if (!empty($attr)) {
+                foreach ($attr as $key => $val) {
+                    if (!in_array($val['id'], $attribute)) {
+                        unset($attr[$key]);
+                    }
+                }
+                $group[$keys[0]] = array_merge($group[$keys[0]], $attr);
+            }
+        }
+        if (!empty($model['attribute_alias'])) {
+            $alias  = preg_split('/[;\r\n]+/s', $model['attribute_alias']);
+            $fields = array();
+            foreach ($alias as &$value) {
+                $val             = explode(':', $value);
+                $fields[$val[0]] = $val[1];
+            }
+            foreach ($group as &$value) {
+                foreach ($value as $key => $val) {
+                    if (!empty($fields[$val['name']])) {
+                        $value[$key]['title'] = $fields[$val['name']];
+                    }
+                }
+            }
+        }
+        $attr = $group;
+    }else{
+        foreach ($list[$model_id] as $value) {
+            $attr[$value['name']] = $value;
+        }
+    }
+    return $attr;
+}
