@@ -234,3 +234,41 @@ function list_sort_by($list,$field, $sortby='asc') {
 function arr2str($arr, $glue = ','){
     return implode($glue, $arr);
 }
+/**
+ * 获取文档模型信息
+ * @param  integer $id    模型ID
+ * @param  string  $field 模型字段
+ * @return array
+ */
+function get_document_model($id = null, $field = null){
+    static $list;
+
+    /* 非法分类ID */
+    if(!(is_numeric($id) || is_null($id))){
+        return '';
+    }
+
+    /* 读取缓存数据 */
+    if(empty($list)){
+        $list = cache('DOCUMENT_MODEL_LIST');
+    }
+
+    /* 获取模型名称 */
+    if(empty($list)){
+        $map   = [['status','=',1],['extend','=',1]];
+        $model = db('Model')->where($map)->field(true)->select();
+        foreach ($model as $value) {
+            $list[$value['id']] = $value;
+        }
+        cache('DOCUMENT_MODEL_LIST', $list); //更新缓存
+    }
+
+    /* 根据条件返回数据 */
+    if(is_null($id)){
+        return $list;
+    } elseif(is_null($field)){
+        return $list[$id];
+    } else {
+        return $list[$id][$field];
+    }
+}
