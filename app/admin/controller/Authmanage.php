@@ -198,4 +198,50 @@ class Authmanage extends Admin{
             return true;
         }
     }
+    /**
+     * 将分类添加到用户组的编辑页面
+     */
+    public function category(){
+		$auth_group     =   db('AuthGroup')->where([
+													['status','>=','0']
+													,['module','=','admin']
+													,['type','=',AuthGroup::TYPE_ADMIN]
+												])
+            ->column('id,id,title,rules');
+        $group_list     =   model('Category')->getTree();
+        $authed_group   =   db('AuthExtend')->where('group_id',Request::param('group_id'))->column('extend_id');
+        $this->assign('authed_group',   implode(',',(array)$authed_group));
+        $this->assign('group_list',     $group_list);
+        $this->assign('auth_group',     $auth_group);
+		$this->assign('this_group',     $auth_group[Request::param('group_id')]);
+        $this->assign('meta_title','分类授权');
+		return view();
+    }
+    public function tree($tree = null){
+        $this->assign('tree', $tree);
+		return $this->fetch('tree');
+    }
+    /**
+     * 将分类添加到用户组  入参:cid,group_id
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function addToCategory(){
+        $cid = input('cid');
+        $gid = input('group_id');
+        if( empty($gid) ){
+            $this->error('参数有误');
+        }
+        $AuthGroup = model('AuthGroup');
+        if( !$AuthGroup->find($gid)){
+            $this->error('用户组不存在');
+        }
+        if( $cid && !$AuthGroup->checkCategoryId($cid)){
+            $this->error($AuthGroup->error);
+        }
+        if ( $AuthGroup->addToCategory($gid,$cid) ){
+            $this->success('操作成功');
+        }else{
+            $this->error('操作失败');
+        }
+    }
 }
