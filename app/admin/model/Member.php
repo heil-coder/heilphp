@@ -22,7 +22,17 @@ class Member extends Model {
     //    array('nickname', '1,16', '昵称长度为1-16个字符', self::EXISTS_VALIDATE, 'length'),
     //    array('nickname', '', '昵称被占用', self::EXISTS_VALIDATE, 'unique'), //用户名被占用
     //);
-
+	protected $auto = ['password'];
+	
+	protected function setPasswordAttr($value){
+		if($value === $this->password){
+			return $value;
+		}
+		else{
+			return encrypt_password($value,session('user_auth.salt'));
+		}
+	}
+	
     public function lists($status = 1, $order = 'uid DESC', $field = true){
         $map = [['status','=',$status]];
         return $this->field($field)->where($map)->order($order)->select();
@@ -99,9 +109,10 @@ class Member extends Model {
 
         /* 记录登录SESSION和COOKIES */
         $auth = array(
-            'uid'             => $user['id'],
-            'username'        => $user['nickname'],
-            'last_login_time' => $user['last_login_time'],
+            'uid'             => $user['id']
+            ,'username'        => $user['nickname']
+			,'salt'			  => $user['salt']
+            ,'last_login_time' => $user['last_login_time']
         );
 
         session('user_auth', $auth);
@@ -169,8 +180,7 @@ class Member extends Model {
 	 */
 	protected function verifyUser($uid, $password_in){
 		$password = $this->getFieldById($uid, 'password');
-		$salt = $this->getFieldById($uid, 'salt');
-		if(encrypt_password($password_in, $salt) === $password){
+		if(encrypt_password($password_in, session('user_auth.salt')) === $password){
 			return true;
 		}
 		return false;
