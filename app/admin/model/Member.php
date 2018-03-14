@@ -112,4 +112,67 @@ class Member extends Model {
     public function getNickName($id){
         return $this->where('id',(int)$id)->value('nickname');
     }
+	/**
+	 * 获取用户信息
+	 * @param  string  $uid         用户ID或用户名
+	 * @param  boolean $is_username 是否使用用户名查询
+	 * @return array                用户信息
+	 */
+	public function info($uid, $is_username = false){
+		$map = array();
+		if($is_username){ //通过用户名获取
+			$map[] = ['username','=',$uid];
+		} else {
+			$map[] = ['id','=',$uid];
+		}
+
+		$user = $this->where($map)->field('id,username,email,mobile,status')->find()->toArray();
+		if(is_array($user) && $user['status'] = 1){
+			return array($user['id'], $user['username'], $user['email'], $user['mobile']);
+		} else {
+			return -1; //用户不存在或被禁用
+		}
+	}
+	/**
+	 * 更新用户信息
+	 * @param int $uid 用户id
+	 * @param string $password 密码，用来验证
+	 * @param array $data 修改的字段数组
+	 * @return true 修改成功，false 修改失败
+	 * @author huajie <banhuajie@163.com>
+	 */
+	public function updateUserFields($uid, $password, $data){
+		if(empty($uid) || empty($password) || empty($data)){
+			$this->error = '参数错误！';
+			return false;
+		}
+
+		//更新前检查用户密码
+		if(!$this->verifyUser($uid, $password)){
+			$this->error = '验证出错：密码不正确！';
+			return false;
+		}
+
+		//更新用户信息
+		//$data = $this->create($data);
+		if($data){
+			return $this->get($uid)->save($data);
+		}
+		return false;
+	}
+	/**
+	 * 验证用户密码
+	 * @param int $uid 用户id
+	 * @param string $password_in 密码
+	 * @return true 验证成功，false 验证失败
+	 * @author huajie <banhuajie@163.com>
+	 */
+	protected function verifyUser($uid, $password_in){
+		$password = $this->getFieldById($uid, 'password');
+		$salt = $this->getFieldById($uid, 'salt');
+		if(encrypt_password($password_in, $salt) === $password){
+			return true;
+		}
+		return false;
+	}
 }

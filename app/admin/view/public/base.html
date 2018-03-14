@@ -32,8 +32,8 @@
             <a href="javascript:;" class="user-entrance"><i class="icon-user"></i></a>
             <ul class="nav-list user-menu hidden">
                 <li class="manager">你好，<em title="{:session('user_auth.username')}">{:session('user_auth.username')}</em></li>
-                <li><a href="{:Url('User/updatePassword')}">修改密码</a></li>
-                <li><a href="{:Url('User/updateNickname')}">修改昵称</a></li>
+                <li><a href="{:Url('User/editPassword')}">修改密码</a></li>
+                <li><a href="{:Url('User/editNickname')}">修改昵称</a></li>
                 <li><a href="{:Url('Common/logout')}">退出</a></li>
             </ul>
         </div>

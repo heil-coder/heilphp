@@ -139,4 +139,84 @@ class User extends Admin{
             $this->success($res['id']?'更新成功！':'新增成功！', Cookie('__forward__'));
         }
     }
+    /**
+     * 修改昵称初始化
+     */
+	public function editNickname(){
+		if(Request::isPost()){
+			//获取参数
+			$nickname = Request::post('nickname');
+			$password = Request::post('password');
+			empty($nickname) && $this->error('请输入昵称');
+			empty($password) && $this->error('请输入密码');
+
+			//密码验证
+			$User   =   model('Member');;
+			$uid    =   $User->login(UID, $password, 4);
+			($uid === -2) && $this->error('密码不正确');
+
+			$Member =   model('Member');
+			$data   =   ['nickname'=>$nickname];
+			if(!$data){
+				$this->error($Member->getError());
+			}
+
+			$res = $Member->get(UID)->save($data);
+
+			if($res !== false){
+				$user               =   session('user_auth');
+				$user['username']   =   $data['nickname'];
+				session('user_auth', $user);
+				session('user_auth_sign', data_auth_sign($user));
+				$this->success('修改昵称成功！');
+			}else{
+				$this->error('修改昵称失败！');
+			}
+		}
+		else{
+			$nickname = db('Member')->getFieldById(UID, 'nickname');
+			$this->assign('nickname', $nickname);
+			$this->assign('meta_title','修改昵称');
+			return view();
+		}
+	}
+
+    /**
+     * 修改密码初始化
+	 */
+	public function editPassword(){
+		if(Request::isPost()){
+			//获取参数
+			$password   =   Request::post('old');
+			empty($password) && $this->error('请输入原密码');
+			$data['password'] = Request::post('password');
+			empty($data['password']) && $this->error('请输入新密码');
+			$repassword = Request::post('repassword');
+			empty($repassword) && $this->error('请输入确认密码');
+
+			if($data['password'] !== $repassword){
+				$this->error('您输入的新密码与确认密码不一致');
+			}
+
+			$user =   model('Member');
+			$res    =   $user->updateUserFields(UID, $password, $data);
+			if($res !== false){
+				$this->success('修改密码成功！');
+			}else{
+				$this->error($user->error);
+			}
+		}
+		else{
+			$this->assign('meta_title','修改密码');
+			return view();
+		}
+	}
+
+    /**
+     * 修改密码提交
+     * @author huajie <banhuajie@163.com>
+     */
+    public function submitPassword(){
+
+    }
 }

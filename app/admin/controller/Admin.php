@@ -24,9 +24,9 @@ class Admin extends Controller {
     protected function initialize(){
         // 获取当前用户ID
         if(defined('UID')) return ;
-        define('UID',is_login() ? 1 : 1);
+        define('UID',is_login());
         if( !UID ){// 还没登录 跳转到登录页面
-            $this->redirect('Public/login');
+            $this->redirect('Common/login');
         }
 
         /* 读取数据库中的配置 */

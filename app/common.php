@@ -419,3 +419,44 @@ function get_client_ip($type = 0,$adv=false) {
     $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
     return $ip[$type];
 }
+
+/**
+ * 根据用户ID获取用户名
+ * @param  integer $uid 用户ID
+ * @return string       用户名
+ */
+function get_username($uid = 0){
+    static $list;
+    if(!($uid && is_numeric($uid))){ //获取当前登录用户名
+        return session('user_auth.username');
+    }
+
+    /* 获取缓存数据 */
+    if(empty($list)){
+        $list = cache('sys_active_user_list');
+    }
+
+    /* 查找用户信息 */
+    $key = "u{$uid}";
+    if(isset($list[$key])){ //已缓存，直接使用
+        $name = $list[$key];
+    } else { //调用接口获取用户信息
+        $User = model('Member');
+        $info = $User->info($uid);
+        if($info && isset($info[1])){
+            $name = $list[$key] = $info[1];
+            /* 缓存用户 */
+            $count = count($list);
+            $max   = config('USER_MAX_CACHE');
+            while ($count-- > $max) {
+                array_shift($list);
+            }
+            cache('sys_active_user_list', $list);
+        } else {
+            $name = '';
+        }
+    }
+    return $name;
+}
+
+
