@@ -60,6 +60,7 @@ class AuthGroup extends Model {
         $gid = is_array($gid)?$gid:explode( ',',trim($gid,',') );
 
         $Access = db(self::AUTH_GROUP_ACCESS);
+		$del = null;
         if( isset($_REQUEST['batch']) ){
             //为单个用户批量添加用户组时,先删除旧数据
             $del = $Access->where('uid','in',$uid)->delete();
