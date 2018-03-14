@@ -156,7 +156,7 @@ class Article extends Admin {
             $cate_id = $this->cate_id;
         }
         if(!empty($cate_id)){
-            $pid = I('pid',0);
+            $pid = input('pid',0);
             // 获取列表绑定的模型
             if ($pid == 0) {
                 $models     =   get_category($cate_id, 'model');
@@ -432,16 +432,16 @@ class Article extends Admin {
         //获取左边菜单
         $this->getMenu();
 
-        $map['status']  =   2;
+        $map[]  =   ['status','=',2];
         if ( !is_administrator() ) {
             $cate_auth  =   AuthGroup::getAuthCategories(UID);
             if($cate_auth){
-                $map['category_id']    =   array('IN',$cate_auth);
+                $map[]    =   ['category_id','IN',$cate_auth];
             }else{
-                $map['category_id']    =   -1;
+                $map[]    =   ['category_id','=',-1];
             }
         }
-        $list = $this->lists(M('Document'),$map,'update_time desc');
+        $list = $this->getListing(db('Document'),$map,'update_time desc');
         //处理列表数据
         if(is_array($list)){
             foreach ($list as $k=>&$v){
@@ -450,8 +450,8 @@ class Article extends Admin {
         }
 
         $this->assign('list', $list);
-        $this->meta_title       =   '待审核';
-        $this->display();
+        $this->assign('meta_title','待审核');
+		return view();
     }
 
     /**
@@ -462,16 +462,16 @@ class Article extends Admin {
         //获取左边菜单
         $this->getMenu();
 
-        $map['status']  =   -1;
+        $map[]  =   ['status','=',-1];
         if ( !is_administrator() ) {
             $cate_auth  =   AuthGroup::getAuthCategories(UID);
             if($cate_auth){
-                $map['category_id']    =   array('IN',$cate_auth);
+                $map[]    =   ['category_id','IN',$cate_auth];
             }else{
-                $map['category_id']    =   -1;
+                $map[]    =   ['category_id','=',-1];
             }
         }
-        $list = $this->lists(M('Document'),$map,'update_time desc');
+        $list = $this->getListing(db('Document'),$map,'update_time desc');
 
         //处理列表数据
         if(is_array($list)){
@@ -481,8 +481,8 @@ class Article extends Admin {
         }
 
         $this->assign('list', $list);
-        $this->meta_title       =   '回收站';
-        $this->display();
+        $this->assign('meta_title','回收站');
+		return view();
     }
 
     /**
@@ -529,32 +529,32 @@ class Article extends Admin {
 
         $Document   =   model('Document');
         /* 查询条件初始化 */
-        $map['uid'] = UID;
+        $map[] = ['uid','=',UID];
         if(isset($title)){
-            $map['title']   =   array('like', '%'.$title.'%');
+            $map[]   =   ['title','like', '%'.$title.'%'];
         }
         if(isset($status)){
-            $map['status']  =   $status;
+            $map[]  =   ['status','=',$status];
         }else{
-            $map['status']  =   array('in', '0,1,2');
+            $map[]  =   ['status','in', '0,1,2'];
         }
         if ( isset($_GET['time-start']) ) {
-            $map['update_time'][] = array('egt',strtotime(I('time-start')));
+            //$map['update_time'][] = array('egt',strtotime(input('time-start')));
         }
         if ( isset($_GET['time-end']) ) {
-            $map['update_time'][] = array('elt',24*60*60 + strtotime(I('time-end')));
+            //$map['update_time'][] = array('elt',24*60*60 + strtotime(input('time-end')));
         }
         //只查询pid为0的文章
-        $map['pid'] = 0;
-        $list = $this->lists($Document,$map,'update_time desc');
+        $map[] = ['pid','=',0];
+        $list = $this->getListing($Document,$map,'update_time desc');
         $list = $this->parseDocumentList($list,1);
 
         // 记录当前列表页的cookie
         Cookie('__forward__',$_SERVER['REQUEST_URI']);
         $this->assign('status', $status);
         $this->assign('list', $list);
-        $this->meta_title = '我的文档';
-        $this->display();
+        $this->assign('meta_title','我的文档');
+		return view();
     }
 
     /**

@@ -200,7 +200,7 @@ function get_parent_category($cid){
     if(empty($cid)){
         return false;
     }
-    $cates  =   db('Category')->where('status',1)->field('id,title,pid')->order('sort')->select()->toArray();
+    $cates  =   db('Category')->where('status',1)->field('id,title,pid')->order('sort')->select();
     $child  =   get_category($cid); //获取参数分类的信息
     $pid    =   $child['pid'];
     $temp   =   array();
@@ -275,4 +275,17 @@ function get_list_field($data, $grid){
         $value  =   implode(' ',$val);
     }
     return $value;
+}
+/**
+ * 获取当前文档的分类
+ * @param int $id
+ * @return array 文档类型数组
+ * @author huajie <banhuajie@163.com>
+ */
+function get_cate($cate_id = null){
+    if(empty($cate_id)){
+        return false;
+    }
+    $cate   =   db('Category')->where('id',$cate_id)->value('title');
+    return $cate;
 }

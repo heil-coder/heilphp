@@ -71,8 +71,6 @@ class Admin extends Controller {
 		//如果存在软删除字段
 		$isSoftDelete = in_array('delete_time',$tableFields) ? true : false;
 
-        $OPT        =   new \ReflectionProperty($Db,'options');
-        $OPT->setAccessible(true);
 
         $pk         =   $Db->getPk();
         if($order===null){
@@ -92,7 +90,7 @@ class Admin extends Controller {
 		else{
             $options['where']   =  1; 
 		}
-        $options      =   array_merge( (array)$OPT->getValue($Db), $options );
+        $options      =   array_merge( $Db->getOptions(), $options );
 
 		$total        =   $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->count() : $Db->where($options['where'])->count();
         $this->assign('_total',$total);
@@ -103,8 +101,7 @@ class Admin extends Controller {
             $listRows = Config::get('LIST_ROWS') > 0 ? Config::get('LIST_ROWS') : 10;
         }
 
-        $Db->setOption('where',[]);
-        $Db->setOption('field',[]);
+        $Db->setOption('where',[])->setOption('field',[]);
 
 		$page = $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->paginate($listRows,$total) : $Db->where($options['where'])->paginate($listRows,$total);
         $p = $page->render(); 
