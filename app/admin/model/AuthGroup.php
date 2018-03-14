@@ -93,12 +93,14 @@ class AuthGroup extends Model {
                     }
                 }
             }
+			if(!empty($repeat)){
+				//id重复添加时错误提示
+				$this->error = "UID:".arr2str($repeat)."不能重复添加";
+				return false;
+			}
             $res = empty($add) ? 0 : $Access->insertAll($add);
-
         }
-        if ($res === false || !empty($repeat)) {
-                //id重复添加时错误提示
-                $this->error = "UID:".arr2str($repeat)."不能重复添加";
+        if ($res === false) {
             return false;
         }else{
             return true;
