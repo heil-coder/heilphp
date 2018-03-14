@@ -9,7 +9,11 @@
     <link rel="stylesheet" type="text/css" href="/{$Request.module}/css/module.css">
     <link rel="stylesheet" type="text/css" href="/{$Request.module}/css/style.css" media="all">
 	<link rel="stylesheet" type="text/css" href="/{$Request.module}/css/default_color.css" media="all">
-
+    <!--[if lt IE 9]>
+	 <script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
+    <![endif]--><!--[if gte IE 9]><!-->
+	 <script type="text/javascript" src="/static/js/jquery-2.1.4.min.js"></script>
+    <!--<![endif]-->
 	{block name="style"}{/block}
 </head>
 <body>
@@ -104,11 +108,6 @@
         </div>
     </div>
     <!-- /内容区 -->
-    <!--[if lt IE 9]>
-	 <script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
-    <![endif]--><!--[if gte IE 9]><!-->
-	 <script type="text/javascript" src="/static/js/jquery-2.1.4.min.js"></script>
-    <!--<![endif]-->
 	<script type="text/javascript" src="/{$Request.module}/js/common.js"></script>
     <script type="text/javascript">
     (function(){
