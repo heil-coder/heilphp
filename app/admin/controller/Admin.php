@@ -64,6 +64,7 @@ class Admin extends Controller {
         if(is_string($Db)){
             $Db =   Db::name($Db);
         }
+		$tmpDb = $Db;
 
 		$table = $Db->getTable();
 		$tableFields = $Db->getConnection()->getTableFields($table);
@@ -102,13 +103,14 @@ class Admin extends Controller {
             $listRows = Config::get('LIST_ROWS') > 0 ? Config::get('LIST_ROWS') : 10;
         }
 
-		$Db = $Db->removeOption(true);
+        $Db->setOption('where',[]);
+        $Db->setOption('field',[]);
+
 		$page = $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->paginate($listRows,$total) : $Db->where($options['where'])->paginate($listRows,$total);
         $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
 
-		$Db = $Db->removeOption(true);
-        //$Db->setOption('options',$options);
+        $Db->setOption('where',[]);
 
         $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
 		$listing = $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->field($field)->order($options['order'])->limit($limit)->select() : $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();

@@ -244,4 +244,38 @@ class Authmanage extends Admin{
             $this->error('操作失败');
         }
     }
+    /**
+     * 用户组授权用户列表
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function user($group_id){
+        if(empty($group_id)){
+            $this->error('参数错误');
+        }
+
+		$auth_group = db('AuthGroup')->where([
+										['status','>=','0']
+										,['module','=','admin']
+										,['type','=',AuthGroup::TYPE_ADMIN]
+									])
+            ->column('id,id,title,rules');
+        $prefix   = config('database.prefix');
+        $l_table  = $prefix.(AuthGroup::MEMBER);
+        $r_table  = $prefix.(AuthGroup::AUTH_GROUP_ACCESS);
+        $model    = db(AuthGroup::MEMBER)->alias('m')->join ( $r_table.' a','m.id=a.uid' );
+		$_REQUEST = array();
+		$list = $this->getListing($model
+			,[
+				['a.group_id','=',$group_id]
+				,['m.status','>=',0]
+			]
+			,'m.id asc'
+			,'m.id,m.nickname,m.last_login_time,m.last_login_ip,m.status');
+        int_to_string($list);
+        $this->assign( '_list',     $list );
+        $this->assign('auth_group', $auth_group);
+        $this->assign('this_group', $auth_group[Request::param('group_id/d')]);
+        $this->assign('meta_title','成员授权');
+		return view();
+    }
 }
