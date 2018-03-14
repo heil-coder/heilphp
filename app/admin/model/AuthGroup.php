@@ -68,7 +68,8 @@ class AuthGroup extends Model {
 
         $uid_arr = explode(',',$uid);
 		$uid_arr = array_diff($uid_arr,array(config('USER_ADMINISTRATOR')));
-        $add = array();
+		$add = [];
+		$repeat = [];
         if( $del!==false ){
             foreach ($uid_arr as $u){
             	//判断用户id是否合法
@@ -78,18 +79,26 @@ class AuthGroup extends Model {
             	}
                 foreach ($gid as $g){
                     if( is_numeric($u) && is_numeric($g) ){
-                        $add[] = array('group_id'=>$g,'uid'=>$u);
+						$Access->setOption('where',[]);
+						if(!$Access->where([
+							['uid','=',$u]
+							,['group_id','=',$g]
+						])->find()
+						){
+							$add[] = array('group_id'=>$g,'uid'=>$u);
+						}
+						else{
+							$repeat[] = $u;
+						}
                     }
                 }
             }
             $res = empty($add) ? 0 : $Access->insertAll($add);
 
         }
-        if ($res === false) {
-            if( count($uid_arr)==1 && count($gid)==1 ){
-                //单个添加时定制错误提示
-                $this->error = "不能重复添加";
-            }
+        if ($res === false || !empty($repeat)) {
+                //id重复添加时错误提示
+                $this->error = "UID:".arr2str($repeat)."不能重复添加";
             return false;
         }else{
             return true;
