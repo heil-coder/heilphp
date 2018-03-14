@@ -34,9 +34,6 @@ class Authmanage extends Admin{
      * 编辑管理员用户组
      */
 	public function editGroup(){
-		if(Request::isPost()){
-			$this->writeGroup();
-		}
 		$id = Request::param('id/d',null);
 		//如果没有传入id
 		if(empty($id)){
@@ -61,7 +58,7 @@ class Authmanage extends Admin{
     /**
      * 管理员用户组数据写入/更新
      */
-    protected function writeGroup(){
+    public function writeGroup(){
         if(isset($_POST['rules'])){
             sort($_POST['rules']);
             $_POST['rules']  = implode( ',' , array_unique($_POST['rules']));
@@ -69,13 +66,13 @@ class Authmanage extends Admin{
         $mAuthGroup       =  model('AuthGroup');
         $data = Request::only(['id','module','type','title','description','status','rules']);
 		$data['module'] = 'admin';
-		$data['type'] =  AuthGroup::TYPE_ADMIN;
+		$data['type'] =  $mAuthGroup::TYPE_ADMIN;
         if ( $data ) {
 			if(empty($data['id'])){
 				$result = $mAuthGroup->save($data);
 			}
 			else{
-				$result = $mAuthGroup->where('id',$data['id'])->find()->save($data);
+				$result = $mAuthGroup->get($data['id'])->save($data);
 			}
             if($result === false){
                 $this->error('操作失败'.$mAuthGroup->getError());
@@ -122,7 +119,7 @@ class Authmanage extends Admin{
         $node_list   = $this->returnNodes();
 		$map         = [];
 		$map[]		 = ['module','=','admin'];
-		$map[]		 = ['type','=',AuthRule::RULE_MAIN];
+		$map['type']		 = ['type','=',AuthRule::RULE_MAIN];
 		$map[]		 = ['status','=',1];
         $main_rules  = db('AuthRule')->where($map)->column('name,id');
 		$map['type'] = ['type','=',AuthRule::RULE_URL];

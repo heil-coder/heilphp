@@ -28,6 +28,12 @@ class AuthGroup extends Model {
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
 
+	protected $auto = ['rules'];
+	protected function setRulesAttr($value){
+		if (is_null($value)) return null;
+		return is_array($value) ? arr2str($value) : $value;
+	}
+
     /**
      * 返回用户拥有管理权限的扩展数据id列表
      *
