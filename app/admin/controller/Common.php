@@ -33,7 +33,7 @@ class Common extends Controller {
             if(true === $res){ //登录成功
                 $this->success('登录成功！', Url('Index/index'));
             } else { //登录失败
-                switch($uid) {
+                switch($res) {
                     case -1: $error = '用户不存在或被禁用！'; break; //系统级别禁用
                     case -2: $error = '密码错误！'; break;
                     default: $error = '未知错误！'; break; // 0-接口参数错误（调试阶段使用）

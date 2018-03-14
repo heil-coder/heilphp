@@ -75,10 +75,10 @@
     		return false;
 
     		function success(data){
-    			if(data.status){
+    			if(data.code){
     				window.location.href = data.url;
     			} else {
-    				self.find(".check-tips").text(data.info);
+    				self.find(".check-tips").text(data.msg);
     				//刷新验证码
     				$(".reloadverify").click();
     			}
