@@ -39,10 +39,10 @@ class SiteStat extends Addon{
         $this->assign('addons_config', $config);
         if($config['display']){
             $info['user']		=	Db('Member')->count();
-            //$info['action']		=	Db('ActionLog')->count();
-            //$info['document']	=	Db('Document')->count();
-            //$info['category']	=	Db('Category')->count();
-            //$info['model']		=	Db('Model')->count();
+            $info['action']		=	Db('ActionLog')->count();
+            $info['document']	=	Db('Document')->count();
+            $info['category']	=	Db('Category')->count();
+            $info['model']		=	Db('Model')->count();
             $this->assign('info',$info);
             $this->display('info');
         }
