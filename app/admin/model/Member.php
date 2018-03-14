@@ -33,7 +33,7 @@ class Member extends Model {
 		}
 	}
 	
-    public function lists($status = 1, $order = 'uid DESC', $field = true){
+    public function lists($status = 1, $order = 'id DESC', $field = true){
         $map = [['status','=',$status]];
         return $this->field($field)->where($map)->order($order)->select();
     }

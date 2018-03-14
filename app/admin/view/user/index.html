@@ -41,8 +41,8 @@
 		{notempty name="_list"}
 		{volist name="_list" id="vo"}
 		<tr>
-            <td><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}" /></td>
-			<td>{$vo.uid} </td>
+            <td><input class="ids" type="checkbox" name="id[]" value="{$vo.id}" /></td>
+			<td>{$vo.id} </td>
 			<td>{$vo.nickname}</td>
 			<td>{$vo.score}</td>
 			<td>{$vo.login}</td>
@@ -50,12 +50,12 @@
 			<td><span>{:long2ip($vo['last_login_ip'])}</span></td>
 			<td>{$vo.status_text}</td>
 			<td>{eq name="vo.status" value="1"}
-				<a href="{:Url('User/changeStatus?method=forbidUser&id='.$vo['uid'])}" class="ajax-get">禁用</a>
+				<a href="{:Url('User/changeStatus?method=forbidUser&id='.$vo['id'])}" class="ajax-get">禁用</a>
 				{else/}
-				<a href="{:Url('User/changeStatus?method=resumeUser&id='.$vo['uid'])}" class="ajax-get">启用</a>
+				<a href="{:Url('User/changeStatus?method=resumeUser&id='.$vo['id'])}" class="ajax-get">启用</a>
 				{/eq}
-				<a href="{:Url('AuthManager/group?uid='.$vo['uid'])}" class="authorize">授权</a>
-                <a href="{:Url('User/changeStatus?method=deleteUser&id='.$vo['uid'])}" class="confirm ajax-get">删除</a>
+				<a href="{:Url('AuthManager/group?uid='.$vo['id'])}" class="authorize">授权</a>
+                <a href="{:Url('User/changeStatus?method=deleteUser&id='.$vo['id'])}" class="confirm ajax-get">删除</a>
                 </td>
 		</tr>
 		{/volist}
