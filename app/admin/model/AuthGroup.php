@@ -78,4 +78,94 @@ class AuthGroup extends Model {
     static public function getAuthCategories($uid){
         return self::getAuthExtend($uid,self::AUTH_EXTEND_CATEGORY_TYPE,'AUTH_CATEGORY');
     }
+
+    /**
+     * 检查id是否全部存在
+     * @param array|string $gid  用户组id列表
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function checkId($modelname,$mid,$msg = '以下id不存在:'){
+        if(is_array($mid)){
+            $count = count($mid);
+            $ids   = implode(',',$mid);
+        }else{
+            $mid   = explode(',',$mid);
+            $count = count($mid);
+            $ids   = $mid;
+        }
+
+        $s = db($modelname)->where('id','IN',$ids)->column('id');
+        if(count($s)===$count){
+            return true;
+        }else{
+            $diff = implode(',',array_diff($mid,$s));
+            $this->error = $msg.$diff;
+            return false;
+        }
+    }
+
+    /**
+     * 检查用户组是否全部存在
+     * @param array|string $gid  用户组id列表
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function checkGroupId($gid){
+        return $this->checkId('AuthGroup',$gid, '以下用户组id不存在:');
+    }
+
+    /**
+     * 检查分类是否全部存在
+     * @param array|string $cid  栏目分类id列表
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function checkCategoryId($cid){
+        return $this->checkId('Category',$cid, '以下分类id不存在:');
+    }
+    /**
+     * 批量设置用户组可管理的分类
+     *
+     * @param int|string|array $gid   用户组id
+     * @param int|string|array $cid   分类id
+     *
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    static public function addToCategory($gid,$cid){
+        return self::addToExtend($gid,$cid,self::AUTH_EXTEND_CATEGORY_TYPE);
+    }
+   /**
+     * 批量设置用户组可管理的扩展权限数据
+     *
+     * @param int|string|array $gid   用户组id
+     * @param int|string|array $cid   分类id
+     *
+     * @author 朱亚杰 <xcoolcc@gmail.com>
+     */
+    static public function addToExtend($gid,$cid,$type){
+        $gid = is_array($gid)?implode(',',$gid):trim($gid,',');
+        $cid = is_array($cid)?$cid:explode( ',',trim($cid,',') );
+
+        $Access = db(self::AUTH_EXTEND);
+		$del = $Access->where([
+							['group_id','in',$gid]
+							,['type','=',$type]
+							])->delete();
+
+        $gid = explode(',',$gid);
+        $add = array();
+        if( $del!==false ){
+            foreach ($gid as $g){
+                foreach ($cid as $c){
+                    if( is_numeric($g) && is_numeric($c) ){
+                        $add[] = array('group_id'=>$g,'extend_id'=>$c,'type'=>$type);
+                    }
+                }
+            }
+            $res = $Access->insertAll($add);
+        }
+        if ($res === false) {
+            return false;
+        }else{
+            return true;
+        }
+    }
 }

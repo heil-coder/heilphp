@@ -226,8 +226,8 @@ class Authmanage extends Admin{
      * @author 朱亚杰 <zhuyajie@topthink.net>
      */
     public function addToCategory(){
-        $cid = input('cid');
-        $gid = input('group_id');
+        $cid = input('cid/a');
+        $gid = input('group_id/d');
         if( empty($gid) ){
             $this->error('参数有误');
         }
