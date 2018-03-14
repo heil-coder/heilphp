@@ -278,4 +278,75 @@ class Authmanage extends Admin{
         $this->assign('meta_title','成员授权');
 		return view();
     }
+    /**
+     * 将用户添加到用户组的编辑页面
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function group(){
+        $uid            =   input('uid/d');
+        $auth_groups    =   model('AuthGroup')->getGroups();
+        $user_groups    =   AuthGroup::getUserGroup($uid);
+        $ids = array();
+        foreach ($user_groups as $value){
+            $ids[]      =   $value['group_id'];
+        }
+        $nickname       =   model('Member')->getNickName($uid);
+        $this->assign('nickname',   $nickname);
+        $this->assign('auth_groups',$auth_groups);
+        $this->assign('user_groups',implode(',',$ids));
+        $this->assign('meta_title','用户组授权');
+		return view();
+    }
+    /**
+     * 将用户添加到用户组,入参uid,group_id
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function addToGroup(){
+        $uid = input('uid');
+        $gid = input('group_id/a');
+        if( empty($uid) ){
+            $this->error('参数有误');
+        }
+        $AuthGroup = model('AuthGroup');
+        if(is_numeric($uid)){
+            if ( is_administrator($uid) ) {
+                $this->error('该用户为超级管理员');
+            }
+            if( !db('Member')->where('id',$uid)->find() ){
+                $this->error('用户不存在');
+            }
+        }
+
+        if( $gid && !$AuthGroup->checkGroupId($gid)){
+            $this->error($AuthGroup->error);
+        }
+        if ( $AuthGroup->addToGroup($uid,$gid) ){
+            $this->success('操作成功');
+        }else{
+            $this->error($AuthGroup->error);
+        }
+    }
+    /**
+     * 将用户从用户组中移除  入参:uid,group_id
+     * @author 朱亚杰 <zhuyajie@topthink.net>
+     */
+    public function removeFromGroup(){
+        $uid = input('uid/d');
+        $gid = input('group_id/d');
+        if( $uid == UID ){
+            $this->error('不允许解除自身授权');
+        }
+        if( empty($uid) || empty($gid) ){
+            $this->error('参数有误');
+        }
+        $AuthGroup = model('AuthGroup');
+        if( !$AuthGroup->find($gid)){
+            $this->error('用户组不存在');
+        }
+        if ( $AuthGroup->removeFromGroup($uid,$gid) ){
+            $this->success('操作成功');
+        }else{
+            $this->error('操作失败');
+        }
+    }
 }
