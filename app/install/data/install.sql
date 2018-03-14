@@ -58,7 +58,7 @@ INSERT INTO `heilphp_config` VALUES ('36', 'ADMIN_ALLOW_IP', '2', '后台允许�
 -- -----------------------------
 DROP TABLE IF EXISTS `heilphp_member`;
 CREATE TABLE `heilphp_member` (
-  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `username` char(16) NOT NULL DEFAULT '' COMMENT '用户名',
   `password` char(32) NOT NULL DEFAULT '' COMMENT '密码md5(字典排序)',
   `salt` char(10) NOT NULL DEFAULT '' COMMENT '密码salt',
@@ -76,7 +76,7 @@ CREATE TABLE `heilphp_member` (
   `last_login_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '会员状态',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`uid`),
+  PRIMARY KEY (`id`),
   KEY `status` (`status`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='会员表';
 

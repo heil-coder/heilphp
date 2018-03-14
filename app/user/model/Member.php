@@ -1,6 +1,7 @@
 <?php
 namespace app\user\model;
 use think\Model;
+use App;
 /**
  * 会员模型
  */
@@ -74,29 +75,29 @@ class Member extends Model{
 	 * @return integer           登录成功-用户ID，登录失败-错误编号
 	 */
 	public function login($username, $password, $type = 1){
-		$map = array();
+		$map = [];
 		switch ($type) {
 			case 1:
-				$map['username'] = $username;
+				$map[] = ['username','=',$username];
 				break;
 			case 2:
-				$map['email'] = $username;
+				$map[] = ['email','=',$username];
 				break;
 			case 3:
-				$map['mobile'] = $username;
+				$map[] = ['mobile','=',$username];
 				break;
 			case 4:
-				$map['id'] = $username;
+				$map[] = ['id','=',$username];
 				break;
 			default:
 				return 0; //参数错误
 		}
 
 		/* 获取用户数据 */
-		$user = $this->where($map)->find();
+		$user = $this->where($map)->find()->toArray();
 		if(is_array($user) && $user['status']){
 			/* 验证用户密码 */
-			if(think_ucenter_md5($password, UC_AUTH_KEY) === $user['password']){
+			if(encrypt_password($password, $user['salt']) === $user['password']){
 				$this->updateLogin($user['id']); //更新用户登录信息
 				return $user['id']; //登录成功，返回用户ID
 			} else {
@@ -161,10 +162,10 @@ class Member extends Model{
 	protected function updateLogin($uid){
 		$data = array(
 			'id'              => $uid,
-			'last_login_time' => NOW_TIME,
+			'last_login_time' => App::getBeginTime(),
 			'last_login_ip'   => get_client_ip(1),
 		);
-		$this->save($data);
+		$this->get($uid)->save($data);
 	}
 
 	/**

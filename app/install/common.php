@@ -208,12 +208,3 @@ function build_salt(){
     $chars  = str_shuffle($chars);
     return substr($chars, 0, 10);
 }
-
-/**
- * 系统非常规MD5加密方法
- * @param  string $str 要加密的字符串
- * @return string
- */
-function encrypt_password($str, $salt = ''){
-    return '' === $str ? '' : md5(sha1($str) . $salt);
-}
