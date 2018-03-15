@@ -375,16 +375,16 @@ class Article extends Admin {
         //获取左边菜单
         $this->getMenu();
 
-        $id     =   I('get.id','');
+        $id     =   input('param.id','');
         if(empty($id)){
             $this->error('参数不能为空！');
         }
 
         // 获取详细数据 
-        $Document = D('Document');
+        $Document = model('Document');
         $data = $Document->detail($id);
         if(!$data){
-            $this->error($Document->getError());
+            $this->error($Document->error);
         }
 
         if($data['pid']){
@@ -407,8 +407,8 @@ class Article extends Admin {
         //获取当前分类的文档类型
         $this->assign('type_list', get_type_bycate($data['category_id']));
 
-        $this->meta_title   =   '编辑文档';
-        $this->display();
+        $this->assign('meta_title','编辑文档');
+		return view();
     }
 
     /**

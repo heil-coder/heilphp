@@ -10,6 +10,8 @@
 namespace app\admin\model;
 use think\Model;
 use app\admin\model\AuthGroup;
+use Request;
+use Env;
 
 /**
  * 文档基础模型
@@ -56,7 +58,7 @@ class Document extends Model{
      */
     public function detail($id){
         /* 获取基础数据 */
-        $info = $this->field(true)->find($id);
+        $info = $this->field(true)->find($id)->toArray();
         if(!(is_array($info) || 1 !== $info['status'])){
             $this->error = '文档被禁用或已删除！';
             return false;
@@ -182,8 +184,9 @@ class Document extends Model{
      */
     private function logic($model){
         $name  = parse_name(get_document_model($model, 'name'), 1);
-        $class = is_file(MODULE_PATH . 'Logic/' . $name . 'Logic' . EXT) ? $name : 'Base';
-        $class = MODULE_NAME . '\\Logic\\' . $class . 'Logic';
+		dump($name);
+        $class = is_file(Env::get('module_path') . 'logic/' . $name .'.php') ? $name : 'Base';
+        $class = 'app\\'.Request::module() . '\\logic\\' . $class;
         return new $class($name);
     }
 
@@ -194,9 +197,9 @@ class Document extends Model{
      * @author huajie <banhuajie@163.com>
      */
     protected function checkName(){
-        $name        = I('post.name');
-        $category_id = I('post.category_id', 0);
-        $id          = I('post.id', 0);
+        $name        = input('post.name');
+        $category_id = input('post.category_id', 0);
+        $id          = input('post.id', 0);
 
         $map = array('name' => $name, 'id' => array('neq', $id), 'status' => array('neq', -1));
 
