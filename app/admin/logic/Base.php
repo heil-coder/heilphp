@@ -60,7 +60,7 @@ class Base extends Model {
      */
     public function edit($id = 0) {
         /* 获取数据 */
-        $data = $this->create();
+        $data = input('param.');
         if ($data === false) {
             return false;
         }

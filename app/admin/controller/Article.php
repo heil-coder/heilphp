@@ -416,10 +416,10 @@ class Article extends Admin {
      * @author huajie <banhuajie@163.com>
      */
     public function update(){
-        $document   =   D('Document');
-        $res = $document->update();
+        $document   =   model('Document');
+        $res = $document->edit();
         if(!$res){
-            $this->error($document->getError());
+            $this->error($document->error());
         }else{
             $this->success($res['id']?'更新成功':'新增成功', Cookie('__forward__'));
         }

@@ -84,14 +84,15 @@ class Document extends Model{
      */
     public function edit($data = null){
         /* 检查文档类型是否符合要求 */
-        $res = $this->checkDocumentType( I('type',2), I('pid') );
+        $res = $this->checkDocumentType( Input('type',2), Input('pid') );
         if(!$res['status']){
             $this->error = $res['info'];
             return false;
         }
 
         /* 获取数据对象 */
-        $data = $this->token(false)->create($data);
+        //$data = $this->token(false)->create($data);
+		$data = Request::param();
         if(empty($data)){
             return false;
         }
@@ -114,15 +115,15 @@ class Document extends Model{
         /* 添加或新增扩展内容 */
         $logic = $this->logic($data['model_id']);
         $logic->checkModelAttr($data['model_id']);
-        if(!$logic->update($id)){
+        if(!$logic->edit($id)){
             if(isset($id)){ //新增失败，删除基础数据
                 $this->delete($id);
             }
-            $this->error = $logic->getError();
+            $this->error = $logic->error();
             return false;
         }
 
-        hook('documentSaveComplete', array('model_id'=>$data['model_id']));
+		Hook::listen('documentSaveComplete', array('model_id'=>$data['model_id']));
 
         //行为记录
         if($id){
