@@ -9,8 +9,28 @@ heilphp
 # 数据返回
 > 使用ThinkPHP 5.1 控制器的success()和error()方法返回数据,可以对get、post或ajax请求方式都可以做适合的响应。
 
+# 待处理
+> 数据字典category allow_publish 的注释内容确认
+> 数据字典category reply_model的注释确认
+> 名词解释 频道 的说明
+
+## 名词解释
+| 标题|说明|
+| --- |  --- |
+| 频道 |暂时理解为首页的推荐的栏目内容| 
+| 列表 |栏目列表页| 
+| 详情 |内容详情页| 
+
+## 系统SESSION
+| 参数| 数据类型 | 默认值 | 注释 |
+| --- | ---| --- | --- |
+
+## 系统缓存
+| 参数| 数据类型 | 默认值 | 注释 |
+| --- | ---| --- | --- |
+
 ## 通用返回格式
-| 参数| 数型 | 默认值 | 注释 |
+| 参数| 数据类型 | 默认值 | 注释 |
 | --- | ---| --- | --- |
 | code  | tinyint | -- | 0：错误 1:成功|
 | msg | string | -- | 返回提示信息 |
@@ -401,61 +421,58 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | id | int(10) unsigned|否|无|是|分类id，自增主键| 
-
-  `name` varchar(30) NOT NULL COMMENT '标志',
-  `title` varchar(50) NOT NULL COMMENT '标题',
-  `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上级分类ID',
-  `sort` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '排序（同级有效）',
-  `list_row` tinyint(3) unsigned NOT NULL DEFAULT '10' COMMENT '列表每页行数',
-  `meta_title` varchar(50) NOT NULL DEFAULT '' COMMENT 'SEO的网页标题',
-  `keywords` varchar(255) NOT NULL DEFAULT '' COMMENT '关键字',
-  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
-  `template_index` varchar(100) NOT NULL DEFAULT '' COMMENT '频道页模板',
-  `template_lists` varchar(100) NOT NULL DEFAULT '' COMMENT '列表页模板',
-  `template_detail` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页模板',
-  `template_edit` varchar(100) NOT NULL DEFAULT '' COMMENT '编辑页模板',
-  `model` varchar(100) NOT NULL DEFAULT '' COMMENT '列表绑定模型',
-  `model_sub` varchar(100) NOT NULL DEFAULT '' COMMENT '子文档绑定模型',
-  `type` varchar(100) NOT NULL DEFAULT '' COMMENT '允许发布的内容类型',
-  `link_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '外链',
-  `allow_publish` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否允许发布内容',
-  `display` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '可见性',
-  `reply` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否允许回复',
-  `check` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '发布的文章是否需要审核',
-  `reply_model` varchar(100) NOT NULL DEFAULT '',
-  `extend` text NULL  COMMENT '扩展设置',
-  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据状态',
-  `icon` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '分类图标',
-  `groups` varchar(255) NOT NULL DEFAULT '' COMMENT '分组定义',
-  PRIMARY KEY (`id`),
+| name| varchar(30) |否|无|--|标志| 
+| title| varchar(50) |否|无|--|标题| 
+| pid| int(10) unsigned |否|0|--|上级分类id| 
+| sort | int(10) unsigned |否|0|--|排序(同级有效)| 
+| list_row| tinyint(3) unsigned |否|10|--|列表每页行数| 
+| meta_title| varchar(50) |否|''|--|SEO的网页标题| 
+| keywords| varchar(255) |否|''|--|关键字| 
+| description| varchar(255) |否|''|--|描述| 
+| template_index| varchar(100) |否|''|--|频道页模板| 
+| template_lists| varchar(100) |否|''|--|列表页模板| 
+| template_detail| varchar(100) |否|''|--|详情页模板| 
+| template_edit| varchar(100) |否|''|--|编辑页模板| 
+| model| varchar(100) |否|''|--|列表绑定模型| 
+| model_sub| varchar(100) |否|''|--|子文档绑定模型| 
+| type| varchar(100) |否|''|--|允许发布的内容类型| 
+| link_id| int(10) unsigned |否|0|--|外链| 
+| allow_publish| tinyint(1) unsigned |否|0|--|是否允许发布内容 非后台管理员的权限设置| 
+| display| tinyint(1) unsigned |否|0|--|可见性| 
+| reply| tinyint(1) unsigned |否|0|--|是否允许回复| 
+| check| tinyint(1) unsigned |否|0|--|发布的文章是否需要审核| 
+| reply_model| varchar(100) |否|''|--|回复使用的模型| 
+| extend| text |是|null|--|扩展设置| 
+| create_time| bigint(10) unsigned |否|0|--|创建时间| 
+| update_time| bigint(10) unsigned |否|0|--|更新时间| 
+| status| tinyint(1) unsigned |否|0|--|数据状态| 
+| icon| int(10) unsigned |否|0|--|分类图标| 
+| groups| varchar(255) |否|''|--|分组定义| 
 
 ## document 文档模型基础表
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
 | id | int(10) unsigned|否|无|是|文档id，自增主键| 
-
-  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
-  `name` char(40) NOT NULL DEFAULT '' COMMENT '标识',
-  `title` char(80) NOT NULL DEFAULT '' COMMENT '标题',
-  `category_id` int(10) unsigned NOT NULL COMMENT '所属分类',
-  `group_id` smallint(3) unsigned NOT NULL COMMENT '所属分组',
-  `description` char(140) NOT NULL DEFAULT '' COMMENT '描述',
-  `root` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '根节点',
-  `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '所属ID',
-  `model_id` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '内容模型ID',
-  `type` tinyint(3) unsigned NOT NULL DEFAULT '2' COMMENT '内容类型',
-  `position` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '推荐位',
-  `link_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '外链',
-  `cover_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '封面',
-  `display` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '可见性',
-  `deadline` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '截至时间',
-  `attach` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '附件数量',
-  `view` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览量',
-  `comment` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论数',
-  `extend` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '扩展统计字段',
-  `level` int(10) NOT NULL DEFAULT '0' COMMENT '优先级',
-  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据状态',
+| uid | int(10) unsigned|否|0|--|用户ID| 
+| name| varchar(40) |否|''|--|标识| 
+| title| varchar(80) |否|''|--|标题| 
+| category_id| int(10) unsigned |否|无|--|所属分类| 
+| group_id| mediumint(8) unsigned|否|无|--|所属分组| 
+| description| varchar(140) |否|''|--|描述| 
+| root| int(10) unsigned |否|0|--|根节点| 
+| pid| int(10) unsigned |否|0|--|所属ID| 
+| model_id| int(10) unsigned |否|0|--|内容模型ID| 
+| type| tinyint(3) unsigned |否|2|--|内容类型| 
+| position| smallint(5) unsigned |否|0|--|推荐位| 
+| link_id| int(10) unsigned |否|0|--|外链| 
+| cover_id| int(10) unsigned |否|0|--|封面| 
+| display| tinyint(1) unsigned |否|1|--|可见性| 
+| deadline| int(10) unsigned |否|0|--|截止时间| 
+| attach| tinyint(1) unsigned |否|0|--|附件数量| 
+| view| int(10) unsigned |否|0|--|浏览量| 
+| comment| int(10) unsigned |否|0|--|评论数| 
+| extend| int(10) unsigned |否|0|--|扩展统计字段| 
+| level| int(10) unsigned |否|0|--|优先级| 
+| create_time| bigint(10) unsigned |否|0|--|创建时间| 
+| update_time| bigint(10) unsigned |否|0|--|更新时间| 
+| status| tinyint(1) unsigned |否|0|--|数据状态| 
