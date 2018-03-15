@@ -274,6 +274,26 @@ function get_document_model($id = null, $field = null){
 }
 
 /**
+ * 检查$pos(推荐位的值)是否包含指定推荐位$contain
+ * @param number $pos 推荐位的值
+ * @param number $contain 指定推荐位
+ * @return boolean true 包含 ， false 不包含
+ * @author huajie <banhuajie@163.com>
+ */
+function check_document_position($pos = 0, $contain = 0){
+    if(empty($pos) || empty($contain)){
+        return false;
+    }
+
+    //将两个参数进行按位与运算，不为0则表示$contain属于$pos
+    $res = $pos & $contain;
+    if($res !== 0){
+        return true;
+    }else{
+        return false;
+    }
+}
+/**
  * 获取分类信息并缓存分类
  * @param  integer $id    分类ID
  * @param  string  $field 要获取的字段名
@@ -320,12 +340,13 @@ function get_model_attribute($model_id, $group = true,$fields=true){
 
     /* 获取属性 */
     if(!isset($list[$model_id])){
-        $map = [['model_id','=',$model_id]];
         $extend = db('Model')->getFieldById($model_id,'extend');
-
         if($extend){
-            $map['model_id'] = ['model_id','in', [$model_id,$extend]];
+            $map[] = ['model_id','in', [$model_id,$extend]];
         }
+		else{
+			$map[] = ['model_id','=',$model_id];
+		}
         $info = db('Attribute')->where($map)->field($fields)->select();
         $list[$model_id] = $info;
     }

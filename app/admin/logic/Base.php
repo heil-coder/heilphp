@@ -44,7 +44,7 @@ class Base extends Model {
         if ($this->getConnection()->getTableFields($this->getTable()) == false) {
             $data = array();
         } else {
-            $data = $this->field(true)->find($id);
+            $data = $this->field(true)->find($id)->toArray();
             if (!$data) {
                 $this->error = '获取详细信息出错！';
                 return false;

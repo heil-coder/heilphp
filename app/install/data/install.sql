@@ -570,3 +570,36 @@ CREATE TABLE `heilphp_document` (
 -- Records of `heilphp_document`
 -- -----------------------------
 INSERT INTO `heilphp_document` VALUES ('1', '1', '', 'HeilPHP0.01开发版发布', '2', '0','升级OneThink核心为ThinkPHP5.1', '0', '0', '2', '2', '0', '0', '0', '1', '0', '0', '8', '0', '0', '0', '1406001413', '1406001413', '1');
+
+-- -----------------------------
+-- Table structure for `heilphp_document_article`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_document_article`;
+CREATE TABLE `heilphp_document_article` (
+  `id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '文档ID',
+  `parse` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '内容解析类型',
+  `content` text NOT NULL COMMENT '文章内容',
+  `template` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页显示模板',
+  `bookmark` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '收藏数',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文档模型文章表';
+
+-- -----------------------------
+-- Records of `heilphp_document_article`
+-- -----------------------------
+INSERT INTO `heilphp_document_article` VALUES ('1', '0', '<h1>\r\n	HeilPHP0.01.1开发版发布&nbsp;\r\n</h1>\r\n<p>\r\n	<br />\r\n</p>\r\n<p>\r\n	<strong>HeilPHP是一个开源的内容管理框架，基于最新的ThinkPHP5.1版本和OneThink1.1版本开发，提供更方便、更安全的WEB应用开发体验，采用了全新的架构设计和命名空间机制，融合了模块化、驱动化和插件化的设计理念于一体，开启了国内WEB应用傻瓜式开发的新潮流。&nbsp;</strong> \r\n</p>\r\n<h2>\r\n	主要特性：\r\n</h2>\r\n<p>\r\n	1. 基于ThinkPHP最新5.1版本。\r\n</p>\r\n<p>\r\n	2. 模块化：全新的架构和模块化的开发机制，便于灵活扩展和二次开发。&nbsp;\r\n</p>\r\n<p>\r\n	3. 文档模型/分类体系：通过和文档模型绑定，以及不同的文档类型，不同分类可以实现差异化的功能，轻松实现诸如资讯、下载、讨论和图片等功能。\r\n</p>\r\n<p>\r\n	4. 开源免费：HeilPHP遵循Apache2开源协议,免费提供使用。&nbsp;\r\n</p>\r\n<p>\r\n	5. 用户行为：支持自定义用户行为，可以对单个用户或者群体用户的行为进行记录及分享，为您的运营决策提供有效参考数据。\r\n</p>\r\n<p>\r\n	<br />\r\n</p>\r\n<p>\r\n	<strong>&nbsp;HeilPHP集成了一个完善的后台管理体系和前台模板标签系统，让你轻松管理数据和进行前台网站的标签式开发。&nbsp;</strong> \r\n</p>\r\n<p>\r\n	<br />\r\n</p>\r\n<h2>\r\n	后台主要功能：\r\n</h2>\r\n<p>\r\n	1. 用户Passport系统\r\n</p>\r\n<p>\r\n	2. 配置管理系统&nbsp;\r\n</p>\r\n<p>\r\n	3. 权限控制系统\r\n</p>\r\n<p>\r\n	4. 后台建模系统&nbsp;\r\n</p>\r\n<p>\r\n	5. 多级分类系统&nbsp;\r\n</p>\r\n<p>\r\n	6. 用户行为系统&nbsp;\r\n</p>\r\n<p>\r\n	7. 钩子和插件系统\r\n</p>\r\n<p>\r\n	8. 系统日志系统&nbsp;\r\n</p>\r\n<p>\r\n	9. 数据备份和还原\r\n</p>\r\n<p>\r\n	<br />\r\n</p>\r\n<p>\r\n	&nbsp;	<br />\r\n</p>\r\n<p>\r\n	<strong>HeilPHP开发团队 2018</strong> \r\n</p>', '', '0');
+
+-- -----------------------------
+-- Table structure for `heilphp_document_download`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_document_download`;
+CREATE TABLE `heilphp_document_download` (
+  `id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '文档ID',
+  `parse` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '内容解析类型',
+  `content` text NOT NULL COMMENT '下载详细描述',
+  `template` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页显示模板',
+  `file_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '文件ID',
+  `download` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '下载次数',
+  `size` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '文件大小',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文档模型下载表';

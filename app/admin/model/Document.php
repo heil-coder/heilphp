@@ -68,7 +68,7 @@ class Document extends Model{
         $logic  = $this->logic($info['model_id']);
         $detail = $logic->detail($id); //获取指定ID的数据
         if(!$detail){
-            $this->error = $logic->getError();
+            $this->error = $logic->error;
             return false;
         }
         $info = array_merge($info, $detail);
@@ -184,7 +184,6 @@ class Document extends Model{
      */
     private function logic($model){
         $name  = parse_name(get_document_model($model, 'name'), 1);
-		dump($name);
         $class = is_file(Env::get('module_path') . 'logic/' . $name .'.php') ? $name : 'Base';
         $class = 'app\\'.Request::module() . '\\logic\\' . $class;
         return new $class($name);

@@ -289,3 +289,23 @@ function get_cate($cate_id = null){
     $cate   =   db('Category')->where('id',$cate_id)->value('title');
     return $cate;
 }
+/**
+ * 获取当前分类的文档类型
+ * @param int $id
+ * @return array 文档类型数组
+ * @author huajie <banhuajie@163.com>
+ */
+function get_type_bycate($id = null){
+    if(empty($id)){
+        return false;
+    }
+    $type_list  =   config('heilphp.DOCUMENT_MODEL_TYPE');
+    $model_type =   db('Category')->getFieldById($id, 'type');
+    $model_type =   explode(',', $model_type);
+    foreach ($type_list as $key=>$value){
+        if(!in_array($key, $model_type)){
+            unset($type_list[$key]);
+        }
+    }
+    return $type_list;
+}

@@ -476,3 +476,22 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | create_time| bigint(10) unsigned |否|0|--|创建时间| 
 | update_time| bigint(10) unsigned |否|0|--|更新时间| 
 | status| tinyint(1) unsigned |否|0|--|数据状态| 
+
+## document_article 文档模型文章表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned|否|0|--|文档id，主键| 
+| parse| tinyint(1) unsigned|否|0|--|内容解析类型| 
+| content| text|否|无|--|文章内容| 
+| template| varchar(100)|否|''|--|详情页显示模板| 
+| bookmark| int(10) unsigned|否|0|--|收藏数| 
+
+## document_download 文档模型下载表
+|字段|类型|允许为空|默认值|自动递增|注释|
+| id | int(10) unsigned|否|0|--|文档id，主键| 
+| parse| tinyint(3) unsigned|否|0|--|内容解析类型| 
+| content| text |否|无|--|下载详细描述| 
+| template| varchar(100)|否|''|--|详情页显示模板| 
+| file_id| int(10) unsigned|否|0|--|文件ID| 
+| download| int(10) unsigned|否|0|--|下载次数| 
+| size| bigint(10) unsigned|否|0|--|文件大小| 
