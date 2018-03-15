@@ -11,6 +11,35 @@
 
 // 应用公共文件
 /**
+ * 插件显示内容里生成访问插件的url
+ * @param string $url url
+ * @param array $param 参数
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+ */
+function addons_url($url, $param = array()){
+    $url        = parse_url($url);
+    $case       = Config('URL_CASE_INSENSITIVE');
+    $addons     = $case ? parse_name($url['scheme']) : $url['scheme'];
+    $controller = $case ? parse_name($url['host']) : $url['host'];
+    $action     = trim($case ? strtolower($url['path']) : $url['path'], '/');
+
+    /* 解析URL带的参数 */
+    if(isset($url['query'])){
+        parse_str($url['query'], $query);
+        $param = array_merge($query, $param);
+    }
+
+    /* 基础参数 */
+    $params = array(
+        '_addons'     => $addons,
+        '_controller' => $controller,
+        '_action'     => $action,
+    );
+    $params = array_merge($params, $param); //添加额外参数
+
+    return Url('Addons/execute', $params);
+}
+/**
  * 时间戳格式化
  * @param int $time			时间字符串或时间戳
  * @param string $format	时间格式
