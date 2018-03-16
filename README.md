@@ -11,6 +11,7 @@ heilphp
 > 使用ThinkPHP 5.1 控制器的success()和error()方法返回数据,可以对get、post或ajax请求方式都可以做适合的响应。
 
 # 待处理
+> 多字段验证唯一,如果其中一个值为null则无法生成正确的验证查询sql语句 (ieldName = null)
 > 数据字典category allow_publish 的注释内容确认
 > 数据字典category reply_model的注释确认
 > 名词解释 频道 的说明
