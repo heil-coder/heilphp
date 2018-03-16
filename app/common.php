@@ -440,6 +440,16 @@ function get_model_attribute($model_id, $group = true,$fields=true){
 function encrypt_password($str, $salt = ''){
     return '' === $str ? '' : md5(sha1($str) . $salt);
 }
+/**
+ * 生成用户salt
+ * @author Jason	<1878566968@qq.com>
+ */
+function build_salt(){
+    $chars  = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $chars .= '`~!@#$%^&*()_+-=[]{};:"|,.<>/?';
+    $chars  = str_shuffle($chars);
+    return substr($chars, 0, 10);
+}
 /*
  * 获取客户端IP地址
  * @param integer $type 返回类型 0 返回IP地址 1 返回IPV4地址数字

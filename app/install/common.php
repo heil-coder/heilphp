@@ -197,14 +197,3 @@ function complete_redirect(){
     flush();
     ob_flush();
 }
-
-/**
- * 生成用户salt
- * @author Jason	<1878566968@qq.com>
- */
-function build_salt(){
-    $chars  = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $chars .= '`~!@#$%^&*()_+-=[]{};:"|,.<>/?';
-    $chars  = str_shuffle($chars);
-    return substr($chars, 0, 10);
-}

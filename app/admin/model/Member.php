@@ -22,14 +22,21 @@ class Member extends Model {
     //    array('nickname', '1,16', '昵称长度为1-16个字符', self::EXISTS_VALIDATE, 'length'),
     //    array('nickname', '', '昵称被占用', self::EXISTS_VALIDATE, 'unique'), //用户名被占用
     //);
+	protected $isInsert = false;
 	protected $auto = ['password'];
 	
-	protected function setPasswordAttr($value){
-		if($value === $this->password){
+	protected function setPasswordAttr($value,$data){
+		if(!empty($this->password) && $value === $this->password){
 			return $value;
 		}
+		elseif(!empty($this->salt)){
+			return encrypt_password($value,$this->salt);
+		}
+		elseif(!empty($data['salt'])){
+			return encrypt_password($value,$data['salt']);
+		}
 		else{
-			return encrypt_password($value,session('user_auth.salt'));
+			return encrypt_password($value);
 		}
 	}
 	
@@ -54,6 +61,7 @@ class Member extends Model {
 			,'mobile'   => $mobile
 			,'nickname'	=> $username
 			,'status'	=>1
+			,'salt'		=> build_salt()
 		);
 
 		//验证手机
