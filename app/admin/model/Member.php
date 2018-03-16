@@ -38,7 +38,38 @@ class Member extends Model {
         return $this->field($field)->where($map)->order($order)->select();
     }
 
+	/**
+	 * 注册一个新用户
+	 * @param  string $username 用户名
+	 * @param  string $password 用户密码
+	 * @param  string $email    用户邮箱
+	 * @param  string $mobile   用户手机号码
+	 * @return integer          注册成功-用户信息，注册失败-错误编号
+	 */
+	public function register($username, $password, $email, $mobile){
+		$data = array(
+			'username' => $username
+			,'password' => $password
+			,'email'    => $email
+			,'mobile'   => $mobile
+			,'nickname'	=> $username
+			,'status'	=>1
+		);
 
+		//验证手机
+		if(empty($data['mobile'])) unset($data['mobile']);
+
+		$validate = new \app\admin\validate\Member;
+		
+		if($validate->check($data)){
+			/* 添加用户 */
+			$uid = $this->save($data);
+			return $uid ? $uid : false; //0-未知错误，大于0-注册成功
+		}
+		else{
+			return $validate->getError();
+		}
+	}
 
 	/**
 	 * 用户登录认证

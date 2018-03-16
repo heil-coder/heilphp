@@ -48,12 +48,12 @@ class User extends Admin{
             }
 
             /* 调用注册接口注册用户 */
-            $User   =   new UserApi;
-            $uid    =   $User->register($username, $password, $email);
-            if($uid !== false){ //注册成功
+            $User   =   model('Member');
+            $uid    =   $User->register($username, $password, $email,$mobile = '');
+            if(is_numeric($uid) && $uid > 0){ //注册成功
 				$this->success('用户添加成功！',Url('index'));
             } else { //注册失败，显示错误信息
-                $this->error($this->showRegError($uid));
+                $this->error($uid);
             }
         } else {
             $this->assign('meta_title','新增用户');
