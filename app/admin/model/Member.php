@@ -9,6 +9,7 @@
 
 namespace app\admin\Model;
 use think\Model;
+use think\model\concern\SoftDelete;
 use App;
 
 /**
@@ -22,6 +23,10 @@ class Member extends Model {
     //    array('nickname', '1,16', '昵称长度为1-16个字符', self::EXISTS_VALIDATE, 'length'),
     //    array('nickname', '', '昵称被占用', self::EXISTS_VALIDATE, 'unique'), //用户名被占用
     //);
+
+	use SoftDelete;
+	protected $deleteTime = 'delete_time';
+
 	protected $auto = ['password'];
 	
 	protected function setPasswordAttr($value,$data){

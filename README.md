@@ -11,10 +11,15 @@ heilphp
 > 使用ThinkPHP 5.1 控制器的success()和error()方法返回数据,可以对get、post或ajax请求方式都可以做适合的响应。
 
 # 待处理
-> 多字段验证唯一,如果其中一个值为null则无法生成正确的验证查询sql语句 (ieldName = null)
 > 数据字典category allow_publish 的注释内容确认
 > 数据字典category reply_model的注释确认
 > 名词解释 频道 的说明
+
+#已处理
+> 多字段验证唯一,如果其中一个值为null则无法生成正确的验证查询sql语句 (fieldName = null)
+```
+delete_time为null时需要在模型中加入软删除设置,联合唯一的字段会自动在验证时增加对delete_time的联合验证,非软删除的null字段暂时没有处理办法
+```
 
 ## 名词解释
 | 标题|说明|
