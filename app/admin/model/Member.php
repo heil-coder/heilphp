@@ -22,7 +22,6 @@ class Member extends Model {
     //    array('nickname', '1,16', '昵称长度为1-16个字符', self::EXISTS_VALIDATE, 'length'),
     //    array('nickname', '', '昵称被占用', self::EXISTS_VALIDATE, 'unique'), //用户名被占用
     //);
-	protected $isInsert = false;
 	protected $auto = ['password'];
 	
 	protected function setPasswordAttr($value,$data){
@@ -62,6 +61,7 @@ class Member extends Model {
 			,'nickname'	=> $username
 			,'status'	=>1
 			,'salt'		=> build_salt()
+			,'delete_time'		=> null
 		);
 
 		//验证手机
