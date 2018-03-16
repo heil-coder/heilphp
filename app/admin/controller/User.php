@@ -42,14 +42,10 @@ class User extends Admin{
     }
     public function add($username = '', $password = '', $repassword = '', $email = ''){
         if(Request::isPost()){
-            /* 检测密码 */
-            if($password != $repassword){
-                $this->error('密码和重复密码不一致！');
-            }
 
             /* 调用注册接口注册用户 */
             $User   =   model('Member');
-            $uid    =   $User->register($username, $password, $email,$mobile = '');
+            $uid    =   $User->register($username, $password,$repassword, $email,$mobile = '');
             if(is_numeric($uid) && $uid > 0){ //注册成功
 				$this->success('用户添加成功！',Url('index'));
             } else { //注册失败，显示错误信息

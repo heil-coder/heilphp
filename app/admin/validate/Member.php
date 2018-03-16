@@ -22,9 +22,9 @@ class Member extends Validate
 		,'password'	=>	[
 			'length'				=> '6,30'								//密码长度不合法	
 		]
-		//,'repassword' =>[
-		//	'confirm' =>			'password'								//确认密码和密码不一致
-		//]
+		,'repassword' =>[
+			'confirm' =>			'password'								//确认密码和密码不一致
+		]
 		,'email'	=>	[
 			'email'															//邮箱格式不正确
 			,'length'				=> '3,32'								//邮箱长度不合法
@@ -45,7 +45,7 @@ class Member extends Validate
         ,'username.unique'					=> '用户名被占用'
 
         ,'password.length'					=> '密码长度不合法'
-		//,'repassword.confirm'				=> '确认密码和密码不一致'
+		,'repassword.confirm'				=> '确认密码和密码不一致'
 
 		,'email.email'						=> '邮箱格式不正确'
 		,'email.length'						=> '邮箱长度不合法'
