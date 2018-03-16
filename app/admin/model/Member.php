@@ -18,12 +18,6 @@ use App;
  */
 
 class Member extends Model {
-
-    //protected $_validate = array(
-    //    array('nickname', '1,16', '昵称长度为1-16个字符', self::EXISTS_VALIDATE, 'length'),
-    //    array('nickname', '', '昵称被占用', self::EXISTS_VALIDATE, 'unique'), //用户名被占用
-    //);
-
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
 
