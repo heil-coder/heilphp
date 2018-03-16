@@ -12,6 +12,7 @@ use think\Model;
 use app\admin\model\AuthGroup;
 use Request;
 use Env;
+use Hook;
 
 /**
  * 文档基础模型
@@ -110,6 +111,7 @@ class Document extends Model{
                 $this->error = '更新基础内容出错！';
                 return false;
             }
+			$id = $data['id'];
         }
 
         /* 添加或新增扩展内容 */
@@ -119,7 +121,7 @@ class Document extends Model{
             if(isset($id)){ //新增失败，删除基础数据
                 $this->delete($id);
             }
-            $this->error = $logic->error();
+            $this->error = $logic->error;
             return false;
         }
 

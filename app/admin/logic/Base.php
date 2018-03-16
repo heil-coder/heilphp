@@ -16,10 +16,10 @@ use think\Model;
 class Base extends Model {
 
     /* 自动验证规则 */
-    protected $_validate    =   array();
+    protected $validate   =   ['rule'=>[],'message'=>[]];
 
     /* 自动完成规则 */
-    protected $_auto        =   array();
+    protected $auto        =   [];
 
     /**
      * 构造函数
@@ -64,16 +64,21 @@ class Base extends Model {
         if ($data === false) {
             return false;
         }
+	   	$Validate = new \think\Validate;
+		if($Validate->check($data) !== true){
+			$this->error = $Validate->getError();	
+		};
+
 
         if (empty($data['id'])) {//新增数据
             $data['id'] = $id;
-            $id = $this->add($data);
+            $id = $this->save($data);
             if (!$id) {
                 $this->error = '新增数据失败！';
                 return false;
             }
         } else { //更新数据
-            $status = $this->save($data);
+            $status = $this->get($id)->save($data);
             if (false === $status) {
                 $this->error = '更新数据失败！';
                 return false;
@@ -97,26 +102,29 @@ class Base extends Model {
      */
     public function checkModelAttr($model_id){
         $fields     =   get_model_attribute($model_id,false);
-        $validate   =   $auto   =   array();
+        $validate   = ['rule'=>[],'message'=>[]];  $auto   =   [];
         foreach($fields as $key=>$attr){
             if($attr['is_must']){// 必填字段
-                $validate[]  =  array($attr['name'],'require',$attr['title'].'必须!',self::MUST_VALIDATE , 'regex', self::MODEL_BOTH);
+                //$validate[]  =  array($attr['name'],'require',$attr['title'].'必须!',self::MUST_VALIDATE , 'regex', self::MODEL_BOTH);
+				$validate['rule'][$attr['name']] = 'require';
+				$validate['message'][$attr['name'].'.'.'require'] = $attr['title'].'必须!';
             }
             // 自动验证规则
             if(!empty($attr['validate_rule'])) {
-                $validate[]  =  array($attr['name'],$attr['validate_rule'],$attr['error_info']?$attr['error_info']:$attr['title'].'验证错误',0,$attr['validate_type'],$attr['validate_time']);
+                //$validate[]  =  array($attr['name'],$attr['validate_rule'],$attr['error_info']?$attr['error_info']:$attr['title'].'验证错误',0,$attr['validate_type'],$attr['validate_time']);
             }
             // 自动完成规则
             if(!empty($attr['auto_rule'])) {
-                $auto[]  =  array($attr['name'],$attr['auto_rule'],$attr['auto_time'],$attr['auto_type']);
+                //$auto[]  =  array($attr['name'],$attr['auto_rule'],$attr['auto_time'],$attr['auto_type']);
             }elseif('checkbox'==$attr['type']){ // 多选型
-                $auto[] =   array($attr['name'],'arr2str',3,'function');
+                //$auto[] =   array($attr['name'],'arr2str',3,'function');
             }elseif('datetime' == $attr['type'] || 'date' == $attr['type']){ // 日期型
-                $auto[] =   array($attr['name'],'strtotime',3,'function');
+                //$auto[] =   array($attr['name'],'strtotime',3,'function');
             }
         }
-        $validate   =   array_merge($validate,$this->_validate);
-        $auto       =   array_merge($auto,$this->_auto);
-        return $this->validate($validate)->auto($auto);
+        $this->validate['rule']   =   array_merge($validate['rule'],$this->validate['rule']);
+        $this->validate['message']   =   array_merge($validate['message'],$this->validate['message']);
+        $auto       =   array_merge($auto,$this->auto);
+		$this->auto($auto);
     }
 }
