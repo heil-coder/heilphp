@@ -100,13 +100,13 @@ class Document extends Model{
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = $this->add(); //添加基础内容
+            $id = $this->save($data); //添加基础内容
             if(!$id){
                 $this->error = '新增基础内容出错！';
                 return false;
             }
         } else { //更新数据
-            $status = $this->save(); //更新基础内容
+            $status = $this->find($data['id'])->save($data); //更新基础内容
             if(false === $status){
                 $this->error = '更新基础内容出错！';
                 return false;
