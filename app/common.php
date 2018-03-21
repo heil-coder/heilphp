@@ -527,6 +527,7 @@ function get_username($uid = 0){
  * @param int $user_id 执行行为的用户id
  * @return boolean
  * @author huajie <banhuajie@163.com>
+ * @modify Jason<1878566968@qq.com>
  */
 function action_log($action = null, $model = null, $record_id = null, $user_id = null){
 
@@ -577,7 +578,9 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
         $data['remark']     =   '操作url：'.$_SERVER['REQUEST_URI'];
     }
 
-    db('ActionLog')->add($data);
+	$Db= db('ActionLog');
+    //db('ActionLog')->insert($data);
+    $test = $Db->insert($data);
 
     if(!empty($action_info['rule'])){
         //解析行为
@@ -601,6 +604,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
  * @param int $self 替换规则里的变量为执行用户的id
  * @return boolean|array: false解析出错 ， 成功返回规则数组
  * @author huajie <banhuajie@163.com>
+ * @modify Jason<1878566968@qq.com>
  */
 function parse_action($action = null, $self){
     if(empty($action)){
@@ -626,6 +630,7 @@ function parse_action($action = null, $self){
     $rules = explode(';', $rules);
     $return = array();
     foreach ($rules as $key=>&$rule){
+		if(empty($rule)) continue;
         $rule = explode('|', $rule);
         foreach ($rule as $k=>$fields){
             $field = empty($fields) ? array() : explode(':', $fields);
