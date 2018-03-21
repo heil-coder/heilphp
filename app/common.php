@@ -578,9 +578,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
         $data['remark']     =   '操作url：'.$_SERVER['REQUEST_URI'];
     }
 
-	$Db= db('ActionLog');
-    //db('ActionLog')->insert($data);
-    $test = $Db->insert($data);
+	db('ActionLog')->insert($data);
 
     if(!empty($action_info['rule'])){
         //解析行为
@@ -666,7 +664,7 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
         //检查执行周期
 		$map = [['action_id','=',$action_id]
 			,['user_id','=',$user_id]];
-        $map[] = ['create_time','gt', app()->getBeginTime() - intval($rule['cycle']) * 3600];
+        $map[] = ['create_time','>', app()->getBeginTime() - intval($rule['cycle']) * 3600];
         $exec_count = db('ActionLog')->where($map)->count();
         if($exec_count > $rule['max']){
             continue;

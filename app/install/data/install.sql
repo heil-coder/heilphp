@@ -361,7 +361,7 @@ CREATE TABLE `heilphp_action` (
 -- Records of `heilphp_action`
 -- -----------------------------
 INSERT INTO `heilphp_action` (`id`, `name`, `title`, `remark`, `rule`, `log`, `type`, `status`, `update_time`, `delete_time`) VALUES
-(1, 'user_login', '用户登录', '积分+10，每天一次', 'table:member|field:score|condition:uid={$self} AND status>-1|rule:score+10|cycle:24|max:1;', '[user|get_nickname]在[time|time_format]登录了后台', 1, 1, 1520551087, NULL),
+(1, 'user_login', '用户登录', '积分+10，每天一次', 'table:member|field:score|condition:id={$self} AND status>-1|rule:score+10|cycle:24|max:1;', '[user|get_nickname]在[time|time_format]登录了后台', 1, 1, 1520551087, NULL),
 (2, 'update_config', '更新配置', '新增或修改或删除配置', '', '', 1, 1, 1520551087, NULL),
 (3, 'update_model', '更新模型', '新增或修改模型', '', '', 1, 1, 1520551087, NULL),
 (4, 'update_channel', '更新导航', '新增或修改或删除导航', '', '', 1, 1, 1520551087, NULL),
