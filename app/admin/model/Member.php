@@ -111,7 +111,7 @@ class Member extends Model {
 			/* 验证用户密码 */
 			if(encrypt_password($password, $user['salt']) === $user['password']){
 				//记录行为
-        		//action_log('user_login', 'member', $uid, $uid);
+        		action_log('user_login', 'member', $user['id'], $user['id']);
 
         		/* 登录用户 */
         		$this->autoLogin($user);
