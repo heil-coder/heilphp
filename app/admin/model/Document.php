@@ -18,7 +18,7 @@ use Hook;
  * 文档基础模型
  */
 class Document extends Model{
-
+	protected $autoWriteTimestamp = true;
     /* 自动验证规则 */
     //protected $_validate = array(
     //    array('name', '/^[a-zA-Z]\w{0,39}$/', '文档标识不合法', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
@@ -52,8 +52,34 @@ class Document extends Model{
     //    array('deadline', 'strtotime', self::MODEL_BOTH, 'function'),
     //);
 
-	protected $auto = ['position'];
-
+	protected $auto = ['create_time','status','position','deadline'];
+    /**
+     * 创建时间不写则取当前时间
+     * @return int 时间戳
+     * @author huajie <banhuajie@163.com>
+     */
+    protected function setCreateTimeAttr($value){
+        return $value ? strtotime($value) : app()->getBeginTime();
+    }
+    /**
+     * 获取数据状态
+     * @return integer 数据状态
+     */
+    protected function setStatusAttr(){
+        $id = input('post.id');
+        if(empty($id)){	//新增
+        	$cate = input('post.category_id');
+        	$check 	=	db('Category')->getFieldById($cate,'check');  	
+            $status = 	$check ? 2 : 1;
+        }else{				//更新
+            $status = $this->getFieldById($id, 'status');
+            //编辑草稿改变状态
+            if($status == 3){
+                $status = 1;
+            }
+        }
+        return $status;
+    }
     /**
      * 生成推荐位的值
      * @return number 推荐位
@@ -61,7 +87,7 @@ class Document extends Model{
      */
     protected function setPositionAttr($position){
         if(!is_array($position)){
-            return is_numeric($position) ?: $position : 0;
+            return is_numeric($position) ? $position : 0;
         }else{
             $pos = 0;
             foreach ($position as $key=>$value){
@@ -70,6 +96,9 @@ class Document extends Model{
             return $pos;
         }
     }
+	protected function setDeadlineAttr($value){
+		return strtotime($value);
+	}
     /**
      * 获取详情页数据
      * @param  integer $id 文档ID
@@ -152,26 +181,6 @@ class Document extends Model{
 
         //内容添加或更新完成
         return $data;
-    }
-
-    /**
-     * 获取数据状态
-     * @return integer 数据状态
-     */
-    protected function getStatus(){
-        $id = I('post.id');
-        if(empty($id)){	//新增
-        	$cate = I('post.category_id');
-        	$check 	=	M('Category')->getFieldById($cate,'check');  	
-            $status = 	$check ? 2 : 1;
-        }else{				//更新
-            $status = $this->getFieldById($id, 'status');
-            //编辑草稿改变状态
-            if($status == 3){
-                $status = 1;
-            }
-        }
-        return $status;
     }
 
     /**
@@ -259,24 +268,6 @@ class Document extends Model{
             }
         }
         return $name;
-    }
-
-    /**
-     * 生成推荐位的值
-     * @return number 推荐位
-     * @author huajie <banhuajie@163.com>
-     */
-    protected function getPosition(){
-        $position = I('post.position');
-        if(!is_array($position)){
-            return 0;
-        }else{
-            $pos = 0;
-            foreach ($position as $key=>$value){
-                $pos += $value;		//将各个推荐位的值相加
-            }
-            return $pos;
-        }
     }
 
 
