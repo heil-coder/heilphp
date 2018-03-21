@@ -52,6 +52,24 @@ class Document extends Model{
     //    array('deadline', 'strtotime', self::MODEL_BOTH, 'function'),
     //);
 
+	protected $auto = ['position'];
+
+    /**
+     * 生成推荐位的值
+     * @return number 推荐位
+     * @author huajie <banhuajie@163.com>
+     */
+    protected function setPositionAttr($position){
+        if(!is_array($position)){
+            return is_numeric($position) ?: $position : 0;
+        }else{
+            $pos = 0;
+            foreach ($position as $key=>$value){
+                $pos += $value;		//将各个推荐位的值相加
+            }
+            return $pos;
+        }
+    }
     /**
      * 获取详情页数据
      * @param  integer $id 文档ID
