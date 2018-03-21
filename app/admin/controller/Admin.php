@@ -6,6 +6,15 @@
 // +----------------------------------------------------------------------
 // | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
+
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
+// +----------------------------------------------------------------------
+
 namespace app\admin\controller;
 use think\Controller;
 use Db;
@@ -53,8 +62,8 @@ class Admin extends Controller {
      *                              否则使用$order参数(如果$order参数,且模型也没有设定过order,则取主键降序);
      *
      * @param boolean      $field   单表模型用不到该参数,要用在多表join时为field()方法指定参数
-     * @author Jason <1878566968@qq.com>
-     *
+     * @author 朱亚杰 <xcoolcc@gmail.com>
+	 * @modify Jason<1878566968@qq.com>
      * @return array|false
      * 返回数据集
      */
@@ -122,7 +131,8 @@ class Admin extends Controller {
      * @param array  $where 查询时的where()方法的参数
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
-     *
+     * @author 朱亚杰  <zhuyajie@topthink.net>
+	 * @modify Jason<1878566968@qq.com>
      */
     final protected function editRow ( $model ,$data, $where , $msg ){
         $id    = array_unique(Request::param('id/a',[]));
@@ -148,7 +158,8 @@ class Admin extends Controller {
      * @param array  $where 查询时的 where()方法的参数
      * @param array  $msg   执行正确和错误的消息,可以设置四个元素 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
-     *
+     * @author 朱亚杰 <xcoolcc@gmail.com>
+	 * @modify Jason<1878566968@qq.com>
      */
     protected function forbid ( $model , $where = array() , $msg = array( 'success'=>'状态禁用成功！', 'error'=>'状态禁用失败！')){
         $data    =  array('status' => 0);
@@ -160,7 +171,8 @@ class Admin extends Controller {
      * @param array  $where 查询时的where()方法的参数
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
-     *
+     * @author 朱亚杰 <xcoolcc@gmail.com>
+	 * @modify Jason<1878566968@qq.com>
      */
     protected function resume (  $model , $where = array() , $msg = array( 'success'=>'状态恢复成功！', 'error'=>'状态恢复失败！')){
         $data    =  array('status' => 1);
@@ -172,10 +184,11 @@ class Admin extends Controller {
      * @param array  $where 查询时的where()方法的参数
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
-     *
+     * @author 朱亚杰 <xcoolcc@gmail.com>
+	 * @modify Jason<1878566968@qq.com>
      */
     protected function delete ( $model , $where = [] , $msg = array( 'success'=>'删除成功！', 'error'=>'删除失败！')) {
-        $data['delete_time']         =   Request::time();
+        $data['delete_time']         =   app()->getBeginTime();
         $this->editRow(   $model , $data, $where, $msg);
     }
     /**
@@ -184,7 +197,8 @@ class Admin extends Controller {
      * @retrun array
      *
      * 注意,返回的主菜单节点数组中有'controller'元素,以供区分子节点和主节点
-     *
+     * @author 朱亚杰 <xcoolcc@gmail.com>
+	 * @modify Jason<1878566968@qq.com>
      */
     final protected function returnNodes($tree = true){
         static $tree_nodes = array();
@@ -245,6 +259,8 @@ class Admin extends Controller {
     }
     /**
      * 获取控制器菜单数组,二级菜单元素位于一级菜单的'_child'元素中
+     * @author 朱亚杰  <xcoolcc@gmail.com>
+	 * @modify Jason<1878566968@qq.com>
      */
     final public function getMenus($controller=''){
 		empty($controlle) && $controller = Request::controller();
