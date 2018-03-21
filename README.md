@@ -15,6 +15,7 @@ heilphp
 > 数据字典category reply_model的注释确认
 > 名词解释 频道 的说明
 > status 统一配置调整
+> 用户行为日志清空后，行为规则周期执行判断会重新计时问题
 
 #已处理
 > 多字段验证唯一,如果其中一个值为null则无法生成正确的验证查询sql语句 (fieldName = null)
