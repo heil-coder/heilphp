@@ -235,7 +235,7 @@ class Admin extends Controller {
      */
     public function setStatus($model = ''){
 		empty($model) && $model = Request::controller();
-        $ids    =   Request::param('ids');
+        $ids    =   Request::param('ids/a');
         $status =   Request::param('status/d');
         if(empty($ids)){
             $this->error('请选择要操作的数据');
