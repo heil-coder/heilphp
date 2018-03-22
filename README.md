@@ -497,6 +497,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 
 ## document_download 文档模型下载表
 |字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
 | id | int(10) unsigned|否|0|--|文档id，主键| 
 | parse| tinyint(3) unsigned|否|0|--|内容解析类型| 
 | content| text |否|无|--|下载详细描述| 
@@ -504,3 +505,12 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | file_id| int(10) unsigned|否|0|--|文件ID| 
 | download| int(10) unsigned|否|0|--|下载次数| 
 | size| bigint(10) unsigned|否|0|--|文件大小| 
+
+## url 链接表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(11) unsigned|否|0|是|链接唯一标识，主键| 
+| url | varchar(255) |否|''|--|链接地址规| 
+| short| varchar(100) |否|''|--|短网址| 
+| status| tinyint(1) unsigned|否|2|--|状态| 
+| create_time| bigint(10) unsigned |否|0|--|创建时间| 

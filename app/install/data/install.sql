@@ -609,3 +609,20 @@ CREATE TABLE `heilphp_document_download` (
   `size` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '文件大小',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文档模型下载表';
+
+-- -----------------------------
+-- Table structure for `heilphp_url`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_url`;
+CREATE TABLE `heilphp_url` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '链接唯一标识',
+  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '链接地址',
+  `short` varchar(100) NOT NULL DEFAULT '' COMMENT '短网址',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '2' COMMENT '状态',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_url` (`url`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='链接表';
+
+
+

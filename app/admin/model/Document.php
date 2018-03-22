@@ -34,25 +34,46 @@ class Document extends Model{
     //    array('model_id,pid,category_id', 'check_category_model', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'function', self::MODEL_INSERT),
     //);
 
-    /* 自动完成规则 */
-    //protected $_auto = array(
-    //    array('uid', 'is_login', self::MODEL_INSERT, 'function'),
-    //    array('title', 'htmlspecialchars', self::MODEL_BOTH, 'function'),
-    //    array('description', 'htmlspecialchars', self::MODEL_BOTH, 'function'),
-    //    array('root', 'getRoot', self::MODEL_BOTH, 'callback'),
-    //    array('link_id', 'getLink', self::MODEL_BOTH, 'callback'),
-    //    array('attach', 0, self::MODEL_INSERT),
-    //    array('view', 0, self::MODEL_INSERT),
-    //    array('comment', 0, self::MODEL_INSERT),
-    //    array('extend', 0, self::MODEL_INSERT),
-    //    array('create_time', 'getCreateTime', self::MODEL_BOTH,'callback'),
-    //    array('update_time', NOW_TIME, self::MODEL_BOTH),
-    //    array('status', 'getStatus', self::MODEL_BOTH, 'callback'),
-    //    array('position', 'getPosition', self::MODEL_BOTH, 'callback'),
-    //    array('deadline', 'strtotime', self::MODEL_BOTH, 'function'),
-    //);
 
-	protected $auto = ['status'];
+	protected $auto = ['attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];
+	protected function setUidAttr(){
+		return is_login();
+	}
+	protected function setTitleAttr($value){
+		return htmlspecialchars($value);	
+	}
+	protected function setDescriptionAttr($value){
+		return htmlspecialchars($value);	
+	}
+    /**
+     * 获取根节点id
+     * @return integer 数据id
+     * @author huajie <banhuajie@163.com>
+     */
+    protected function setRootAttr(){
+        $pid = input('post.pid');
+        if($pid == 0){
+            return 0;
+        }
+        $p_root = $this->getFieldById($pid, 'root');
+        return $p_root == 0 ? $pid : $p_root;
+    }
+    /**
+     * 获取链接id
+     * @return int 链接对应的id
+     * @author huajie <banhuajie@163.com>
+     */
+    protected function setLinkIdAttr(){
+        $link = input('post.link_id');
+        if(empty($link)){
+            return 0;
+        } else if(is_numeric($link)){
+            return $link;
+        }
+        $res = model('Url')->edit(array('url'=>$link));
+		dump($res);
+        return $res['id'];
+    }
     /**
      * 创建时间不写则取当前时间
      * @return int 时间戳
@@ -188,29 +209,7 @@ class Document extends Model{
         return $data;
     }
 
-    /**
-     * 获取根节点id
-     * @return integer 数据id
-     * @author huajie <banhuajie@163.com>
-     */
-    protected function getRoot(){
-        $pid = I('post.pid');
-        if($pid == 0){
-            return 0;
-        }
-        $p_root = $this->getFieldById($pid, 'root');
-        return $p_root == 0 ? $pid : $p_root;
-    }
 
-    /**
-     * 创建时间不写则取当前时间
-     * @return int 时间戳
-     * @author huajie <banhuajie@163.com>
-     */
-    protected function getCreateTime(){
-        $create_time    =   I('post.create_time');
-        return $create_time?strtotime($create_time):NOW_TIME;
-    }
 
     /**
      * 获取扩展模型对象
@@ -310,21 +309,7 @@ class Document extends Model{
         return $res;
     }
 
-    /**
-     * 获取链接id
-     * @return int 链接对应的id
-     * @author huajie <banhuajie@163.com>
-     */
-    protected function getLink(){
-        $link = I('post.link_id');
-        if(empty($link)){
-            return 0;
-        } else if(is_numeric($link)){
-            return $link;
-        }
-        $res = D('Url')->update(array('url'=>$link));
-        return $res['id'];
-    }
+
 
     /**
      * 保存为草稿
