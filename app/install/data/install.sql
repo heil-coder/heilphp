@@ -558,7 +558,7 @@ CREATE TABLE `heilphp_document` (
   `link_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '外链',
   `cover_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '封面',
   `display` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '可见性',
-  `deadline` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '截止时间',
+  `deadline` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '截止时间',
   `attach` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '附件数量',
   `view` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览量',
   `comment` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论数',

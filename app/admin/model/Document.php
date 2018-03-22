@@ -52,13 +52,14 @@ class Document extends Model{
     //    array('deadline', 'strtotime', self::MODEL_BOTH, 'function'),
     //);
 
-	protected $auto = ['create_time','status','position','deadline'];
+	protected $auto = ['status'];
     /**
      * 创建时间不写则取当前时间
      * @return int 时间戳
      * @author huajie <banhuajie@163.com>
      */
     protected function setCreateTimeAttr($value){
+		if(is_numeric($value))	return $value;
         return $value ? strtotime($value) : app()->getBeginTime();
     }
     /**
@@ -97,7 +98,8 @@ class Document extends Model{
         }
     }
 	protected function setDeadlineAttr($value){
-		return strtotime($value);
+		if(is_numeric($value))	return $value;
+		return empty($value) ? null : strtotime($value);
 	}
     /**
      * 获取详情页数据
@@ -160,6 +162,9 @@ class Document extends Model{
             }
 			$id = $data['id'];
         }
+		dump($this->getLastSql());
+		dump($data);
+		exit();
 
         /* 添加或新增扩展内容 */
         $logic = $this->logic($data['model_id']);

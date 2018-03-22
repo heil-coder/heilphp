@@ -476,7 +476,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | link_id| int(10) unsigned |否|0|--|外链| 
 | cover_id| int(10) unsigned |否|0|--|封面| 
 | display| tinyint(1) unsigned |否|1|--|可见性| 
-| deadline| int(10) unsigned |否|0|--|截止时间| 
+| deadline| bigint(10) unsigned |否|0|--|截止时间| 
 | attach| tinyint(1) unsigned |否|0|--|附件数量| 
 | view| int(10) unsigned |否|0|--|浏览量| 
 | comment| int(10) unsigned |否|0|--|评论数| 
