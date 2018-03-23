@@ -186,7 +186,7 @@ class Auth{
 
         $map=array(
             ['id','in',$ids]
-            ,['type','in',$type]
+            ,'type'=>is_array($type) ? $type : ['type','in',$type]
             ,['status','=',1]
         );
         //读取用户组所有权限规则
