@@ -50,7 +50,7 @@ class Article extends Admin {
                 $cate_id =  array_unique($cate_id);
                 break;
         }
-        if(!$cate_id){
+        if(empty($cate_id)){
             return null;//不明
         }elseif( !is_array($cate_id) && in_array($cate_id,$cates) ) {
             return true;//有权限
