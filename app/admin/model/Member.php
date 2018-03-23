@@ -71,8 +71,8 @@ class Member extends Model {
 		
 		if($validate->check($data)){
 			/* 添加用户 */
-			$uid = $this->save($data);
-			return $uid ? $uid : false; //0-未知错误，大于0-注册成功
+			$res = $this->save($data);
+			return $res ? $this->id: false; //0-未知错误，大于0-注册成功
 		}
 		else{
 			return $validate->getError();
