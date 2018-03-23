@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: luofei614 <weibo.com/luofei614>　
 // +----------------------------------------------------------------------
-namespace Think;
+namespace auth;
 /**
  * 权限认证类
  * 功能特性：
@@ -79,12 +79,12 @@ class Auth{
     );
 
     public function __construct() {
-        $prefix = C('DB_PREFIX');
+        $prefix = Config('database.prefix');
         $this->_config['AUTH_GROUP'] = $prefix.$this->_config['AUTH_GROUP'];
         $this->_config['AUTH_RULE'] = $prefix.$this->_config['AUTH_RULE'];
         $this->_config['AUTH_USER'] = $prefix.$this->_config['AUTH_USER'];
         $this->_config['AUTH_GROUP_ACCESS'] = $prefix.$this->_config['AUTH_GROUP_ACCESS'];
-        if (C('AUTH_CONFIG')) {
+        if (Config('AUTH_CONFIG')) {
             //可设置配置项 AUTH_CONFIG, 此配置项为数组。
             $this->_config = array_merge($this->_config, C('AUTH_CONFIG'));
         }
@@ -148,10 +148,10 @@ class Auth{
         static $groups = array();
         if (isset($groups[$uid]))
             return $groups[$uid];
-        $user_groups = M()
+        $user_groups = db()
             ->table($this->_config['AUTH_GROUP_ACCESS'] . ' a')
             ->where("a.uid='$uid' and g.status='1'")
-            ->join($this->_config['AUTH_GROUP']." g on a.group_id=g.id")
+            ->join($this->_config['AUTH_GROUP'].' g','a.group_id=g.id')
             ->field('rules')->select();
         $groups[$uid]=$user_groups?:array();
         return $groups[$uid];
@@ -185,12 +185,12 @@ class Auth{
         }
 
         $map=array(
-            'id'=>array('in',$ids),
-            'type'=>$type,
-            'status'=>1,
+            ['id','in',$ids]
+            ,['type','in',$type]
+            ,['status','=',1]
         );
         //读取用户组所有权限规则
-        $rules = M()->table($this->_config['AUTH_RULE'])->where($map)->field('condition,name')->select();
+        $rules = db()->table($this->_config['AUTH_RULE'])->where($map)->field('condition,name')->select();
 
         //循环规则，判断结果。
         $authList = array();   //
@@ -223,7 +223,7 @@ class Auth{
     protected function getUserInfo($uid) {
         static $userinfo=array();
         if(!isset($userinfo[$uid])){
-             $userinfo[$uid]=M()->where(array('uid'=>$uid))->table($this->_config['AUTH_USER'])->find();
+             $userinfo[$uid]=db()->where(array('uid'=>$uid))->table($this->_config['AUTH_USER'])->find();
         }
         return $userinfo[$uid];
     }

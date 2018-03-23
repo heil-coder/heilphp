@@ -41,7 +41,7 @@ class Article extends Admin {
             case 'edit':    //编辑
             case 'update':  //更新
                 $doc_id  =  Request::param('id');
-                $cate_id =  db('Document')->where('id',$doc_id)->view('category_id');
+                $cate_id =  db('Document')->where('id',$doc_id)->value('category_id');
                 break;
             case 'setstatus': //更改状态
             case 'permit':    //回收站
