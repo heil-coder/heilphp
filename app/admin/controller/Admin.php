@@ -97,8 +97,8 @@ class Admin extends Controller {
      * @author 朱亚杰  <xcoolcc@gmail.com>
      */
     final protected function accessControl(){
-        $allow = Config('ALLOW_VISIT');
-        $deny  = Config('DENY_VISIT');
+        $allow = array_map('strtolower',Config('ALLOW_VISIT'));
+        $deny  = array_map('strtolower',Config('DENY_VISIT'));
         $check = strtolower(Request::controller().'/'.Request::action());
         if ( !empty($deny)  && in_array($check,$deny) ) {
             return false;//非超管禁止访问deny中的方法

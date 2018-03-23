@@ -279,10 +279,10 @@ class Article extends Admin {
         }
         $Document->alias('DOCUMENT');
         if(!is_null($model_id)){
-            $map['model_id']    =   $model_id;
-            if(is_array($field) && array_diff($Document->getDbFields(),$field)){
+            $map['model_id']    =   ['model_id','=',$model_id];
+            if(is_array($field) && array_diff($Document->getConnection()->getTableFields($Document->getTable()),$field)){
                 $modelName  =   db('Model')->getFieldById($model_id,'name');
-                $Document->join('__DOCUMENT_'.strtoupper($modelName).'__ '.$modelName.' ON DOCUMENT.id='.$modelName.'.id');
+                $Document->join('__DOCUMENT_'.strtoupper($modelName).'__ '.$modelName,'DOCUMENT.id='.$modelName.'.id');
                 $key = array_search('id',$field);
                 if(false  !== $key){
                     unset($field[$key]);
