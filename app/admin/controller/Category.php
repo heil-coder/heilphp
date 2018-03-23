@@ -76,7 +76,7 @@ class Category extends Admin {
             if(false !== $Category->edit()){
                 $this->success('新增成功！', Url('index'));
             } else {
-                $error = $Category->getError();
+                $error = $Category->error;
                 $this->error(empty($error) ? '未知错误！' : $error);
             }
         } else {

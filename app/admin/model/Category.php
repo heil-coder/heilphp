@@ -18,7 +18,7 @@ class Category extends Model{
 	protected $autoWriteTimestamp = true;
 
     /* 自动完成规则 */
-	protected $auto = ['model','model_sub','type','reply_model','extend','status'=>1];
+	protected $auto = ['status'=>1];
 	//修改器
 	protected function setModelAttr($value){
 		if (is_null($value)) return null;
@@ -144,6 +144,11 @@ class Category extends Model{
             return false;
         }
 
+		$validate = new \app\admin\validate\Category;
+		if(!$validate->check($data)){
+			$this->error = $validate->getError();
+			return false;
+		}
         /* 添加或更新数据 */
         if(empty($data['id'])){
             $res = $this->save($data);
@@ -155,7 +160,7 @@ class Category extends Model{
         cache('sys_category_list', null);
 
         //记录行为
-        //action_log('update_category', 'category', $data['id'] ? $data['id'] : $res, UID);
+        action_log('update_category', 'category', $this->id, UID);
 
         return $res;
     }
