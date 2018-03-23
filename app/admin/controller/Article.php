@@ -419,7 +419,7 @@ class Article extends Admin {
         $document   =   model('Document');
         $res = $document->edit();
         if(!$res){
-            $this->error($document->error());
+            $this->error($document->error);
         }else{
             $this->success($res['id']?'更新成功':'新增成功', Cookie('__forward__'));
         }

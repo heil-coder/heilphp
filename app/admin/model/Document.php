@@ -170,11 +170,12 @@ class Document extends Model{
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = $this->save($data); //添加基础内容
-            if(!$id){
+            $this->save($data); //添加基础内容
+            if(!$this->id){
                 $this->error = '新增基础内容出错！';
                 return false;
             }
+			$id = $this->id;
         } else { //更新数据
             $status = $this->find($data['id'])->save($data); //更新基础内容
             if(false === $status){
@@ -183,9 +184,6 @@ class Document extends Model{
             }
 			$id = $data['id'];
         }
-		dump($this->getLastSql());
-		dump($data);
-		exit();
 
         /* 添加或新增扩展内容 */
         $logic = $this->logic($data['model_id']);
