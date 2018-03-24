@@ -364,7 +364,7 @@ class Article extends Admin {
         $this->assign('type_list',  get_type_bycate($cate_id));
         $this->assign('model',      $model);
         $this->assign('meta_title','新增'.$model['title']);
-        $this->display();
+		return view();
     }
 
     /**

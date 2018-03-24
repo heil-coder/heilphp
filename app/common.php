@@ -323,6 +323,22 @@ function check_document_position($pos = 0, $contain = 0){
     }
 }
 /**
+ * 验证分类是否允许发布内容
+ * @param  integer $id 分类ID
+ * @return boolean     true-允许发布内容，false-不允许发布内容
+ */
+function check_category($id){
+    if (is_array($id)) {
+		$id['type']	=	!empty($id['type'])?$id['type']:2;
+        $type = get_category($id['category_id'], 'type');
+        $type = explode(",", $type);
+        return in_array($id['type'], $type);
+    } else {
+        $publish = get_category($id, 'allow_publish');
+        return $publish ? true : false;
+    }
+}
+/**
  * 获取分类信息并缓存分类
  * @param  integer $id    分类ID
  * @param  string  $field 要获取的字段名
