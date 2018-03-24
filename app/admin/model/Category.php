@@ -143,6 +143,9 @@ class Category extends Model{
         if(!$data){ //数据对象创建错误
             return false;
         }
+        if(empty($data['id'])){
+			unset($data['id']);
+		}
 
 		$validate = new \app\admin\validate\Category;
 		if(!$validate->check($data)){
