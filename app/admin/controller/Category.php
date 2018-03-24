@@ -119,10 +119,10 @@ class Category extends Admin {
         }
 
         //删除该分类信息
-        $res = db('Category')->delete($cate_id);
+        $res = db('Category')->where('id',$cate_id)->delete();
         if($res !== false){
             //记录行为
-            //action_log('update_category', 'category', $cate_id, UID);
+            action_log('update_category', 'category', $cate_id, UID);
             $this->success('删除分类成功！');
         }else{
             $this->error('删除分类失败！');
