@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -13,7 +13,16 @@ namespace think;
 
 class Build
 {
+    /**
+     * 应用对象
+     * @var App
+     */
     protected $app;
+
+    /**
+     * 应用目录
+     * @var string
+     */
     protected $basePath;
 
     public function __construct(App $app)
@@ -24,7 +33,7 @@ class Build
 
     /**
      * 根据传入的build资料创建目录和文件
-     * @access protected
+     * @access public
      * @param  array  $build build列表
      * @param  string $namespace 应用类库命名空间
      * @param  bool   $suffix 类库后缀
@@ -172,8 +181,145 @@ class Build
     }
 
     /**
-     * 创建模块的欢迎页面
+     * 根据注释自动生成路由规则
      * @access public
+     * @param  bool   $suffix 类库后缀
+     * @param  string $layer  控制器层目录名
+     * @return string
+     */
+    public function buildRoute($alias = false, $layer = '')
+    {
+        $namespace = $this->app->getNameSpace();
+        $modules   = glob($this->basePath . '*', GLOB_ONLYDIR);
+        $content   = '<?php ' . PHP_EOL . '//根据 Annotation 自动生成的路由规则';
+
+        if (!$layer) {
+            $layer = $this->app->config('app.url_controller_layer');
+        }
+
+        foreach ($modules as $module) {
+            $module = basename($module);
+
+            if (in_array($module, $this->app->config('app.deny_module_list'))) {
+                continue;
+            }
+
+            $controllers = glob($this->basePath . $module . '/' . $layer . '/*.php');
+
+            foreach ($controllers as $controller) {
+                $content .= $this->getControllerRoute($namespace, $module, basename($controller, '.php'), $alias, $layer);
+            }
+        }
+
+        $filename = $this->app->getRuntimePath() . 'build_route.php';
+        file_put_contents($filename, $content);
+
+        return $filename;
+    }
+
+    /**
+     * 生成控制器类的路由规则
+     * @access protected
+     * @param  string $namespace 应用命名空间
+     * @param  string $module 模块
+     * @param  string $controller 控制器名
+     * @param  bool   $suffix 类库后缀
+     * @param  string $layer 控制器层目录名
+     * @return string
+     */
+    protected function getControllerRoute($namespace, $module, $controller, $alias = false, $layer = '')
+    {
+        $class   = new \ReflectionClass($namespace . '\\' . $module . '\\' . $layer . '\\' . $controller);
+        $content = '';
+        $comment = $class->getDocComment();
+
+        if ($alias) {
+            $controller = substr($controller, 0, -10);
+        }
+
+        if (false !== strpos($comment, '@route(')) {
+            $comment = $this->parseRouteComment($comment);
+            $route   = $module . '/' . $controller;
+            $comment = preg_replace('/route\(\s?([\'\"][\-\_\/\:\<\>\?\$\[\]\w]+[\'\"])\s?\)/is', 'Route::resourece(\1,\'' . $route . '\')', $comment);
+            $content .= PHP_EOL . $comment;
+        } elseif (false !== strpos($comment, '@alias(')) {
+            $comment = $this->parseRouteComment($comment, '@alias(');
+            $route   = $module . '/' . $controller;
+            $comment = preg_replace('/alias\(\s?([\'\"][\-\_\/\w]+[\'\"])\s?\)/is', 'Route::alias(\1,\'' . $route . '\')', $comment);
+            $content .= PHP_EOL . $comment;
+        }
+
+        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+
+        foreach ($methods as $method) {
+            $comment = $this->getMethodRouteComment($module, $controller, $method);
+            if ($comment) {
+                $content .= PHP_EOL . $comment;
+            }
+        }
+
+        return $content;
+    }
+
+    /**
+     * 解析路由注释
+     * @access protected
+     * @param  string $comment
+     * @param  string $tag
+     * @return string
+     */
+    protected function parseRouteComment($comment, $tag = '@route(')
+    {
+        $comment = substr($comment, 3, -2);
+        $comment = explode(PHP_EOL, substr(strstr(trim($comment), $tag), 1));
+        $comment = array_map(function ($item) {return trim(trim($item), ' \t*');}, $comment);
+
+        if (count($comment) > 1) {
+            $key     = array_search('', $comment);
+            $comment = array_slice($comment, 0, false === $key ? 1 : $key);
+        }
+
+        $comment = implode(PHP_EOL . "\t", $comment) . ';';
+
+        if (strpos($comment, '{')) {
+            $comment = preg_replace_callback('/\{\s?.*?\s?\}/s', function ($matches) {
+                return false !== strpos($matches[0], '"') ? '[' . substr(var_export(json_decode($matches[0], true), true), 7, -1) . ']' : $matches[0];
+            }, $comment);
+        }
+        return $comment;
+    }
+
+    /**
+     * 获取方法的路由注释
+     * @access protected
+     * @param  string           $module 模块
+     * @param  string           $controller 控制器名
+     * @param  \ReflectMethod   $reflectMethod
+     * @return string|void
+     */
+    protected function getMethodRouteComment($module, $controller, $reflectMethod)
+    {
+        $comment = $reflectMethod->getDocComment();
+
+        if (false !== strpos($comment, '@route(')) {
+            $comment = $this->parseRouteComment($comment);
+            $action  = $reflectMethod->getName();
+
+            if ($suffix = $this->app->config('app.action_suffix')) {
+                $action = substr($action, 0, -strlen($suffix));
+            }
+
+            $route   = $module . '/' . $controller . '/' . $action;
+            $comment = preg_replace('/route\s?\(\s?([\'\"][\-\_\/\:\<\>\?\$\[\]\w]+[\'\"])\s?\,?\s?[\'\"]?(\w+?)[\'\"]?\s?\)/is', 'Route::\2(\1,\'' . $route . '\')', $comment);
+            $comment = preg_replace('/route\s?\(\s?([\'\"][\-\_\/\:\<\>\?\$\[\]\w]+[\'\"])\s?\)/is', 'Route::rule(\1,\'' . $route . '\')', $comment);
+
+            return $comment;
+        }
+    }
+
+    /**
+     * 创建模块的欢迎页面
+     * @access protected
      * @param  string $module 模块名
      * @param  string $namespace 应用类库命名空间
      * @param  bool   $suffix 类库后缀
@@ -193,13 +339,13 @@ class Build
 
     /**
      * 创建模块的公共文件
-     * @access public
+     * @access protected
      * @param  string $module 模块名
      * @return void
      */
     protected function buildCommon($module)
     {
-        $filename = $this->app->getConfigPath() . ($module ? $module . DIRECTORY_SEPARATOR : '') . 'config.php';
+        $filename = $this->app->getConfigPath() . ($module ? $module . DIRECTORY_SEPARATOR : '') . 'app.php';
         $this->checkDirBuild(dirname($filename));
 
         if (!is_file($filename)) {
@@ -213,6 +359,12 @@ class Build
         }
     }
 
+    /**
+     * 创建目录
+     * @access protected
+     * @param  string $dirname 目录名称
+     * @return void
+     */
     protected function checkDirBuild($dirname)
     {
         if (!is_dir($dirname)) {

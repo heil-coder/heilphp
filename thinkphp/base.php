@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -47,7 +47,7 @@ Container::getInstance()->bind([
     'url'                   => Url::class,
     'validate'              => Validate::class,
     'view'                  => View::class,
-
+    'middlewareDispatcher'  => http\middleware\Dispatcher::class,
     // 接口依赖注入
     'think\LoggerInterface' => Log::class,
 ]);
@@ -98,3 +98,6 @@ Loader::addClassAlias([
 
 // 加载惯例配置文件
 facade\Config::set(include __DIR__ . '/convention.php');
+
+// 加载composer autofile文件
+Loader::loadComposerAutoloadFiles();

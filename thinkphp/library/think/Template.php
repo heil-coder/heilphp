@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -20,9 +20,16 @@ use think\exception\TemplateNotFoundException;
  */
 class Template
 {
-    // 模板变量
+    /**
+     * 模板变量
+     * @var array
+     */
     protected $data = [];
-    // 引擎配置
+
+    /**
+     * 模板配置参数
+     * @var array
+     */
     protected $config = [
         'view_path'          => '', // 模板路径
         'view_base'          => '',
@@ -53,23 +60,39 @@ class Template
         'default_filter'     => 'htmlentities', // 默认过滤方法 用于普通标签输出
     ];
 
-    private $literal     = [];
-    private $includeFile = []; // 记录所有模板包含的文件路径及更新时间
+    /**
+     * 保留内容信息
+     * @var array
+     */
+    private $literal = [];
+
+    /**
+     * 模板包含信息
+     * @var array
+     */
+    private $includeFile = [];
+
+    /**
+     * 模板存储对象
+     * @var object
+     */
     protected $storage;
 
     /**
      * 架构函数
      * @access public
-     * @param array $config
+     * @param  array $config
      */
     public function __construct(array $config = [])
     {
-        $this->config['cache_path']   = Container::get('app')->getRuntimePath() . 'temp/';
-        $this->config                 = array_merge($this->config, $config);
-        $this->config['taglib_begin'] = $this->stripPreg($this->config['taglib_begin']);
-        $this->config['taglib_end']   = $this->stripPreg($this->config['taglib_end']);
-        $this->config['tpl_begin']    = $this->stripPreg($this->config['tpl_begin']);
-        $this->config['tpl_end']      = $this->stripPreg($this->config['tpl_end']);
+        $this->config['cache_path']          = Container::get('app')->getRuntimePath() . 'temp/';
+        $this->config                        = array_merge($this->config, $config);
+        $this->config['taglib_begin_origin'] = $this->config['taglib_begin'];
+        $this->config['taglib_end_origin']   = $this->config['taglib_end'];
+        $this->config['taglib_begin']        = $this->stripPreg($this->config['taglib_begin']);
+        $this->config['taglib_end']          = $this->stripPreg($this->config['taglib_end']);
+        $this->config['tpl_begin']           = $this->stripPreg($this->config['tpl_begin']);
+        $this->config['tpl_end']             = $this->stripPreg($this->config['tpl_end']);
 
         // 初始化模板编译存储器
         $type          = $this->config['compile_type'] ? $this->config['compile_type'] : 'File';
@@ -80,7 +103,7 @@ class Template
     /**
      * 字符串替换 避免正则混淆
      * @access private
-     * @param string $str
+     * @param  string $str
      * @return string
      */
     private function stripPreg($str)
@@ -94,8 +117,8 @@ class Template
     /**
      * 模板变量赋值
      * @access public
-     * @param mixed $name
-     * @param mixed $value
+     * @param  mixed $name
+     * @param  mixed $value
      * @return void
      */
     public function assign($name, $value = '')
@@ -110,8 +133,8 @@ class Template
     /**
      * 模板引擎参数赋值
      * @access public
-     * @param mixed $name
-     * @param mixed $value
+     * @param  mixed $name
+     * @param  mixed $value
      */
     public function __set($name, $value)
     {
@@ -121,7 +144,7 @@ class Template
     /**
      * 模板引擎配置项
      * @access public
-     * @param array|string $config
+     * @param  array|string $config
      * @return void|array
      */
     public function config($config)
@@ -164,9 +187,9 @@ class Template
     /**
      * 渲染模板文件
      * @access public
-     * @param string    $template 模板文件
-     * @param array     $vars 模板变量
-     * @param array     $config 模板参数
+     * @param  string    $template 模板文件
+     * @param  array     $vars 模板变量
+     * @param  array     $config 模板参数
      * @return void
      */
     public function fetch($template, $vars = [], $config = [])
@@ -194,7 +217,7 @@ class Template
         $template = $this->parseTemplateFile($template);
 
         if ($template) {
-            $cacheFile = $this->config['cache_path'] . $this->config['cache_prefix'] . md5($template) . '.' . ltrim($this->config['cache_suffix'], '.');
+            $cacheFile = $this->config['cache_path'] . $this->config['cache_prefix'] . md5($this->config['layout_name'] . $template) . '.' . ltrim($this->config['cache_suffix'], '.');
 
             if (!$this->checkCache($cacheFile)) {
                 // 缓存无效 重新模板编译
@@ -224,9 +247,9 @@ class Template
     /**
      * 渲染模板内容
      * @access public
-     * @param string    $content 模板内容
-     * @param array     $vars 模板变量
-     * @param array     $config 模板参数
+     * @param  string    $content 模板内容
+     * @param  array     $vars 模板变量
+     * @param  array     $config 模板参数
      * @return void
      */
     public function display($content, $vars = [], $config = [])
@@ -253,8 +276,8 @@ class Template
     /**
      * 设置布局
      * @access public
-     * @param mixed     $name 布局模板名称 false 则关闭布局
-     * @param string    $replace 布局模板内容替换标识
+     * @param  mixed     $name 布局模板名称 false 则关闭布局
+     * @param  string    $replace 布局模板内容替换标识
      * @return object
      */
     public function layout($name, $replace = '')
@@ -283,7 +306,7 @@ class Template
      * 检查编译缓存是否有效
      * 如果无效则需要重新编译
      * @access private
-     * @param string $cacheFile 缓存文件名
+     * @param  string $cacheFile 缓存文件名
      * @return boolean
      */
     private function checkCache($cacheFile)
@@ -331,7 +354,7 @@ class Template
     /**
      * 检查编译缓存是否存在
      * @access public
-     * @param string $cacheId 缓存的id
+     * @param  string $cacheId 缓存的id
      * @return boolean
      */
     public function isCache($cacheId)
@@ -347,8 +370,8 @@ class Template
     /**
      * 编译模板文件内容
      * @access private
-     * @param string    $content 模板内容
-     * @param string    $cacheFile 缓存文件名
+     * @param  string    $content 模板内容
+     * @param  string    $cacheFile 缓存文件名
      * @return void
      */
     private function compiler(&$content, $cacheFile)
@@ -402,7 +425,7 @@ class Template
      * 模板解析入口
      * 支持普通标签和TagLib解析 支持自定义标签库
      * @access public
-     * @param string $content 要解析的模板内容
+     * @param  string $content 要解析的模板内容
      * @return void
      */
     public function parse(&$content)
@@ -474,7 +497,7 @@ class Template
     /**
      * 检查PHP语法
      * @access private
-     * @param string $content 要解析的模板内容
+     * @param  string $content 要解析的模板内容
      * @return void
      * @throws \think\Exception
      */
@@ -494,7 +517,7 @@ class Template
     /**
      * 解析模板中的布局标签
      * @access private
-     * @param string $content 要解析的模板内容
+     * @param  string $content 要解析的模板内容
      * @return void
      */
     private function parseLayout(&$content)
@@ -1015,8 +1038,8 @@ class Template
      * 对模板中使用了函数的变量进行解析
      * 格式 {$varname|function1|function2=arg1,arg2}
      * @access public
-     * @param string    $varStr     变量字符串
-     * @param bool      $autoescape 自动转义
+     * @param  string    $varStr     变量字符串
+     * @param  bool      $autoescape 自动转义
      * @return void
      */
     public function parseVarFunction(&$varStr, $autoescape = true)
@@ -1059,7 +1082,7 @@ class Template
                     case 'raw':
                         continue;
                     case 'date':
-                        $name = 'date(' . $args[1] . ',strtotime(' . $name . ') ?: ' . $name . ')';
+                        $name = 'date(' . $args[1] . ',!is_numeric(' . $name . ')? strtotime(' . $name . ') : ' . $name . ')';
                         break;
                     case 'first':
                         $name = 'current(' . $name . ')';
@@ -1159,7 +1182,7 @@ class Template
                     $parseStr = "date('Y-m-d g:i a',time())";
                     break;
                 case 'VERSION':
-                    $parseStr = 'THINK_VERSION';
+                    $parseStr = 'app()->version()';
                     break;
                 case 'LDELIM':
                     $parseStr = '\'' . ltrim($this->config['tpl_begin'], '\\') . '\'';

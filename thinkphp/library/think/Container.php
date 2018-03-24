@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -11,13 +11,30 @@
 
 namespace think;
 
+use Closure;
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionFunction;
+use ReflectionMethod;
+
 class Container
 {
-    // 容器对象实例
+    /**
+     * 容器对象实例
+     * @var Container
+     */
     protected static $instance;
-    // 容器中的对象实例
+
+    /**
+     * 容器中的对象实例
+     * @var array
+     */
     protected $instances = [];
-    // 容器中绑定的对象标识
+
+    /**
+     * 容器绑定标识
+     * @var array
+     */
     protected $bind = [];
 
     /**
@@ -37,9 +54,9 @@ class Container
     /**
      * 获取容器中的对象实例
      * @access public
-     * @param string        $abstract       类名或者标识
-     * @param array|true    $args           变量
-     * @param bool          $newInstance    是否每次创建新的实例
+     * @param  string        $abstract       类名或者标识
+     * @param  array|true    $vars           变量
+     * @param  bool          $newInstance    是否每次创建新的实例
      * @return object
      */
     public static function get($abstract, $vars = [], $newInstance = false)
@@ -50,8 +67,8 @@ class Container
     /**
      * 绑定一个类、闭包、实例、接口实现到容器
      * @access public
-     * @param string  $abstract    类标识、接口
-     * @param mixed   $concrete    要绑定的类、闭包或者实例
+     * @param  string  $abstract    类标识、接口
+     * @param  mixed   $concrete    要绑定的类、闭包或者实例
      * @return Container
      */
     public static function set($abstract, $concrete = null)
@@ -62,15 +79,15 @@ class Container
     /**
      * 绑定一个类、闭包、实例、接口实现到容器
      * @access public
-     * @param string  $abstract    类标识、接口
-     * @param mixed   $concrete    要绑定的类、闭包或者实例
+     * @param  string|array  $abstract    类标识、接口
+     * @param  mixed         $concrete    要绑定的类、闭包或者实例
      * @return $this
      */
     public function bind($abstract, $concrete = null)
     {
         if (is_array($abstract)) {
             $this->bind = array_merge($this->bind, $abstract);
-        } elseif ($concrete instanceof \Closure) {
+        } elseif ($concrete instanceof Closure) {
             $this->bind[$abstract] = $concrete;
         } elseif (is_object($concrete)) {
             $this->instances[$abstract] = $concrete;
@@ -84,8 +101,8 @@ class Container
     /**
      * 绑定一个类实例当容器
      * @access public
-     * @param string    $abstract    类名或者标识
-     * @param object    $instance    类的实例
+     * @param  string    $abstract    类名或者标识
+     * @param  object    $instance    类的实例
      * @return $this
      */
     public function instance($abstract, $instance)
@@ -102,7 +119,7 @@ class Container
     /**
      * 判断容器中是否存在类及标识
      * @access public
-     * @param string    $abstract    类名或者标识
+     * @param  string    $abstract    类名或者标识
      * @return bool
      */
     public function bound($abstract)
@@ -111,11 +128,22 @@ class Container
     }
 
     /**
+     * 判断容器中是否存在类及标识
+     * @access public
+     * @param  string    $name    类名或者标识
+     * @return bool
+     */
+    public function has($name)
+    {
+        return $this->bound($name);
+    }
+
+    /**
      * 创建类的实例
      * @access public
-     * @param string        $abstract       类名或者标识
-     * @param array|true    $args           变量
-     * @param bool          $newInstance    是否每次创建新的实例
+     * @param  string        $abstract       类名或者标识
+     * @param  array|true    $args           变量
+     * @param  bool          $newInstance    是否每次创建新的实例
      * @return object
      */
     public function make($abstract, $vars = [], $newInstance = false)
@@ -132,7 +160,7 @@ class Container
             if (isset($this->bind[$abstract])) {
                 $concrete = $this->bind[$abstract];
 
-                if ($concrete instanceof \Closure) {
+                if ($concrete instanceof Closure) {
                     $object = $this->invokeFunction($concrete, $vars);
                 } else {
                     $object = $this->make($concrete, $vars, $newInstance);
@@ -152,13 +180,13 @@ class Container
     /**
      * 执行函数或者闭包方法 支持参数调用
      * @access public
-     * @param string|array|\Closure $function 函数或者闭包
-     * @param array                 $vars     变量
+     * @param  string|array|\Closure $function 函数或者闭包
+     * @param  array                 $vars     变量
      * @return mixed
      */
     public function invokeFunction($function, $vars = [])
     {
-        $reflect = new \ReflectionFunction($function);
+        $reflect = new ReflectionFunction($function);
         $args    = $this->bindParams($reflect, $vars);
 
         return $reflect->invokeArgs($args);
@@ -167,18 +195,18 @@ class Container
     /**
      * 调用反射执行类的方法 支持参数绑定
      * @access public
-     * @param string|array $method 方法
-     * @param array        $vars   变量
+     * @param  string|array $method 方法
+     * @param  array        $vars   变量
      * @return mixed
      */
     public function invokeMethod($method, $vars = [])
     {
         if (is_array($method)) {
             $class   = is_object($method[0]) ? $method[0] : $this->invokeClass($method[0]);
-            $reflect = new \ReflectionMethod($class, $method[1]);
+            $reflect = new ReflectionMethod($class, $method[1]);
         } else {
             // 静态方法
-            $reflect = new \ReflectionMethod($method);
+            $reflect = new ReflectionMethod($method);
         }
 
         $args = $this->bindParams($reflect, $vars);
@@ -189,13 +217,13 @@ class Container
     /**
      * 调用反射执行callable 支持参数绑定
      * @access public
-     * @param mixed $callable
-     * @param array $vars   变量
+     * @param  mixed $callable
+     * @param  array $vars   变量
      * @return mixed
      */
     public function invoke($callable, $vars = [])
     {
-        if ($callable instanceof \Closure) {
+        if ($callable instanceof Closure) {
             $result = $this->invokeFunction($callable, $vars);
         } else {
             $result = $this->invokeMethod($callable, $vars);
@@ -207,13 +235,13 @@ class Container
     /**
      * 调用反射执行类的实例化 支持依赖注入
      * @access public
-     * @param string    $class 类名
-     * @param array     $vars  变量
+     * @param  string    $class 类名
+     * @param  array     $vars  变量
      * @return mixed
      */
     public function invokeClass($class, $vars = [])
     {
-        $reflect     = new \ReflectionClass($class);
+        $reflect     = new ReflectionClass($class);
         $constructor = $reflect->getConstructor();
 
         if ($constructor) {
@@ -228,8 +256,8 @@ class Container
     /**
      * 绑定参数
      * @access protected
-     * @param \ReflectionMethod|\ReflectionFunction $reflect 反射类
-     * @param array                                 $vars    变量
+     * @param  \ReflectionMethod|\ReflectionFunction $reflect 反射类
+     * @param  array                                 $vars    变量
      * @return array
      */
     protected function bindParams($reflect, $vars = [])
@@ -256,7 +284,7 @@ class Container
                 } elseif ($param->isDefaultValueAvailable()) {
                     $args[] = $param->getDefaultValue();
                 } else {
-                    throw new \InvalidArgumentException('method param miss:' . $name);
+                    throw new InvalidArgumentException('method param miss:' . $name);
                 }
             }
         }

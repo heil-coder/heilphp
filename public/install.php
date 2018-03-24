@@ -1,31 +1,21 @@
 <?php
 // +----------------------------------------------------------------------
-// | HeilPHP 
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2018 http://www.heilphp.com All rights reserved.
+// | Copyright (c) 2006-2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: Jason <1878566968@qq.com>
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
 // [ 应用入口文件 ]
+namespace think;
 
-//检测php版本
-if(version_compare(PHP_VERSION,'5.5.0','<'))  die('require PHP > 5.5.0 !');
-
-/**
- * 系统调试设置
- * 项目正式部署后请设置为false
- */
+// 加载基础文件
+require __DIR__ . '/../thinkphp/base.php';
 
 define ( 'BIND_MODULE','install');
 
-/**
- * 应用目录设置
- * 安全起见，建议安装调试完成后移动到非WEB目录
- */
-define('APP_PATH', __DIR__ . '/../app/');
-
-// 加载框架引导文件
-require __DIR__ . '/../thinkphp/start.php';
+// 执行应用并响应
+Container::get('app')->bind('install')->run()->send();

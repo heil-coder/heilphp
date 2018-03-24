@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -12,23 +12,58 @@
 namespace think\model\concern;
 
 use InvalidArgumentException;
+use think\Exception;
 use think\Loader;
 use think\model\Relation;
 
 trait Attribute
 {
-    // 数据表主键 复合主键使用数组定义
+    /**
+     * 数据表主键 复合主键使用数组定义
+     * @var string|array
+     */
     protected $pk = 'id';
-    // 数据表字段信息 留空则自动获取
+
+    /**
+     * 数据表字段信息 留空则自动获取
+     * @var array
+     */
     protected $field = [];
-    // 只读字段
+
+    /**
+     * JSON数据表字段
+     * @var array
+     */
+    protected $json = [];
+
+    /**
+     * 数据表废弃字段
+     * @var array
+     */
+    protected $disuse = [];
+
+    /**
+     * 数据表只读字段
+     * @var array
+     */
     protected $readonly = [];
-    // 字段类型或者格式转换
+
+    /**
+     * 数据表字段类型
+     * @var array
+     */
     protected $type = [];
 
-    // 当前数据
+    /**
+     * 当前模型数据
+     * @var array
+     */
     private $data = [];
-    // 原始数据
+
+    /**
+     * 原始数据
+     * @var array
+     */
     private $origin = [];
 
     /**
@@ -44,7 +79,7 @@ trait Attribute
     /**
      * 判断一个字段名是否为主键字段
      * @access public
-     * @param string $key 名称
+     * @param  string $key 名称
      * @return bool
      */
     protected function isPk($key)
@@ -62,7 +97,7 @@ trait Attribute
     /**
      * 设置允许写入的字段
      * @access public
-     * @param mixed $field 允许写入的字段 如果为true只允许写入数据表字段
+     * @param  array|string|true $field 允许写入的字段 如果为true只允许写入数据表字段
      * @return $this
      */
     public function allowField($field)
@@ -79,7 +114,7 @@ trait Attribute
     /**
      * 设置只读字段
      * @access public
-     * @param mixed $field 只读字段
+     * @param  array|string $field 只读字段
      * @return $this
      */
     public function readonly($field)
@@ -96,8 +131,8 @@ trait Attribute
     /**
      * 设置数据对象值
      * @access public
-     * @param mixed $data  数据或者属性名
-     * @param mixed $value 值
+     * @param  mixed $data  数据或者属性名
+     * @param  mixed $value 值
      * @return $this
      */
     public function data($data, $value = null)
@@ -112,10 +147,25 @@ trait Attribute
                 $data = get_object_vars($data);
             }
 
+            if ($this->disuse) {
+                // 废弃字段
+                foreach ((array) $this->disuse as $key) {
+                    if (array_key_exists($key, $data)) {
+                        unset($data[$key]);
+                    }
+                }
+            }
+
             if (true === $value) {
                 // 数据对象赋值
                 foreach ($data as $key => $value) {
                     $this->setAttr($key, $value, $data);
+                }
+            } elseif (is_array($value)) {
+                foreach ($value as $name) {
+                    if (isset($data[$name])) {
+                        $this->data[$name] = $data[$name];
+                    }
                 }
             } else {
                 $this->data = $data;
@@ -128,8 +178,8 @@ trait Attribute
     /**
      * 批量设置数据对象值
      * @access public
-     * @param mixed $data  数据
-     * @param bool  $set   是否需要进行数据处理
+     * @param  mixed $data  数据
+     * @param  bool  $set   是否需要进行数据处理
      * @return $this
      */
     public function appendData($data, $set = false)
@@ -153,7 +203,7 @@ trait Attribute
     /**
      * 获取对象原始数据 如果不存在指定字段返回null
      * @access public
-     * @param string $name 字段名 留空获取全部
+     * @param  string $name 字段名 留空获取全部
      * @return mixed
      */
     public function getOrigin($name = null)
@@ -168,7 +218,7 @@ trait Attribute
     /**
      * 获取对象原始数据 如果不存在指定字段返回false
      * @access public
-     * @param string $name 字段名 留空获取全部
+     * @param  string $name 字段名 留空获取全部
      * @return mixed
      * @throws InvalidArgumentException
      */
@@ -192,13 +242,17 @@ trait Attribute
      */
     public function getChangedData()
     {
-        $data = array_udiff_assoc($this->data, $this->origin, function ($a, $b) {
-            if ((empty($a) || empty($b)) && $a !== $b) {
-                return 1;
-            }
+        if ($this->force) {
+            $data = $this->data;
+        } else {
+            $data = array_udiff_assoc($this->data, $this->origin, function ($a, $b) {
+                if ((empty($a) || empty($b)) && $a !== $b) {
+                    return 1;
+                }
 
-            return is_object($a) || $a != $b ? 1 : 0;
-        });
+                return is_object($a) || $a != $b ? 1 : 0;
+            });
+        }
 
         if (!empty($this->readonly)) {
             // 只读字段不允许更新
@@ -215,15 +269,13 @@ trait Attribute
     /**
      * 修改器 设置数据对象值
      * @access public
-     * @param string $name  属性名
-     * @param mixed  $value 属性值
-     * @param array  $data  数据
+     * @param  string $name  属性名
+     * @param  mixed  $value 属性值
+     * @param  array  $data  数据
      * @return $this
      */
     public function setAttr($name, $value, $data = [])
     {
-        $isRelationData = false;
-
         if (is_null($value) && $this->autoWriteTimestamp && in_array($name, [$this->createTime, $this->updateTime])) {
             // 自动写入的时间戳字段
             $value = $this->autoWriteTimestamp($name);
@@ -248,7 +300,7 @@ trait Attribute
     /**
      * 是否需要自动写入时间字段
      * @access public
-     * @param bool $auto
+     * @param  bool $auto
      * @return $this
      */
     public function isAutoWriteTimestamp($auto)
@@ -260,8 +312,8 @@ trait Attribute
 
     /**
      * 自动写入时间戳
-     * @access public
-     * @param string $name 时间戳字段
+     * @access protected
+     * @param  string $name 时间戳字段
      * @return mixed
      */
     protected function autoWriteTimestamp($name)
@@ -300,9 +352,9 @@ trait Attribute
 
     /**
      * 数据写入 类型转换
-     * @access public
-     * @param mixed        $value 值
-     * @param string|array $type  要转换的类型
+     * @access protected
+     * @param  mixed        $value 值
+     * @param  string|array $type  要转换的类型
      * @return mixed
      */
     protected function writeTransform($value, $type)
@@ -363,11 +415,12 @@ trait Attribute
     /**
      * 获取器 获取数据对象的值
      * @access public
-     * @param string $name 名称
+     * @param  string $name 名称
+     * @param  array  $item 数据
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public function getAttr($name)
+    public function getAttr($name, &$item = null)
     {
         try {
             $notFound = false;
@@ -408,23 +461,36 @@ trait Attribute
                 if ($modelRelation instanceof Relation) {
                     $value = $this->getRelationData($modelRelation);
 
+                    if ($item && method_exists($modelRelation, 'getBindAttr') && $bindAttr = $modelRelation->getBindAttr()) {
+
+                        foreach ($bindAttr as $key => $attr) {
+                            $key = is_numeric($key) ? $attr : $key;
+
+                            if (isset($item[$key])) {
+                                throw new Exception('bind attr has exists:' . $key);
+                            } else {
+                                $item[$key] = $value ? $value->getAttr($attr) : null;
+                            }
+                        }
+                        return false;
+                    }
+
                     // 保存关联对象值
                     $this->relation[$name] = $value;
+
                     return $value;
                 }
             }
-
             throw new InvalidArgumentException('property not exists:' . static::class . '->' . $name);
         }
-
         return $value;
     }
 
     /**
      * 数据读取 类型转换
-     * @access public
-     * @param mixed        $value 值
-     * @param string|array $type  要转换的类型
+     * @access protected
+     * @param  mixed        $value 值
+     * @param  string|array $type  要转换的类型
      * @return mixed
      */
     protected function readTransform($value, $type)

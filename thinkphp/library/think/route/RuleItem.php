@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -15,23 +15,34 @@ use think\Route;
 
 class RuleItem extends Rule
 {
-    // 路由规则
+    /**
+     * 路由规则
+     * @var string
+     */
     protected $name;
-    // 路由地址
+
+    /**
+     * 路由地址
+     * @var string|\Closure
+     */
     protected $route;
-    // 请求类型
+
+    /**
+     * 请求类型
+     * @var string
+     */
     protected $method;
 
     /**
      * 架构函数
      * @access public
-     * @param Route             $router 路由实例
-     * @param RuleGroup         $group 路由所属分组对象
-     * @param string|array      $name 路由规则
-     * @param string            $method 请求类型
-     * @param string|\Closure   $route 路由地址
-     * @param array             $option 路由参数
-     * @param array             $pattern 变量规则
+     * @param  Route             $router 路由实例
+     * @param  RuleGroup         $group 路由所属分组对象
+     * @param  string|array      $name 路由规则
+     * @param  string            $method 请求类型
+     * @param  string|\Closure   $route 路由地址
+     * @param  array             $option 路由参数
+     * @param  array             $pattern 变量规则
      */
     public function __construct(Route $router, RuleGroup $group, $name, $route, $method = '*', $option = [], $pattern = [])
     {
@@ -48,7 +59,7 @@ class RuleItem extends Rule
     /**
      * 路由规则预处理
      * @access public
-     * @param string      $rule     路由规则
+     * @param  string      $rule     路由规则
      * @return void
      */
     public function setRule($rule)
@@ -74,38 +85,44 @@ class RuleItem extends Rule
     }
 
     /**
-     * 是否为MISS路由
+     * 设置为自动路由
      * @access public
-     * @return bool
-     */
-    public function isMiss()
-    {
-        return '__miss__' == $this->name;
-    }
-
-    /**
-     * 是否为自动路由
-     * @access public
-     * @return bool
+     * @return $this
      */
     public function isAuto()
     {
-        return '__auto__' == $this->name;
+        $this->parent->setAutoRule($this);
+        return $this;
+    }
+
+    /**
+     * 设置为MISS路由
+     * @access public
+     * @return $this
+     */
+    public function isMiss()
+    {
+        $this->parent->setMissRule($this);
+        return $this;
     }
 
     /**
      * 检测路由
      * @access public
-     * @param Request      $request  请求对象
-     * @param string       $url      访问地址
-     * @param string       $depr     路径分隔符
-     * @param bool         $completeMatch   路由是否完全匹配
+     * @param  Request      $request  请求对象
+     * @param  string       $url      访问地址
+     * @param  string       $depr     路径分隔符
+     * @param  bool         $completeMatch   路由是否完全匹配
      * @return Dispatch
      */
     public function check($request, $url, $depr = '/', $completeMatch = false)
     {
-        if ($dispatch = $this->checkAllowOptions($request)) {
-            // 允许OPTIONS嗅探
+        if ($this->parent && $prefix = $this->parent->getFullName()) {
+            $this->name = $prefix . ($this->name ? '/' . $this->name : '');
+        }
+
+        if ($dispatch = $this->checkCrossDomain($request)) {
+            // 允许跨域
             return $dispatch;
         }
 
@@ -114,7 +131,24 @@ class RuleItem extends Rule
             return false;
         }
 
-        $option = array_merge($this->parent->getOption(), $this->option);
+        // 合并分组参数
+        $this->mergeGroupOptions();
+        $option = $this->option;
+
+        if (!empty($option['append'])) {
+            $request->route($option['append']);
+        }
+
+        // 是否区分 / 地址访问
+        if (!empty($option['remove_slash']) && '/' != $this->name) {
+            $this->name = rtrim($this->name, '/');
+            $url        = rtrim($url, '|');
+        }
+
+        // 检查前置行为
+        if (isset($option['before']) && false === $this->checkBefore($option['before'])) {
+            return false;
+        }
 
         if (isset($option['ext'])) {
             // 路由ext参数 优先于系统配置的URL伪静态后缀参数
@@ -127,11 +161,11 @@ class RuleItem extends Rule
     /**
      * 检测路由规则
      * @access private
-     * @param Request   $request 请求对象
-     * @param string    $url URL地址
-     * @param string    $depr URL分隔符（全局）
-     * @param bool      $completeMatch   路由是否完全匹配
-     * @param array     $option   路由参数
+     * @param  Request   $request 请求对象
+     * @param  string    $url URL地址
+     * @param  string    $depr URL分隔符（全局）
+     * @param  bool      $completeMatch   路由是否完全匹配
+     * @param  array     $option   路由参数
      * @return array|false
      */
     private function checkRule($request, $url, $depr, $completeMatch = false, $option = [])
@@ -181,8 +215,8 @@ class RuleItem extends Rule
     /**
      * 检测URL和规则路由是否匹配
      * @access private
-     * @param string    $url URL地址
-     * @param array     $pattern 变量规则
+     * @param  string    $url URL地址
+     * @param  array     $pattern 变量规则
      * @return array|false
      */
     private function match($url, $pattern)

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -25,13 +25,13 @@ class Resource extends RuleGroup
     /**
      * 架构函数
      * @access public
-     * @param Route         $router     路由对象
-     * @param RuleGroup     $group      路由所属分组对象
-     * @param string        $name       资源名称
-     * @param string        $route      路由地址
-     * @param array         $option     路由参数
-     * @param array         $pattern    变量规则
-     * @param array         $rest       资源定义
+     * @param  Route         $router     路由对象
+     * @param  RuleGroup     $group      路由所属分组对象
+     * @param  string        $name       资源名称
+     * @param  string        $route      路由地址
+     * @param  array         $option     路由参数
+     * @param  array         $pattern    变量规则
+     * @param  array         $rest       资源定义
      */
     public function __construct(Route $router, RuleGroup $group = null, $name = '', $route = '', $option = [], $pattern = [], $rest = [])
     {
@@ -39,7 +39,9 @@ class Resource extends RuleGroup
         $this->parent   = $group;
         $this->resource = $name;
         $this->route    = $route;
-        $this->name     = strpos($rule, '.') ? strstr($rule, '.', true) : $rule;
+        $this->name     = strpos($name, '.') ? strstr($name, '.', true) : $name;
+
+        $this->setFullName();
 
         // 资源路由默认为完整匹配
         $option['complete_match'] = true;
@@ -52,10 +54,10 @@ class Resource extends RuleGroup
     /**
      * 检测分组路由
      * @access public
-     * @param Request      $request  请求对象
-     * @param string       $url      访问地址
-     * @param string       $depr     路径分隔符
-     * @param bool         $completeMatch   路由是否完全匹配
+     * @param  Request      $request  请求对象
+     * @param  string       $url      访问地址
+     * @param  string       $depr     路径分隔符
+     * @param  bool         $completeMatch   路由是否完全匹配
      * @return Dispatch
      */
     public function check($request, $url, $depr = '/', $completeMatch = false)
@@ -69,8 +71,8 @@ class Resource extends RuleGroup
     /**
      * 生成资源路由规则
      * @access protected
-     * @param string    $rule       路由规则
-     * @param array     $option     路由参数
+     * @param  string    $rule       路由规则
+     * @param  array     $option     路由参数
      * @return void
      */
     protected function buildResourceRule($rule, $option = [])
@@ -106,11 +108,9 @@ class Resource extends RuleGroup
                 $val[1] = str_replace(':id', ':' . $option['var'][$rule], $val[1]);
             }
 
-            $item = trim(substr(trim($rule . $val[1], '/'), strlen($this->name)), '/');
-
             $option['rest'] = $key;
 
-            $this->router->rule($item, $this->route . '/' . $val[2], $val[0], $option);
+            $this->router->rule(trim($val[1], '/'), $this->route . '/' . $val[2], $val[0], $option);
         }
 
         $this->router->setGroup($group);
@@ -119,8 +119,8 @@ class Resource extends RuleGroup
     /**
      * rest方法定义和修改
      * @access public
-     * @param string        $name 方法名称
-     * @param array|bool    $resource 资源
+     * @param  string        $name 方法名称
+     * @param  array|bool    $resource 资源
      * @return $this
      */
     public function rest($name, $resource = [])
@@ -137,7 +137,7 @@ class Resource extends RuleGroup
     /**
      * 设置资源允许
      * @access public
-     * @param array     $only
+     * @param  array     $only
      * @return $this
      */
     public function only($only)
@@ -148,7 +148,7 @@ class Resource extends RuleGroup
     /**
      * 设置资源排除
      * @access public
-     * @param array     $except
+     * @param  array     $except
      * @return $this
      */
     public function except($except)
@@ -159,7 +159,7 @@ class Resource extends RuleGroup
     /**
      * 设置资源路由的变量
      * @access public
-     * @param array     $vars
+     * @param  array     $vars
      * @return $this
      */
     public function vars($vars)
