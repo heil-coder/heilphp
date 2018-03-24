@@ -15,4 +15,8 @@ const HEILPHP_ADDON_PATH = './addons/';
 return [
     /* 文档模型配置 (文档模型核心配置，请勿更改) */
     'DOCUMENT_MODEL_TYPE' => array(2 => '主题', 1 => '目录', 3 => '段落')
+
+    /* 用户相关设置 */
+    ,'USER_MAX_CACHE'     => 1000					//最大缓存用户数
+    ,'USER_ADMINISTRATOR' => 1						//管理员用户ID
 ];

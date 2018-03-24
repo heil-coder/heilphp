@@ -60,20 +60,24 @@ class Base extends Model {
      */
     public function edit($id = 0) {
         /* 获取数据 */
-        $data = input('param.');
+		$fields = $this->getConnection()->getTableFields($this->getTable());
+        $data = request()->only($fields);
         if ($data === false) {
             return false;
         }
+
+		if(empty($data['id'])) unset($data['id']);
+
 	   	$Validate = new \think\Validate;
 		if($Validate->check($data) !== true){
 			$this->error = $Validate->getError();	
 		};
 
-
+		$this->data($data);
         if (empty($data['id'])) {//新增数据
             $data['id'] = $id;
-            $id = $this->save($data);
-            if (!$id) {
+            $res = $this->save($data);
+            if (!$res) {
                 $this->error = '新增数据失败！';
                 return false;
             }

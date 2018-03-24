@@ -558,7 +558,7 @@ CREATE TABLE `heilphp_document` (
   `link_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '外链',
   `cover_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '封面',
   `display` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '可见性',
-  `deadline` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '截止时间',
+  `deadline` bigint(10) unsigned DEFAULT NULL COMMENT '截止时间',
   `attach` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '附件数量',
   `view` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览量',
   `comment` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '评论数',
@@ -575,7 +575,7 @@ CREATE TABLE `heilphp_document` (
 -- -----------------------------
 -- Records of `heilphp_document`
 -- -----------------------------
-INSERT INTO `heilphp_document` VALUES ('1', '1', '', 'HeilPHP0.01开发版发布', '2', '0','升级OneThink核心为ThinkPHP5.1', '0', '0', '2', '2', '0', '0', '0', '1', '0', '0', '8', '0', '0', '0', '1406001413', '1406001413', '1');
+INSERT INTO `heilphp_document` VALUES ('1', '1', '', 'HeilPHP0.01开发版发布', '2', '0','升级OneThink核心为ThinkPHP5.1', '0', '0', '2', '2', '0', '0', '0', '1', null, '0', '8', '0', '0', '0', '1406001413', '1406001413', '1');
 
 -- -----------------------------
 -- Table structure for `heilphp_document_article`
