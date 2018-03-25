@@ -20,12 +20,12 @@ class Common extends Controller {
     /**
      * 后台用户登录
      */
-    public function login($username = null, $password = null, $verify = null){
+    public function login($username = null, $password = null, $captcha = null){
         if(Request::isPost()){
             /* 检测验证码 TODO: */
-            //if(!check_verify($verify)){
-            //    $this->error('验证码输入错误！');
-            //}
+            if(!captcha_check($captcha)){
+                $this->error('验证码输入错误！');
+            }
 
             /* 调用UC登录接口登录 */
             $User = model('Member');

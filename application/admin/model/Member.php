@@ -106,7 +106,7 @@ class Member extends Model {
 		}
 
 		/* 获取用户数据 */
-		$user = $this->where($map)->find()->toArray();
+		$user = $this->where($map)->find();
 		if(is_array($user) && $user['status']){
 			/* 验证用户密码 */
 			if(encrypt_password($password, $user['salt']) === $user['password']){
