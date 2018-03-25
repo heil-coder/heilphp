@@ -88,15 +88,25 @@ class Member extends Model {
 	 */
 	public function login($username, $password, $type = 1){
 		$map = [];
+		$data = [];
+		$data['password'] = $password;
+		$scene = '';
+		$validate = new \app\admin\validate\Member;
 		switch ($type) {
 			case 1:
 				$map[] = ['username','=',$username];
+				$data['username'] = $username;
+				$scene = 'loginName';
 				break;
 			case 2:
 				$map[] = ['email','=',$username];
+				$data['email'] = $username;
+				$scene = 'loginEmail';
 				break;
 			case 3:
 				$map[] = ['mobile','=',$username];
+				$data['mobile'] = $username;
+				$scene = 'loginMobile';
 				break;
 			case 4:
 				$map[] = ['id','=',$username];
@@ -104,9 +114,12 @@ class Member extends Model {
 			default:
 				return 0; //参数错误
 		}
+		if(true !== $validate->scene($scene)->check($data)){
+			return $validate->getError();
+		}
 
 		/* 获取用户数据 */
-		$user = $this->where($map)->find();
+		$user = $this->where($map)->find()->toArray();
 		if(is_array($user) && $user['status']){
 			/* 验证用户密码 */
 			if(encrypt_password($password, $user['salt']) === $user['password']){

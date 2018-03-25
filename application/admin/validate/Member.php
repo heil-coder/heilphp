@@ -14,13 +14,15 @@ class Member extends Validate
 {
     protected $rule = [
 		'username'  =>  [
-			'chsDash'														//用户名只能是汉字、字母、数字和下划线_及破折号-
+			'require'														//用户名不能为空
+			,'chsDash'														//用户名只能是汉字、字母、数字和下划线_及破折号-
 			,'length'				=> '1,30'								//用户名长度不合法
 			,'checkDenyMember'												//用户名禁止注册
 			,'unique'				=> 'member,username'					//用户名被占用
 		]
 		,'password'	=>	[
-			'length'				=> '6,30'								//密码长度不合法	
+			'require'														//密码不能为空
+			,'length'				=> '6,30'								//密码长度不合法	
 		]
 		,'repassword' =>[
 			'confirm' =>			'password'								//确认密码和密码不一致
@@ -39,11 +41,13 @@ class Member extends Validate
     ];
 
     protected $message  =   [
-        'username.chsDash'					=> '用户名只能是汉字、字母、数字和下划线_及破折号-'
+        'username.require'					=> '用户名不能为空'
+        ,'username.chsDash'					=> '用户名只能是汉字、字母、数字和下划线_及破折号-'
         ,'username.length'					=> '用户名长度不合法'
         ,'username.checkDenyMember'			=> '用户名禁止注册'
         ,'username.unique'					=> '用户名被占用'
 
+        ,'password.require'					=> '密码不能为空'
         ,'password.length'					=> '密码长度不合法'
 		,'repassword.confirm'				=> '确认密码和密码不一致'
 
@@ -56,6 +60,11 @@ class Member extends Validate
 		,'mobile.checkDenyMobile'			=> '手机禁止注册'
 		,'mobile.unique'					=> '手机号被占用'
     ];
+	protected function sceneLoginName(){
+    	return $this->only(['username','password'])
+			->remove('password','length')
+            ->remove('username', 'unique');
+	}
 
 	/**
 	 * 检测用户名是不是被禁止注册
