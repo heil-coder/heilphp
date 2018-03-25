@@ -24,7 +24,7 @@ class Common extends Controller {
         if(Request::isPost()){
             /* 检测验证码 TODO: */
             if(!captcha_check($captcha)){
-                //$this->error('验证码输入错误！');
+                $this->error('验证码输入错误！');
             }
 
             /* 调用UC登录接口登录 */
