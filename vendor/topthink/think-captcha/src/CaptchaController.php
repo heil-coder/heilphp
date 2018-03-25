@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2006-2015 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -9,9 +9,15 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 
-namespace think\image;
+namespace think\captcha;
 
-class Exception extends \RuntimeException
+use think\facade\Config;
+
+class CaptchaController
 {
-
+    public function index($id = "")
+    {
+        $captcha = new Captcha((array) Config::pull('captcha'));
+        return $captcha->entry($id);
+    }
 }
