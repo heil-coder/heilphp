@@ -625,4 +625,29 @@ CREATE TABLE `heilphp_url` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='链接表';
 
 
+-- -----------------------------
+-- Table structure for `heilphp_channel`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_channel`;
+CREATE TABLE `heilphp_channel` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '频道ID',
+  `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上级频道ID',
+  `title` varchar(30) NOT NULL COMMENT '频道标题',
+  `url` varchar(100) NOT NULL COMMENT '频道连接',
+  `sort` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '导航排序',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `target` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '新窗口打开',
+  PRIMARY KEY (`id`),
+  KEY `pid` (`pid`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT="频道表";
+
+-- -----------------------------
+-- Records of `heilphp_channel`
+-- -----------------------------
+INSERT INTO `heilphp_channel` VALUES ('1', '0', '首页', 'Index/index', '1', '1379475111', '1379923177', '1', '0');
+INSERT INTO `heilphp_channel` VALUES ('2', '0', '博客', 'Article/index?category=blog', '2', '1379475131', '1379483713', '1', '0');
+INSERT INTO `heilphp_channel` VALUES ('3', '0', '官网', 'http://www.onethink.cn', '3', '1379475154', '1387163458', '1', '0');
+
 

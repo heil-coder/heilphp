@@ -519,3 +519,16 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | short| varchar(100) |否|''|--|短网址| 
 | status| tinyint(1) unsigned|否|2|--|状态| 
 | create_time| bigint(10) unsigned |否|0|--|创建时间| 
+
+## channel 频道表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(11) unsigned|否|0|是|频道唯一标识，主键| 
+| pid | int(10) unsigned|否|0|--|上级频道ID| 
+| title | varchar(30) |否|无|--|频道标题| 
+| url| varchar(30) |否|无|--|频道链接| 
+| sort| int(10) unsigned|否|0|--|导航排序| 
+| create_time| bigint(10) unsigned |否|0|--|创建时间| 
+| update_time| bigint(10) unsigned |否|0|--|更新时间| 
+| status| tinyint(1) unsigned|否|0|--|状态| 
+| target| tinyint(1) unsigned|否|0|--|新窗口打开| 
