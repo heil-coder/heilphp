@@ -155,11 +155,11 @@ class Channel extends Admin {
      */
     public function sort(){
         if(Request()->isGet()){
-            $ids = input('get.ids');
-            $pid = input('get.pid');
+            $ids = input('param.ids');
+            $pid = input('param.pid');
 
             //获取排序的数据
-            $map = array('status'=>array('gt',-1));
+            $map = [['status','>',-1]];
             if(!empty($ids)){
                 $map['id'] = ['id','in',$ids];
             }else{
