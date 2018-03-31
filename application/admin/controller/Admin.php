@@ -95,6 +95,7 @@ class Admin extends Controller {
      *   返回 **true**, 允许任何管理员访问,无需执行节点权限检测
      *   返回 **null**, 需要继续执行节点权限检测决定是否允许访问
      * @author 朱亚杰  <xcoolcc@gmail.com>
+	 * @modify Jason<1878566968@qq.com>
      */
     final protected function accessControl(){
         $allow = array_map('strtolower',Config('ALLOW_VISIT'));

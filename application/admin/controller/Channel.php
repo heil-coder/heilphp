@@ -54,7 +54,7 @@ class Channel extends Admin {
     public function add(){
         if(Request()->isPost()){
             $Channel = model('Channel');
-            $data = Request()->only();
+            $data = Request()->only('id,pid,title,url,sort,create_time,update_time,status,target');
             if($data){
                 $id = $Channel->save($data);
                 if($id){
@@ -90,9 +90,9 @@ class Channel extends Admin {
     public function edit($id = 0){
         if(Request()->isPost()){
             $Channel = model('Channel');
-            $data = Request()->only();
+            $data = Request()->only('id,pid,title,url,sort,create_time,update_time,status,target');
             if($data){
-                if($Channel->save($data)){
+                if($Channel->get($data['id'])->save($data)){
                     //记录行为
                     action_log('update_channel', 'channel', $data['id'], UID);
                     $this->success('编辑成功', Url('index'));
