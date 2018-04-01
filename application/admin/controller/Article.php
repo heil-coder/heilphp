@@ -562,7 +562,7 @@ class Article extends Admin {
      */
     public function permit(){
         /*参数过滤*/
-        $ids = I('param.ids');
+        $ids = input('param.ids');
         if(empty($ids)){
             $this->error('请选择要操作的数据');
         }
@@ -630,8 +630,8 @@ class Article extends Admin {
         if(!isset($_POST['cate_id'])) {
             $this->error('请选择要粘贴到的分类！');
         }
-        $cate_id = I('post.cate_id');   //当前分类
-        $pid = I('post.pid', 0);        //当前父类数据id
+        $cate_id = Input('post.cate_id');   //当前分类
+        $pid = Input('post.pid', 0);        //当前父类数据id
 
         //检查所选择的数据是否符合粘贴要求
         $check = $this->checkPaste(empty($moveList) ? $copyList : $moveList, $cate_id, $pid);
@@ -701,10 +701,10 @@ class Article extends Admin {
      */
     protected function checkPaste($list, $cate_id, $pid){
         $return = array('status'=>1);
-        $Document = D('Document');
+        $Document = model('Document');
 
         // 检查支持的文档模型
-        $modelList =   M('Category')->getFieldById($cate_id,'model');   // 当前分类支持的文档模型
+        $modelList =   db('Category')->getFieldById($cate_id,'model');   // 当前分类支持的文档模型
         foreach ($list as $key=>$value){
             //不能将自己粘贴为自己的子内容
             if($value == $pid){
@@ -722,7 +722,7 @@ class Article extends Admin {
         }
 
         // 检查支持的文档类型和层级规则
-        $typeList =   M('Category')->getFieldById($cate_id,'type'); // 当前分类支持的文档模型
+        $typeList =   db('Category')->getFieldById($cate_id,'type'); // 当前分类支持的文档模型
         foreach ($list as $key=>$value){
             // 移动文档的所属文档模型
             $modelType  =   $Document->getFieldById($value,'type');
@@ -747,36 +747,36 @@ class Article extends Admin {
      * @author huajie <banhuajie@163.com>
      */
     public function sort(){
-        if(IS_GET){
+        if(Request()->isGet()){
             //获取左边菜单
             $this->getMenu();
 
-            $ids        =   I('get.ids');
-            $cate_id    =   I('get.cate_id');
-            $pid        =   I('get.pid');
+            $ids        =   Input('get.ids');
+            $cate_id    =   Input('get.cate_id/d');
+            $pid        =   Input('get.pid/d');
 
             //获取排序的数据
-            $map['status'] = array('gt',-1);
+            $map['status'] = ['status','>',-1];
             if(!empty($ids)){
-                $map['id'] = array('in',$ids);
+                $map['id'] = ['id','in',$ids];
             }else{
-                if($cate_id !== ''){
-                    $map['category_id'] = $cate_id;
+                if(!is_null($cate_id)){
+                    $map['category_id'] = ['category_id','=',$cate_id];
                 }
-                if($pid !== ''){
-                    $map['pid'] = $pid;
+                if(!is_null($pid)){
+                    $map['pid'] = ['pid','=',$pid];
                 }
             }
-            $list = M('Document')->where($map)->field('id,title')->order('level DESC,id DESC')->select();
+            $list = db('Document')->where($map)->field('id,title')->order('level DESC,id DESC')->select();
 
             $this->assign('list', $list);
-            $this->meta_title = '文档排序';
-            $this->display();
-        }elseif (IS_POST){
-            $ids = I('post.ids');
+            $this->assign('meta_title','文档排序');
+			return view();
+        }elseif (Request()->isPost()){
+            $ids = Input('post.ids');
             $ids = array_reverse(explode(',', $ids));
             foreach ($ids as $key=>$value){
-                $res = M('Document')->where(array('id'=>$value))->setField('level', $key+1);
+                $res = db('Document')->where(array('id'=>$value))->setField('level', $key+1);
             }
             if($res !== false){
                 $this->success('排序成功！');
