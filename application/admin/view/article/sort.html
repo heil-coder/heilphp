@@ -75,7 +75,9 @@
 			//重置所有option文字。
 			function rest(){
 				$('option').text(function(){
-					return $(this).text().split('.')[1]
+					tmp = $(this).text().split('.');
+					tmp.splice(0,1);
+					return tmp.join('.');
 				});
 			}
 
