@@ -641,7 +641,7 @@ class Article extends Admin {
 
         if(!empty($moveList)) {// 移动    TODO:检查name重复
             foreach ($moveList as $key=>$value){
-                $Model              =   M('Document');
+                $Model              =   db('Document');
                 $map['id']          =   $value;
                 $data['category_id']=   $cate_id;
                 $data['pid']        =   $pid;
@@ -662,14 +662,14 @@ class Article extends Admin {
             }
         }elseif(!empty($copyList)){ // 复制
             foreach ($copyList as $key=>$value){
-                $Model  =   M('Document');
+                $Model  =   db('Document');
                 $data   =   $Model->find($value);
                 unset($data['id']);
                 unset($data['name']);
                 $data['category_id']    =   $cate_id;
                 $data['pid']            =   $pid;
-                $data['create_time']    =   NOW_TIME;
-                $data['update_time']    =   NOW_TIME;
+                $data['create_time']    =   app()->getBeginTime();
+                $data['update_time']    =   app()->getBeginTime();
                 //获取root
                 if($pid == 0){
                     $data['root'] = 0;
@@ -678,12 +678,13 @@ class Article extends Admin {
                     $data['root'] = $p_root == 0 ? $pid : $p_root;
                 }
 
-                $result   =  $Model->add($data);
+				$Model->setOption('where',[])->setOption('data',[]);
+                $result   =  $Model->insert($data);
                 if($result){
-                    $logic      =   D(get_document_model($data['model_id'],'name'),'Logic');
+                    $logic      =   model(get_document_model($data['model_id'],'name'),'Logic');
                     $data       =   $logic->detail($value); //获取指定ID的扩展数据
                     $data['id'] =   $result;
-                    $res        =   $logic->add($data);
+                    $res        =   $logic->insert($data);
                 }
             }
             session('copyArticle', null);
@@ -716,7 +717,7 @@ class Article extends Admin {
             $modelType  =   $Document->getFieldById($value,'model_id');
             if(!in_array($modelType,explode(',',$modelList))) {
                 $return['status'] = 0;
-                $return['info'] = '当前分类的文档模型不支持编号为 '.$value.' 的数据！';
+                $return['info'] = '当前分类的文档模型不支持编号为 '.$value.' 的数据！1';
                 return $return;
             }
         }
@@ -728,7 +729,7 @@ class Article extends Admin {
             $modelType  =   $Document->getFieldById($value,'type');
             if(!in_array($modelType,explode(',',$typeList))) {
                 $return['status'] = 0;
-                $return['info'] = '当前分类的文档类型不支持编号为 '.$value.' 的数据！';
+                $return['info'] = '当前分类的文档类型不支持编号为 '.$value.' 的数据！2';
                 return $return;
             }
             $res = $Document->checkDocumentType($modelType, $pid);

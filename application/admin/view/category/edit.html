@@ -65,7 +65,7 @@
 					<div class="form-item">
 						<label class="item-label">允许文档类型</label>
 						<div class="controls">
-							{volist name=":Config('DOCUMENT_MODEL_TYPE')" id="type"}
+							{volist name=":Config('heilphp.DOCUMENT_MODEL_TYPE')" id="type"}
 								<label class="checkbox">
 									<input type="checkbox" name="type[]" value="{$key}">{$type}
 								</label>
