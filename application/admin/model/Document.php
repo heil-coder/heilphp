@@ -18,6 +18,7 @@ use Hook;
  * 文档基础模型
  */
 class Document extends Model{
+	public $error;
 	protected $autoWriteTimestamp = true;
     /* 自动验证规则 */
     //protected $_validate = array(
@@ -71,7 +72,6 @@ class Document extends Model{
             return $link;
         }
         $res = model('Url')->edit(array('url'=>$link));
-		dump($res);
         return $res['id'];
     }
     /**

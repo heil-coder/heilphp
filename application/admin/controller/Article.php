@@ -679,12 +679,12 @@ class Article extends Admin {
                 }
 
 				$Model->setOption('where',[])->setOption('data',[]);
-                $result   =  $Model->insert($data);
+                $result   =  $Model->insertGetId($data);
                 if($result){
-                    $logic      =   model(get_document_model($data['model_id'],'name'),'Logic');
+                    $logic      =   model(get_document_model($data['model_id'],'name'),'logic',false,'admin');
                     $data       =   $logic->detail($value); //获取指定ID的扩展数据
                     $data['id'] =   $result;
-                    $res        =   $logic->insert($data);
+                    $res        =   $logic->save($data);
                 }
             }
             session('copyArticle', null);

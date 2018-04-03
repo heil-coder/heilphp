@@ -10,7 +10,7 @@ heilphp
 > config  分组为0的在后台系统配置处不显示，无法修改
 > 分类编辑修改子文档绑定模型时action_log('update_category')报错
 > 分类编辑 数组参数写入失败
-> 内容粘贴异常
+> 内容批量粘贴异常
 
 # 数据返回
 > 使用ThinkPHP 5.1 控制器的success()和error()方法返回数据,可以对get、post或ajax请求方式都可以做适合的响应。
