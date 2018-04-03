@@ -684,7 +684,7 @@ class Article extends Admin {
                     $logic      =   model(get_document_model($data['model_id'],'name'),'logic',false,'admin');
                     $data       =   $logic->detail($value); //获取指定ID的扩展数据
                     $data['id'] =   $result;
-                    $res        =   $logic->save($data);
+                    $res        =   $logic->isUpdate(false)->save($data);
                 }
             }
             session('copyArticle', null);
