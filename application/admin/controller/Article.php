@@ -462,7 +462,7 @@ class Article extends Admin {
         //获取左边菜单
         $this->getMenu();
 
-        $map[]  =   ['status','=',-1];
+        $map['delete_time']  =   ['delete_time','not null'];
         if ( !is_administrator() ) {
             $cate_auth  =   AuthGroup::getAuthCategories(UID);
             if($cate_auth){

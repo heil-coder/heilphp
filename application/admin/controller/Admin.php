@@ -160,9 +160,30 @@ class Admin extends Controller {
 		else{
             $options['where']   =  1; 
 		}
-        $options      =   array_merge( $Db->getOptions(), $options );
-
-		$total        =   $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->count() : $Db->where($options['where'])->count();
+		$options      =   array_merge( $Db->getOptions(), $options );
+		if(!empty($options['where']['delete_time'])){
+			$tmpDeleteTime = $where['delete_time'];
+			unset($options['where']['delete_time']);
+		}
+		$Db->setOption('where',[]);
+		if(!$isSoftDelete){
+			$total = $Db->where($options['where'])->count();
+		}
+		else{
+			if(empty($tmpDeleteTime)){
+				$total= $Db->where($options['where'])->whereNull('delete_time')->count();
+			}
+			else{
+				switch(count($tmpDeleteTime)){
+				case 3:
+					$total = $Db->where($options['where'])->where($tmpDeleteTime[0],$tmpDeleteTime[2])->count();
+					break;
+				case 2:
+					$total = $Db->where($options['where'])->where($tmpDeleteTime[0],$tmpDeleteTime[1])->count();
+					break;
+				}
+			}
+		}
         $this->assign('_total',$total);
 
         if( isset($REQUEST['r']) ){
@@ -171,17 +192,15 @@ class Admin extends Controller {
             $listRows = Config::get('LIST_ROWS') > 0 ? Config::get('LIST_ROWS') : 10;
         }
 
-        $Db->setOption('where',[])->setOption('field',[]);
+        $Db->setOption('field',[]);
 
-		$page = $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->paginate($listRows,$total) : $Db->where($options['where'])->paginate($listRows,$total);
+		$page = $Db->where($options['where'])->paginate($listRows,$total);
         $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
 
-        $Db->setOption('where',[]);
 
         $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
-		$listing = $isSoftDelete ? $Db->where($options['where'])->whereNull('delete_time')->field($field)->order($options['order'])->limit($limit)->select() : $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
-
+		$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
 		return $listing;
     }
     /**

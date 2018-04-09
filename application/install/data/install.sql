@@ -74,7 +74,7 @@ CREATE TABLE `heilphp_member` (
   `reg_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
   `last_login_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '最后登录IP',
   `last_login_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '会员状态',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '会员状态',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`),
   KEY `status` (`status`)
@@ -566,7 +566,8 @@ CREATE TABLE `heilphp_document` (
   `level` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '优先级',
   `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '数据状态',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '数据状态',
+  `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`),
   KEY `idx_category_status` (`category_id`,`status`),
   KEY `idx_status_type_pid` (`status`,`uid`,`pid`)

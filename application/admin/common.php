@@ -127,6 +127,23 @@ function show_status_op($status) {
     }
 }
 /**
+ * 获取文档的类型文字
+ * @param string $type
+ * @return string 状态文字 ，false 未获取到
+ * @author huajie <banhuajie@163.com>
+ */
+function get_document_type($type = null){
+    if(!isset($type)){
+        return false;
+    }
+    switch ($type){
+        case 1  : return    '目录'; break;
+        case 2  : return    '主题'; break;
+        case 3  : return    '段落'; break;
+        default : return    false;  break;
+    }
+}
+/**
  * 根据条件字段获取数据
  * @param mixed $value 条件，可用常量或者数组
  * @param string $condition 条件字段
