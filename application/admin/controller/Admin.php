@@ -160,30 +160,16 @@ class Admin extends Controller {
 		else{
             $options['where']   =  1; 
 		}
+		$tmpOptions = $Db->getOptions();
 		$options      =   array_merge( $Db->getOptions(), $options );
-		if(!empty($options['where']['delete_time'])){
-			$tmpDeleteTime = $where['delete_time'];
-			unset($options['where']['delete_time']);
-		}
-		$Db->setOption('where',[]);
-		if(!$isSoftDelete){
+
+		if(!$isSoftDelete || ($isSoftDelete && !empty($tmpOptions['where']['AND']['delete_time']))){
 			$total = $Db->where($options['where'])->count();
 		}
 		else{
-			if(empty($tmpDeleteTime)){
-				$total= $Db->where($options['where'])->whereNull('delete_time')->count();
-			}
-			else{
-				switch(count($tmpDeleteTime)){
-				case 3:
-					$total = $Db->where($options['where'])->where($tmpDeleteTime[0],$tmpDeleteTime[2])->count();
-					break;
-				case 2:
-					$total = $Db->where($options['where'])->where($tmpDeleteTime[0],$tmpDeleteTime[1])->count();
-					break;
-				}
-			}
+			$total = $Db->where($options['where'])->whereNull('delete_time')->count();
 		}
+
         $this->assign('_total',$total);
 
         if( isset($REQUEST['r']) ){
