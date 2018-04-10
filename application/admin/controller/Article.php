@@ -46,7 +46,7 @@ class Article extends Admin {
             case 'setstatus': //更改状态
             case 'permit':    //回收站
                 $doc_id  =  Request::param('ids/a');;
-                $cate_id =  db('Document')->where('id','in',$doc_id)->column('category_id',true);
+                $cate_id =  db('Document')->where('id','in',$doc_id)->column('category_id');
                 $cate_id =  array_unique($cate_id);
                 break;
         }
@@ -264,18 +264,18 @@ class Article extends Admin {
             $map['update_time'][] = ['update_time','<=',24*60*60 + strtotime(Request::param('time-end'))];
         }
         if ( Request::has('nickname') ) {
-            $map['uid'] = db('Member')->where('nickname',Request::param('nickname'))->value('uid');
+            $map['uid'] = ['uid','in',db('Member')->where('nickname','like','%'.Request::param('nickname').'%')->column('id')];
         }
 
         // 构建列表数据
         $Document = db('Document');
 
         if($cate_id){
-            $map[] =   ['category_id','=',$cate_id];
+            $map['category_id'] =   ['category_id','=',$cate_id];
         }
         $map[]         =   ['pid','=',Request::param('pid',0)];
         if(Request::has('pid')){ // 子文档列表忽略分类
-            $map['category_id'] = [];
+            unset($map['category_id']);
         }
         $Document->alias('DOCUMENT');
         if(!is_null($model_id)){
@@ -301,7 +301,7 @@ class Article extends Admin {
 
         if(Request::has('pid')){
             // 获取上级文档
-            $article    =   $Document->field('id,title,type')->find($map['pid']);
+            $article    =   $Document->field('id,title,type')->find(Request::has('pid'));
             $this->assign('article',$article);
         }
         //检查该分类是否允许发布内容
