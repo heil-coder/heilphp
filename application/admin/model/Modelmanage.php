@@ -79,7 +79,7 @@ class Modelmanage extends Model{
      * 获取指定数据库的所有表名
      */
     public function getTables(){
-        return $this->db->getTables();
+        return $this->getConnection()->getTables();
     }
 
     /**
@@ -102,6 +102,7 @@ class Modelmanage extends Model{
             return false;
         }
 
+		dump($data);
         //新增属性
         $fields = db()->query('SHOW FULL COLUMNS FROM '.$table);
         foreach ($fields as $key=>$value){

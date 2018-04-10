@@ -121,4 +121,27 @@ class Modelmanage extends Admin {
             $this->success('删除模型成功！');
         }
     }
+    /**
+     * 生成一个模型
+     * @author huajie <banhuajie@163.com>
+     */
+    public function generate(){
+        if(!Request::isPost()){
+            //获取所有的数据表
+            $tables = model('Modelmanage')->getTables();
+
+            $this->assign('tables', $tables);
+            $this->assign('meta_title','生成模型');
+			return view();
+        }else{
+            $table = Input('post.table');
+            empty($table) && $this->error('请选择要生成的数据表！');
+            $res = model('Modelmanage')->generate($table,I('post.name'),I('post.title'));
+            if($res){
+                $this->success('生成模型成功！', U('index'));
+            }else{
+                $this->error(D('Model')->getError());
+            }
+        }
+    }
 }
