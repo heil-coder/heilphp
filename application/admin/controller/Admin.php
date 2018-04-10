@@ -136,18 +136,16 @@ class Admin extends Controller {
         }
 		$tmpDb = $Db;
 
-		$table = $Db->getTable();
-		$tableFields = $Db->getConnection()->getTableFields($table);
+		$tableFields = $Db->getTableFields();
 		//如果存在软删除字段
 		$isSoftDelete = in_array('delete_time',$tableFields) ? true : false;
-
 
         $pk         =   $Db->getPk();
         if($order===null){
             //order置空
         }else if ( isset($REQUEST['_order']) && isset($REQUEST['_field']) && in_array(strtolower($REQUEST['_order']),array('desc','asc')) ) {
             $options['order'] = '`'.$REQUEST['_field'].'` '.$REQUEST['_order'];
-		}elseif( $order==='' /*&& empty($options['order'])*/ && !empty($pk) ){
+		}elseif( $order==='' *&& empty($options['order']) && !empty($pk) ){
             $options['order'] = $pk.' desc';
         }elseif($order){
             $options['order'] = $order;
@@ -167,7 +165,7 @@ class Admin extends Controller {
 			$total = $Db->where($options['where'])->count();
 		}
 		else{
-			$total = $Db->where($options['where'])->whereNull('delete_time')->count();
+			$total = $Db->where($options['where'])->useSoftDelete('delete_time')->count();
 		}
 
         $this->assign('_total',$total);
@@ -204,8 +202,7 @@ class Admin extends Controller {
         $id    = array_unique(Request::param('id/a',[]));
         $id    = is_array($id) ? implode(',',$id) : $id;
         //如存在id字段，则加入该条件
-		$table = model($model)->getTable();
-		$fields = model($model)->getConnection()->getTableFields($table);
+		$fields = model($model)->getTableFields();
         if(in_array('id',$fields) && !empty($id)){
 			$where[] =  ['id','in', $id];
         }
