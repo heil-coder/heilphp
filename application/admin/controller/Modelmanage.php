@@ -51,11 +51,11 @@ class Modelmanage extends Admin {
 
         /*获取一条记录的详细数据*/
         $Model = model('Modelmanage');
-        $data = $Model->field(true)->find($id);
+        $data = $Model->field(true)->find($id)->toArray();
         if(!$data){
             $this->error($Model->getError());
         }
-        $data['attribute_list'] = empty($data['attribute_list']) ? '' : explode(",", $data['attribute_list']);
+        $data['attribute_list'] = empty($data['attribute_list']) ? [] : explode(",", $data['attribute_list']);
         $fields = db('Attribute')->where('model_id',$data['id'])->column('id,name,title,is_show');
         $fields = empty($fields) ? array() : $fields;
         // 是否继承了其他模型
@@ -84,7 +84,7 @@ class Modelmanage extends Admin {
         
         // 模型字段列表排序
         $fields = list_sort_by($fields,"sort");
-        
+
         $this->assign('fields', $fields);
         $this->assign('info', $data);
         $this->assign('meta_title','编辑模型');
