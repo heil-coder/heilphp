@@ -24,7 +24,8 @@ use app\admin\model\AuthRule;
 
 /**
  * 后台基础控制器
- * @author Jason <1878566968@qq.com>
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+ * @modify Jason <1878566968@qq.com>
  */
 class Admin extends Controller {
     /**
@@ -95,7 +96,7 @@ class Admin extends Controller {
      *   返回 **true**, 允许任何管理员访问,无需执行节点权限检测
      *   返回 **null**, 需要继续执行节点权限检测决定是否允许访问
      * @author 朱亚杰  <xcoolcc@gmail.com>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     final protected function accessControl(){
         $allow = array_map('strtolower',Config('ALLOW_VISIT'));
@@ -124,7 +125,7 @@ class Admin extends Controller {
      *
      * @param boolean      $field   单表模型用不到该参数,要用在多表join时为field()方法指定参数
      * @author 朱亚杰 <xcoolcc@gmail.com>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      * @return array|false
      * 返回数据集
      */
@@ -145,7 +146,7 @@ class Admin extends Controller {
             //order置空
         }else if ( isset($REQUEST['_order']) && isset($REQUEST['_field']) && in_array(strtolower($REQUEST['_order']),array('desc','asc')) ) {
             $options['order'] = '`'.$REQUEST['_field'].'` '.$REQUEST['_order'];
-		}elseif( $order==='' *&& empty($options['order']) && !empty($pk) ){
+		}elseif( $order==='' && empty($options['order']) && !empty($pk) ){
             $options['order'] = $pk.' desc';
         }elseif($order){
             $options['order'] = $order;
@@ -196,7 +197,7 @@ class Admin extends Controller {
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      * @author 朱亚杰  <zhuyajie@topthink.net>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     final protected function editRow ( $model ,$data, $where , $msg ){
         $id    = array_unique(Request::param('id/a',[]));
@@ -222,7 +223,7 @@ class Admin extends Controller {
      * @param array  $msg   执行正确和错误的消息,可以设置四个元素 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      * @author 朱亚杰 <xcoolcc@gmail.com>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     protected function forbid ( $model , $where = array() , $msg = array( 'success'=>'状态禁用成功！', 'error'=>'状态禁用失败！')){
         $data    =  array('status' => 0);
@@ -235,7 +236,7 @@ class Admin extends Controller {
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      * @author 朱亚杰 <xcoolcc@gmail.com>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     protected function resume (  $model , $where = array() , $msg = array( 'success'=>'状态恢复成功！', 'error'=>'状态恢复失败！')){
         $data    =  array('status' => 1);
@@ -248,7 +249,7 @@ class Admin extends Controller {
      * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      * @author 朱亚杰 <xcoolcc@gmail.com>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     protected function delete ( $model , $where = [] , $msg = array( 'success'=>'删除成功！', 'error'=>'删除失败！')) {
         $data['delete_time']         =   app()->getBeginTime();
@@ -261,7 +262,7 @@ class Admin extends Controller {
      *
      * 注意,返回的主菜单节点数组中有'controller'元素,以供区分子节点和主节点
      * @author 朱亚杰 <xcoolcc@gmail.com>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     final protected function returnNodes($tree = true){
         static $tree_nodes = array();
@@ -323,7 +324,7 @@ class Admin extends Controller {
     /**
      * 获取控制器菜单数组,二级菜单元素位于一级菜单的'_child'元素中
      * @author 朱亚杰  <xcoolcc@gmail.com>
-	 * @modify Jason<1878566968@qq.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     final public function getMenus($controller=''){
 		empty($controlle) && $controller = Request::controller();
