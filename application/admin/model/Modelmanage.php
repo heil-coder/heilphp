@@ -21,7 +21,7 @@ class Modelmanage extends Model{
     /* 自动验证规则 */
 
     /* 自动完成规则 */
-	protected $auto = ['name','status'=>1,'field_sort','attribute_list'];
+	protected $auto = ['status'=>1];
 	protected function setNameAttr($value){
 		return strtolower($value);
 	}
@@ -46,7 +46,8 @@ class Modelmanage extends Model{
      */
     public function edit(){
         /* 获取数据对象 */
-        $data = Request::only('id,name,title,extend,engine_type,need_pk');
+		$data = Request::param();
+
         if(empty($data)){
             return false;
         }
