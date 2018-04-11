@@ -576,7 +576,7 @@ CREATE TABLE `heilphp_document` (
 -- -----------------------------
 -- Records of `heilphp_document`
 -- -----------------------------
-INSERT INTO `heilphp_document` VALUES ('1', '1', '', 'HeilPHP0.01开发版发布', '2', '0','升级OneThink核心为ThinkPHP5.1', '0', '0', '2', '2', '0', '0', '0', '1', null, '0', '8', '0', '0', '0', '1406001413', '1406001413', '1');
+INSERT INTO `heilphp_document` VALUES ('1', '1', '', 'HeilPHP0.01开发版发布', '2', '0','升级OneThink核心为ThinkPHP5.1', '0', '0', '2', '2', '0', '0', '0', '1', null, '0', '8', '0', '0', '0', '1406001413', '1406001413', '1',null);
 
 -- -----------------------------
 -- Table structure for `heilphp_document_article`
