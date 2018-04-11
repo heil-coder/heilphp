@@ -137,9 +137,9 @@ class Modelmanage extends Admin {
         }else{
             $table = Input('post.table');
             empty($table) && $this->error('请选择要生成的数据表！');
-            $res = model('Modelmanage')->generate($table,I('post.name'),I('post.title'));
+            $res = model('Modelmanage')->generate($table,Input('post.name'),Input('post.title'));
             if($res){
-                $this->success('生成模型成功！', U('index'));
+                $this->success('生成模型成功！', Url('index'));
             }else{
                 $this->error(model('Model')->error);
             }

@@ -13,6 +13,7 @@ use Request;
 
 /**
  * 文档基础模型
+ * @modify Jason<1878566968@qq.com>
  */
 class Modelmanage extends Model{
 	protected $name= 'model';
@@ -69,7 +70,7 @@ class Modelmanage extends Model{
         cache('DOCUMENT_MODEL_LIST', null);
 
         //记录行为
-        //action_log('update_model','model',$data['id'] ? $data['id'] : $id,UID);
+        action_log('update_model','model',$data['id'] ? $data['id'] : $id,UID);
 
         //内容添加或更新完成
         return $data;
@@ -91,9 +92,9 @@ class Modelmanage extends Model{
             $name = $title = substr($table, strlen(config('database.prefix')));
         }
         $data = array('name'=>$name, 'title'=>$title);
-        $data = $this->create($data);
+        //$data = $this->create($data);
         if($data){
-            $res = $this->add($data);
+            $res = $this->save($data);
             if(!$res){
                 return false;
             }
@@ -102,7 +103,6 @@ class Modelmanage extends Model{
             return false;
         }
 
-		dump($data);
         //新增属性
         $fields = db()->query('SHOW FULL COLUMNS FROM '.$table);
         foreach ($fields as $key=>$value){
@@ -121,9 +121,9 @@ class Modelmanage extends Model{
             $is_null = strcmp($value['null'], 'NO') == 0 ? ' NOT NULL ' : ' NULL ';
             $data['field'] = $value['type'].$is_null;
             $data['value'] = $value['default'] == null ? '' : $value['default'];
-            $data['model_id'] = $res;
-            $_POST = $data;		//便于自动验证
-            model('Attribute')->update($data, false);
+            $data['model_id'] = $this->id;
+            //$_POST = $data;		//便于自动验证
+            model('Attribute')->edit($data, false);
         }
         return $res;
     }
