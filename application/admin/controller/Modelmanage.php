@@ -130,6 +130,7 @@ class Modelmanage extends Admin {
             //获取所有的数据表
             $tables = model('Modelmanage')->getTables();
 
+            $this->assign('id', '');
             $this->assign('tables', $tables);
             $this->assign('meta_title','生成模型');
 			return view();
@@ -140,7 +141,7 @@ class Modelmanage extends Admin {
             if($res){
                 $this->success('生成模型成功！', U('index'));
             }else{
-                $this->error(D('Model')->getError());
+                $this->error(model('Model')->error);
             }
         }
     }
