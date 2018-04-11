@@ -15,7 +15,7 @@ use think\Model;
 
 class Menu extends Model {
     /* 自动完成规则 */
-	protected $auto = ['title','status'=>1];
+	protected $auto = ['status'=>1];
 	protected function setTitleAttr($value){
 		return htmlspecialchars($value);
 	}

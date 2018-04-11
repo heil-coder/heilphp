@@ -21,8 +21,6 @@ class Member extends Model {
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
 
-	protected $auto = ['password'];
-	
 	protected function setPasswordAttr($value,$data){
 		if(!empty($this->password) && $value === $this->password){
 			return $value;
