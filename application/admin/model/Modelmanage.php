@@ -122,8 +122,9 @@ class Modelmanage extends Model{
             $data['field'] = $value['type'].$is_null;
             $data['value'] = $value['default'] == null ? '' : $value['default'];
             $data['model_id'] = $this->id;
-            //$_POST = $data;		//便于自动验证
-            model('Attribute')->edit($data, false);
+			$Attribute = model('Attribute');
+            $Attribute->edit($data, false);
+			unset($Attribute->id);
         }
         return $res;
     }

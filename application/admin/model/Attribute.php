@@ -53,7 +53,6 @@ class Attribute extends Model {
     public function edit($data = null, $create = true){
         /* 获取数据对象 */
         $data = empty($data) ? $_POST : $data;
-        //$data = $this->create($data);
         if(empty($data)){
             return false;
         }
@@ -97,7 +96,6 @@ class Attribute extends Model {
         //记录行为
         action_log('update_attribute', 'attribute', !empty($data['id']) ? $data['id'] : $this->id, UID);
 
-		unset($this->id);
         //内容添加或更新完成
         return $data;
 
