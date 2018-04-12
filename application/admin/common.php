@@ -104,8 +104,13 @@ function get_model_by_id($id){
     return $model = db('Model')->getFieldById($id,'title');
 }
 
-// 获取属性类型信息
-function get_attribute_type($type=''){
+/**
+ * 获取属性类型信息
+ * @param string $type 属性类型标示
+ * @param bool $isShow 仅展示属性类型信息
+ */
+
+function get_attribute_type($type='',$isShow = false){
     // TODO 可以加入系统配置
     static $_type = array(
         'num'       =>  array('数字','int(10) UNSIGNED NOT NULL'),
@@ -121,7 +126,7 @@ function get_attribute_type($type=''){
         'picture'   =>  array('上传图片','int(10) UNSIGNED NOT NULL'),
         'file'      =>  array('上传附件','int(10) UNSIGNED NOT NULL'),
     );
-    return $type?$_type[$type][0]:$_type;
+    return $type?$_type[$type][0]:($isShow ? '未定义' : $_type);
 }
 /**
  * 获取对应状态的文字信息

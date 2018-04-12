@@ -32,7 +32,7 @@
 			<td>{$vo.id} </td>
 			<td>{$vo.name}</td>
 			<td><a data-id="{$vo.id}" href="{:Url('Attribute/edit?id='.$vo['id'])}">{$vo.title}</a></td>
-			<td><span>{:get_attribute_type($vo['type'])}</span></td>
+			<td><span>{:get_attribute_type($vo['type'],true)}</span></td>
 			<td><a href="{:Url('Attribute/edit?id='.$vo['id'])}">编辑</a>
 				<a class="confirm ajax-get" href="{:Url('Attribute/remove?id='.$vo['id'])}">删除</a>
                 </td>

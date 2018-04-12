@@ -27,23 +27,11 @@ use Request;
 
 class Attribute extends Model {
 	protected $autoWriteTimestamp = true;
-    /* 自动验证规则 */
-    //protected $_validate = array(
-    //    array('name', 'require', '字段名必须', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
-    //    array('name', '/^[a-zA-Z][\w_]{1,29}$/', '字段名不合法', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
-    //    array('name', 'checkName', '字段名已存在', self::MUST_VALIDATE, 'callback', self::MODEL_BOTH),
-    //    array('field', 'require', '字段定义必须', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
-    //    array('field', '1,100', '注释长度不能超过100个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-    //    array('title', '1,100', '注释长度不能超过100个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-    //    array('remark', '1,100', '备注不能超过100个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-    //    array('model_id', 'require', '未选择操作的模型', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
-    //);
-
     /* 自动完成规则 */
 	protected $insert = ['status'=>1];
 
     /* 操作的表名 */
-    protected $table_name = null;
+    //protected $table_name = null;
 
     /**
      * 新增或更新一个属性
@@ -56,6 +44,12 @@ class Attribute extends Model {
         if(empty($data)){
             return false;
         }
+
+		$validate = new \app\admin\validate\Attribute;
+		if(!$validate->check($data)){
+			$this->error = $validate->getError();
+			return false;
+		}
         /* 添加或新增属性 */
         if(empty($data['id'])){ //新增属性
 
@@ -101,21 +95,7 @@ class Attribute extends Model {
 
     }
 
-    /**
-     * 检查同一张表是否有相同的字段
-     * @author huajie <banhuajie@163.com>
-     */
-    protected function checkName(){
-        $name = I('post.name');
-        $model_id = I('post.model_id');
-        $id = I('post.id');
-        $map = array('name'=>$name, 'model_id'=>$model_id);
-        if(!empty($id)){
-            $map['id'] = array('neq', $id);
-        }
-        $res = $this->where($map)->find();
-        return empty($res);
-    }
+
 
     /**
      * 检查当前表是否存在
