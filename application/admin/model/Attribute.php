@@ -137,7 +137,6 @@ class Attribute extends Model {
         $sql = <<<sql
                 SHOW TABLES LIKE '{$table_name}';
 sql;
-		dump($table_name);
         $res = db()->query($sql);
         return count($res);
     }
@@ -200,7 +199,6 @@ sql;
             }
 
         }
-		dump($sql);
         $res = db()->execute($sql);
         return $res !== false;
     }
