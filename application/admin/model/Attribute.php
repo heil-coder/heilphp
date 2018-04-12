@@ -124,20 +124,20 @@ class Attribute extends Model {
      * @author huajie <banhuajie@163.com>
      */
     protected function checkTableExist($model_id){
-        $Model = M('Model');
+        $Model = db('Model');
         //当前操作的表
         $model = $Model->where(array('id'=>$model_id))->field('name,extend')->find();
 
         if($model['extend'] == 0){	//独立模型表名
-            $table_name = $this->table_name = C('DB_PREFIX').strtolower($model['name']);
+            $table_name = $this->table_name = Config('database.prefix').strtolower($model['name']);
         }else{						//继承模型表名
             $extend_model = $Model->where(array('id'=>$model['extend']))->field('name,extend')->find();
-            $table_name = $this->table_name = C('DB_PREFIX').strtolower($extend_model['name']).'_'.strtolower($model['name']);
+            $table_name = $this->table_name = Config('database.prefix').strtolower($extend_model['name']).'_'.strtolower($model['name']);
         }
         $sql = <<<sql
                 SHOW TABLES LIKE '{$table_name}';
 sql;
-        $res = M()->query($sql);
+        $res = db()->query($sql);
         return count($res);
     }
 
@@ -223,7 +223,7 @@ sql;
             ALTER TABLE `{$this->table_name}`
 CHANGE COLUMN `{$last_field}` `{$field['name']}`  {$field['field']} {$default} COMMENT '{$field['title']}' ;
 sql;
-        $res = M()->execute($sql);
+        $res = db()->execute($sql);
         return $res !== false;
     }
 
@@ -241,7 +241,7 @@ sql;
             ALTER TABLE `{$this->table_name}`
 DROP COLUMN `{$field['name']}`;
 sql;
-        $res = M()->execute($sql);
+        $res = db()->execute($sql);
         return $res !== false;
     }
 
