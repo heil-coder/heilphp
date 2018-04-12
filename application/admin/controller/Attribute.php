@@ -51,7 +51,7 @@ class Attribute extends Admin {
 	 * @modify Jason <1878566968@qq.com>
      */
     public function add(){
-        $model_id   =   Input('get.model_id');
+        $model_id   =   Input('param.model_id');
         $model      =   db('Model')->field('title,name,field_group')->find($model_id);
         $this->assign('model',$model);
         $this->assign('info', array('model_id'=>$model_id));

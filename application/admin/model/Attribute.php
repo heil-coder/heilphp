@@ -137,6 +137,7 @@ class Attribute extends Model {
         $sql = <<<sql
                 SHOW TABLES LIKE '{$table_name}';
 sql;
+		dump($table_name);
         $res = db()->query($sql);
         return count($res);
     }
@@ -169,7 +170,7 @@ ADD COLUMN `{$field['name']}`  {$field['field']} {$default} COMMENT '{$field['ti
 sql;
         }else{
             //新建表时是否默认新增“id主键”字段
-            $model_info = M('Model')->field('engine_type,need_pk')->getById($field['model_id']);
+            $model_info = db('Model')->field('engine_type,need_pk')->getById($field['model_id']);
             if($model_info['need_pk']){
                 $sql = <<<sql
                 CREATE TABLE IF NOT EXISTS `{$this->table_name}` (
@@ -199,7 +200,8 @@ sql;
             }
 
         }
-        $res = M()->execute($sql);
+		dump($sql);
+        $res = db()->execute($sql);
         return $res !== false;
     }
 
