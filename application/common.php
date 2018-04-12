@@ -370,6 +370,26 @@ function get_category($id, $field = null){
 }
 
 /**
+ * 获取表名（不含表前缀）
+ * @param string $model_id
+ * @return string 表名
+ * @author huajie <banhuajie@163.com>
+ * @modify Jason <1878566968@qq.com>
+ */
+function get_table_name($model_id = null){
+    if(empty($model_id)){
+        return false;
+    }
+    $Model = db('Model');
+    $name = '';
+    $info = $Model->getById($model_id);
+    if($info['extend'] != 0){
+        $name = $Model->getFieldById($info['extend'], 'name').'_';
+    }
+    $name .= $info['name'];
+    return $name;
+}
+/**
  * 获取属性信息并缓存
  * @param  integer $id    属性ID
  * @param  string  $field 要获取的字段名

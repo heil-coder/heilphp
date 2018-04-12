@@ -12,7 +12,7 @@ use Request;
 
 /**
  * 模型管理控制器
- * @author Jason	<1878566968@qq.com>
+ * @modify Jason	<1878566968@qq.com>
  */
 class Modelmanage extends Admin {
 

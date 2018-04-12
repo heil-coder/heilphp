@@ -269,8 +269,12 @@ function get_parent_category($cid){
  * 主要定义后台公共函数库
  */
 
-/* 解析列表定义规则*/
-
+/**
+ * 解析列表定义规则
+ * @param array $data 列表数据数组
+ * @param array $grid 数据解析规则
+ * @modify Jason <1878566968@qq.com>
+ */
 function get_list_field($data, $grid){
 
     // 获取当前字段数据
@@ -312,7 +316,7 @@ function get_list_field($data, $grid){
                     $href);
 
                 // 替换数据变量
-                $href   =   preg_replace_callback('/\[([a-z_]+)\]/', function($match) use($data){return $data[$match[1]];}, $href);
+                $href   =   preg_replace_callback('/\[([a-z_]+)\]/', function($match) use($data){return !empty($data[$match[1]]) ? $data[$match[1]]: '';}, $href);
 
                 $val[]  =   '<a href="'.Url($href).'">'.$show.'</a>';
             }
