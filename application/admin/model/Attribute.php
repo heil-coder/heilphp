@@ -80,7 +80,7 @@ class Attribute extends Model {
                 }
             }
 
-            $status = $this->save();
+            $status = $this->get($data['id'])->save($data);
             if(false === $status){
                 $this->error = '更新属性出错！';
                 return false;
