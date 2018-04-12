@@ -112,7 +112,7 @@ class Attribute extends Admin {
         empty($info) && $this->error('该字段不存在！');
 
         //删除属性数据
-        $res = $Model->delete($id);
+        $res = $Model->destroy($id);
 
         //删除表字段
         $Model->deleteField($info);
