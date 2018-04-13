@@ -206,14 +206,15 @@ class Think extends Admin{
 
     public function add($model = null){
         //获取模型信息
-        $model = db('Model')->where(array('status' => 1))->find($model);
+        $model = db('Model')->where([['id','=',$model]])->find();
         $model || $this->error('模型不存在！');
+		$model['status'] == 1 || $this->error('模型已禁用');
         if(Request()->isPost()){
             $Model  =   model(parse_name(get_table_name($model['id']),1));
             // 获取模型的字段信息
             $Model  =   $this->checkAttr($Model,$model['id']);
             if($Model->create() && $Model->add()){
-                $this->success('添加'.$model['title'].'成功！', U('lists?model='.$model['name']));
+                $this->success('添加'.$model['title'].'成功！', Url('lists?model='.$model['name']));
             } else {
                 $this->error($Model->getError());
             }

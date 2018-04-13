@@ -44,7 +44,8 @@ function addons_url($url, $param = array()){
  * @param int $time			时间字符串或时间戳
  * @param string $format	时间格式
  * @return string 完整的时间显示
- * @author Jason	<1878566968@qq.com>
+ * @author huajie <banhuajie@163.com>
+ * @modify Jason <1878566968@qq.com>
  */
 function time_format($time = NULL,$format='Y-m-d H:i'){
     $time = $time === NULL ? App::getBeginTime() : $time;
@@ -718,3 +719,25 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
     return $return;
 }
 
+/**
+ * 获取文档封面图片
+ * @param int $cover_id
+ * @param string $field
+ * @return 完整的数据  或者  指定的$field字段值
+ * @author huajie <banhuajie@163.com>
+ * @author huajie <banhuajie@163.com>
+ */
+function get_cover($cover_id, $field = null){
+    if(empty($cover_id)){
+        return false;
+    }
+    $picture = db('Picture')->where('status',1)->getById($cover_id);
+    if($field == 'path'){
+        if(!empty($picture['url'])){
+            $picture['path'] = $picture['url'];
+        }else{
+            $picture['path'] = __ROOT__.$picture['path'];
+        }
+    }
+    return empty($field) ? $picture : $picture[$field];
+}
