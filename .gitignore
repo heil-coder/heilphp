@@ -2,4 +2,4 @@
 composer.lock
 *.log
 *.swp
-thinkphp
+thinkphp/.git
