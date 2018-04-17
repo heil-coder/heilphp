@@ -258,28 +258,28 @@ class Article extends Admin {
             $map[] = ['status','in','0,1,2'];
         }
         if ( Request::has('time-start') ) {
-            $map['update_time'][] = ['update_time','>=',strtotime(Request::param('time-start'))];
+            $map[] = ['update_time','>=',strtotime(input('time-start'))];
         }
         if ( Request::has('time-end') ) {
-            $map['update_time'][] = ['update_time','<=',24*60*60 + strtotime(Request::param('time-end'))];
+            $map[] = ['update_time','<=',24*60*60 + strtotime(input('time-end'))];
         }
         if ( Request::has('nickname') ) {
-            $map['uid'] = ['uid','in',db('Member')->where('nickname','like','%'.Request::param('nickname').'%')->column('id')];
+            $map[] = ['uid','in',db('Member')->where('nickname','like','%'.input('nickname').'%')->column('id')];
         }
 
         // 构建列表数据
         $Document = db('Document');
 
         if($cate_id){
-            $map['category_id'] =   ['category_id','=',$cate_id];
         }
         $map[]         =   ['pid','=',Request::param('pid',0)];
-        if(Request::has('pid')){ // 子文档列表忽略分类
-            unset($map['category_id']);
-        }
+        //非子文档列表 && 收到分类id条件
+		if(!Request::has('pid') && $cate_id){
+            $map['category_id'] =   ['category_id','=',$cate_id];
+		}
         $Document->alias('DOCUMENT');
         if(!is_null($model_id)){
-            $map['model_id']    =   ['model_id','=',$model_id];
+            $map[]    =   ['model_id','=',$model_id];
             if(is_array($field) && array_diff($Document->getConnection()->getTableFields($Document->getTable()),$field)){
                 $modelName  =   db('Model')->getFieldById($model_id,'name');
                 $Document->join('__DOCUMENT_'.strtoupper($modelName).'__ '.$modelName,'DOCUMENT.id='.$modelName.'.id');
@@ -294,7 +294,7 @@ class Article extends Admin {
             $map[] = "position & {$position} = {$position}";
         }
 		if(!is_null($group_id)){
-			$map['group_id']	=	$group_id;
+			$map[]	=	['group_id','=',$group_id];
 		}
 
         $list = $this->getListing($Document,$map,'level DESC,id DESC',$field);
@@ -539,10 +539,10 @@ class Article extends Admin {
             $map[]  =   ['status','in', '0,1,2'];
         }
         if ( isset($_GET['time-start']) ) {
-            //$map['update_time'][] = array('egt',strtotime(input('time-start')));
+            $map[] = ['update_time','>=',strtotime(input('time-start'))];
         }
         if ( isset($_GET['time-end']) ) {
-            //$map['update_time'][] = array('elt',24*60*60 + strtotime(input('time-end')));
+            $map[] = ['update_time','<=',24*60*60 + strtotime(input('time-end'))];
         }
         //只查询pid为0的文章
         $map[] = ['pid','=',0];

@@ -26,7 +26,7 @@
 		<div class="search-form fr cf">
 			<div class="sleft">
 				<div class="drop-down">
-					<span id="sch-sort-txt" class="sort-txt" data="{$status}"><if condition="get_status_title($status) eq ''">所有<else/>{:get_status_title($status)}</if></span>
+					<span id="sch-sort-txt" class="sort-txt" data="{$status}">{if condition="get_status_title($status) eq ''"}所有{else/}{:get_status_title($status)}{/if}</span>
 					<i class="arrow arrow-down"></i>
 					<ul id="sub-sch-menu" class="nav-list hidden">
 						<li><a href="javascript:;" value="">所有</a></li>
