@@ -58,12 +58,7 @@ INSERT INTO `heilphp_config` VALUES ('36', 'ADMIN_ALLOW_IP', '2', '后台允许�
 -- -----------------------------
 DROP TABLE IF EXISTS `heilphp_member`;
 CREATE TABLE `heilphp_member` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `username` char(16) NOT NULL DEFAULT '' COMMENT '用户名',
-  `password` char(32) NOT NULL DEFAULT '' COMMENT '密码md5(字典排序)',
-  `salt` char(10) NOT NULL DEFAULT '' COMMENT '密码salt',
-  `email` varchar(50) NOT NULL DEFAULT '' COMMENT '邮箱',
-  `mobile` char(15) NOT NULL DEFAULT '' COMMENT '手机',
+  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `nickname` char(30) NOT NULL DEFAULT '' COMMENT '昵称',
   `sex` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别(0:未知/保密 1:男 2:女)',
   `birthday` date NOT NULL DEFAULT '0000-00-00' COMMENT '生日',
@@ -76,7 +71,7 @@ CREATE TABLE `heilphp_member` (
   `last_login_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '会员状态',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`uid`),
   KEY `status` (`status`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='会员表';
 
@@ -651,4 +646,68 @@ INSERT INTO `heilphp_channel` VALUES ('1', '0', '首页', 'Index/index', '1', '1
 INSERT INTO `heilphp_channel` VALUES ('2', '0', '博客', 'Article/index?category=blog', '2', '1379475131', '1379483713', '1', '0');
 INSERT INTO `heilphp_channel` VALUES ('3', '0', '官网', 'http://www.onethink.cn', '3', '1379475154', '1387163458', '1', '0');
 
+-- -----------------------------
+-- Table structure for `heilphp_ucenter_admin`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_ucenter_admin`;
+CREATE TABLE `heilphp_ucenter_admin` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
+  `member_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '管理员用户ID',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '管理员状态',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='管理员表';
 
+
+-- -----------------------------
+-- Table structure for `heilphp_ucenter_app`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_ucenter_app`;
+CREATE TABLE `heilphp_ucenter_app` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '应用ID',
+  `title` varchar(30) NOT NULL COMMENT '应用名称',
+  `url` varchar(100) NOT NULL COMMENT '应用URL',
+  `ip` char(15) NOT NULL DEFAULT '' COMMENT '应用IP',
+  `auth_key` varchar(100) NOT NULL DEFAULT '' COMMENT '加密KEY',
+  `sys_login` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '同步登陆',
+  `allow_ip` varchar(255) NOT NULL DEFAULT '' COMMENT '允许访问的IP',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '应用状态',
+  PRIMARY KEY (`id`),
+  KEY `status` (`status`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='应用表';
+
+
+-- -----------------------------
+-- Table structure for `heilphp_ucenter_member`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_ucenter_member`;
+CREATE TABLE `heilphp_ucenter_member` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `username` char(16) DEFAULT NULL COMMENT '用户名',
+  `password` char(32) NOT NULL COMMENT '密码md5(字典排序)',
+  `salt` char(10) DEFAULT NULL COMMENT '密码salt',
+  `email` char(32) NOT NULL COMMENT '用户邮箱',
+  `mobile` char(15) NOT NULL DEFAULT '' COMMENT '用户手机',
+  `reg_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
+  `reg_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '注册IP',
+  `last_login_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
+  `last_login_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '最后登录IP',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `status` tinyint(4) DEFAULT '0' COMMENT '用户状态',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`),
+  KEY `status` (`status`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+-- -----------------------------
+-- Table structure for `heilphp_ucenter_setting`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_ucenter_setting`;
+CREATE TABLE `heilphp_ucenter_setting` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '设置ID',
+  `type` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '配置类型（1-用户配置）',
+  `value` text NOT NULL COMMENT '配置数据',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='设置表';

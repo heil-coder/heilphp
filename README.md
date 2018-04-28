@@ -259,12 +259,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 ## member 会员信息表 
 |字段|类型|允许为空|默认值|自动递增|注释|
 |:--|:--|:--|:--|:--|:--|
-| id | int(10) unsigned |否|无|是| 用户ID,自增主键 |
-| username| char(16) |否|无|--| 用户名|
-| password| char(32) |否|无|--| 密码 md5(字典排序)|
-| salt| char(10) |否|无|--| 密码salt|
-| email| varchar(50)| 是|无|--|邮箱|
-| mobile| char(15)| 是|无|--|手机|
+| uid | int(10) unsigned |否|无|是| 用户ID,自增主键 |
 | nickname | char(30)  |否|无|--| 昵称|
 | sex| tinyint(1) unsigned |否|0|--| 性别(0:未知/保密 1:男 2:女)|
 | birthday| date|否|无|--|生日|
@@ -539,3 +534,13 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | update_time| bigint(10) unsigned |否|0|--|更新时间| 
 | status| tinyint(1) unsigned|否|0|--|状态| 
 | target| tinyint(1) unsigned|否|0|--|新窗口打开| 
+
+## ucenter_member 用户表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| 用户ID,自增主键 |
+| username| char(16) |否|无|--| 用户名|
+| password| char(32) |否|无|--| 密码 md5(字典排序)|
+| salt| char(10) |否|无|--| 密码salt|
+| email| varchar(50)| 是|无|--|邮箱|
+| mobile| char(15)| 是|无|--|手机|
