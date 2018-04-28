@@ -1,11 +1,60 @@
 <?php
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
+// +----------------------------------------------------------------------
 namespace app\user\model;
 use think\Model;
-use App;
 /**
  * 会员模型
  */
-class Member extends Model{
+class UcenterMember extends Model{
+	/**
+	 * 数据表前缀
+	 * @var string
+	 */
+	//protected $tablePrefix = UC_TABLE_PREFIX;
+
+	/**
+	 * 数据库连接
+	 * @var string
+	 */
+	//protected $connection = UC_DB_DSN;
+
+	/* 用户模型自动验证 */
+	//protected $_validate = array(
+	//	/* 验证用户名 */
+	//	array('username', '1,30', -1, self::EXISTS_VALIDATE, 'length'), //用户名长度不合法
+	//	array('username', 'checkDenyMember', -2, self::EXISTS_VALIDATE, 'callback'), //用户名禁止注册
+	//	array('username', '', -3, self::EXISTS_VALIDATE, 'unique'), //用户名被占用
+
+	//	/* 验证密码 */
+	//	array('password', '6,30', -4, self::EXISTS_VALIDATE, 'length'), //密码长度不合法
+
+	//	/* 验证邮箱 */
+	//	array('email', 'email', -5, self::EXISTS_VALIDATE), //邮箱格式不正确
+	//	array('email', '1,32', -6, self::EXISTS_VALIDATE, 'length'), //邮箱长度不合法
+	//	array('email', 'checkDenyEmail', -7, self::EXISTS_VALIDATE, 'callback'), //邮箱禁止注册
+	//	array('email', '', -8, self::EXISTS_VALIDATE, 'unique'), //邮箱被占用
+
+	//	/* 验证手机号码 */
+	//	array('mobile', '//', -9, self::EXISTS_VALIDATE), //手机格式不正确 TODO:
+	//	array('mobile', 'checkDenyMobile', -10, self::EXISTS_VALIDATE, 'callback'), //手机禁止注册
+	//	array('mobile', '', -11, self::EXISTS_VALIDATE, 'unique'), //手机号被占用
+	//);
+
+	/* 用户模型自动完成 */
+	//protected $_auto = array(
+	//	array('password', 'think_ucenter_md5', self::MODEL_BOTH, 'function', UC_AUTH_KEY),
+	//	array('reg_time', NOW_TIME, self::MODEL_INSERT),
+	//	array('reg_ip', 'get_client_ip', self::MODEL_INSERT, 'function', 1),
+	//	array('update_time', NOW_TIME),
+	//	array('status', 'getStatus', self::MODEL_BOTH, 'callback'),
+	//);
+
 	/**
 	 * 检测用户名是不是被禁止注册
 	 * @param  string $username 用户名
@@ -51,20 +100,22 @@ class Member extends Model{
 	 */
 	public function register($username, $password, $email, $mobile){
 		$data = array(
-			'username' => $username
-			,'password' => $password
-			,'email'    => $email
-			,'mobile'   => $mobile
-			,'nickname'	=> $username
-			,'status'	=>1
+			'username' => $username,
+			'password' => $password,
+			'email'    => $email,
+			'mobile'   => $mobile,
 		);
 
 		//验证手机
 		if(empty($data['mobile'])) unset($data['mobile']);
 
 		/* 添加用户 */
-		$uid = $this->save($data);
-		return $uid ? $uid : false; //0-未知错误，大于0-注册成功
+		if($this->create($data)){
+			$uid = $this->add();
+			return $uid ? $uid : 0; //0-未知错误，大于0-注册成功
+		} else {
+			return $this->getError(); //错误详情见自动验证注释
+		}
 	}
 
 	/**
@@ -76,15 +127,25 @@ class Member extends Model{
 	 */
 	public function login($username, $password, $type = 1){
 		$map = [];
+		$data = [];
+		$data['password'] = $password;
+		$scene = '';
+		$validate = new \app\admin\validate\Member;
 		switch ($type) {
 			case 1:
 				$map[] = ['username','=',$username];
+				$data['username'] = $username;
+				$scene = 'loginName';
 				break;
 			case 2:
 				$map[] = ['email','=',$username];
+				$data['email'] = $username;
+				$scene = 'loginEmail';
 				break;
 			case 3:
 				$map[] = ['mobile','=',$username];
+				$data['mobile'] = $username;
+				$scene = 'loginMobile';
 				break;
 			case 4:
 				$map[] = ['id','=',$username];
@@ -92,10 +153,13 @@ class Member extends Model{
 			default:
 				return 0; //参数错误
 		}
+		if(true !== $validate->scene($scene)->check($data)){
+			return $validate->getError();
+		}
 
 		/* 获取用户数据 */
-		$user = $this->where($map)->find()->toArray();
-		if(is_array($user) && $user['status']){
+		$user = $this->where($map)->find();
+		if(!empty($user) && $user['status']){
 			/* 验证用户密码 */
 			if(encrypt_password($password, $user['salt']) === $user['password']){
 				$this->updateLogin($user['id']); //更新用户登录信息
@@ -162,10 +226,10 @@ class Member extends Model{
 	protected function updateLogin($uid){
 		$data = array(
 			'id'              => $uid,
-			'last_login_time' => App::getBeginTime(),
+			'last_login_time' => app()->getBeginTime(),
 			'last_login_ip'   => get_client_ip(1),
 		);
-		$this->get($uid)->save($data);
+		$this->isUpdate(true)->save($data);
 	}
 
 	/**

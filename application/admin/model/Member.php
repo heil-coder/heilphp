@@ -15,125 +15,42 @@ use App;
 /**
  * 用户模型
  * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+ * @modify Jason <1878566968@qq.com>
  */
 
 class Member extends Model {
-	use SoftDelete;
-	protected $deleteTime = 'delete_time';
 
-	protected function setPasswordAttr($value,$data){
-		if(!empty($this->password) && $value === $this->password){
-			return $value;
-		}
-		elseif(!empty($this->salt)){
-			return encrypt_password($value,$this->salt);
-		}
-		elseif(!empty($data['salt'])){
-			return encrypt_password($value,$data['salt']);
-		}
-		else{
-			return encrypt_password($value);
-		}
-	}
-	
-    public function lists($status = 1, $order = 'id DESC', $field = true){
+    //protected $_validate = array(
+    //    array('nickname', '1,16', '昵称长度为1-16个字符', self::EXISTS_VALIDATE, 'length'),
+    //    array('nickname', '', '昵称被占用', self::EXISTS_VALIDATE, 'unique'), //用户名被占用
+    //);
+
+    public function lists($status = 1, $order = 'uid DESC', $field = true){
         $map = [['status','=',$status]];
-        return $this->field($field)->where($map)->order($order)->select();
+        return $this->field($field)->where($map)->order($order)->select()->toArray();
     }
 
-	/**
-	 * 注册一个新用户
-	 * @param  string $username 用户名
-	 * @param  string $password 用户密码
-	 * @param  string $email    用户邮箱
-	 * @param  string $mobile   用户手机号码
-	 * @return integer          注册成功-用户信息，注册失败-错误编号
-	 */
-	public function register($username, $password,$repassword, $email, $mobile){
-		$data = array(
-			'username' => $username
-			,'password' => $password
-			,'repassword' => $repassword
-			,'email'    => $email
-			,'mobile'   => $mobile
-			,'nickname'	=> $username
-			,'status'	=>1
-			,'salt'		=> build_salt()
-			,'delete_time'		=> null
-		);
+    /**
+     * 登录指定用户
+     * @param  integer $uid 用户ID
+     * @return boolean      ture-登录成功，false-登录失败
+     */
+    public function login($uid){
+        /* 检测是否在当前应用注册 */
+        $user = $this->field(true)->where('uid',$uid)->find()->toArray();
+        if(!$user || 1 != $user['status']) {
+            $this->error = '用户不存在或已被禁用！'; //应用级别禁用
+            return false;
+        }
 
-		//验证手机
-		if(empty($data['mobile'])) unset($data['mobile']);
+        //记录行为
+        action_log('user_login', 'member', $uid, $uid);
 
-		$validate = new \app\admin\validate\Member;
-		
-		if($validate->check($data)){
-			/* 添加用户 */
-			$res = $this->save($data);
-			return $res ? $this->id: false; //0-未知错误，大于0-注册成功
-		}
-		else{
-			return $validate->getError();
-		}
-	}
+        /* 登录用户 */
+        $this->autoLogin($user);
+        return true;
+    }
 
-	/**
-	 * 用户登录认证
-	 * @param  string  $username 用户名
-	 * @param  string  $password 用户密码
-	 * @param  integer $type     用户名类型 （1-用户名，2-邮箱，3-手机，4-UID）
-	 * @return integer           登录成功-用户ID，登录失败-错误编号
-	 */
-	public function login($username, $password, $type = 1){
-		$map = [];
-		$data = [];
-		$data['password'] = $password;
-		$scene = '';
-		$validate = new \app\admin\validate\Member;
-		switch ($type) {
-			case 1:
-				$map[] = ['username','=',$username];
-				$data['username'] = $username;
-				$scene = 'loginName';
-				break;
-			case 2:
-				$map[] = ['email','=',$username];
-				$data['email'] = $username;
-				$scene = 'loginEmail';
-				break;
-			case 3:
-				$map[] = ['mobile','=',$username];
-				$data['mobile'] = $username;
-				$scene = 'loginMobile';
-				break;
-			case 4:
-				$map[] = ['id','=',$username];
-				break;
-			default:
-				return 0; //参数错误
-		}
-		if(true !== $validate->scene($scene)->check($data)){
-			return $validate->getError();
-		}
-
-		/* 获取用户数据 */
-		$user = $this->where($map)->find()->toArray();
-		if(is_array($user) && $user['status']){
-			/* 验证用户密码 */
-			if(encrypt_password($password, $user['salt']) === $user['password']){
-				//记录行为
-        		action_log('user_login', 'member', $user['id'], $user['id']);
-
-        		/* 登录用户 */
-        		$this->autoLogin($user);
-        		return true;
-			} else {
-				return -2; //密码错误
-			}
-		} else {
-			return -1; //用户不存在或被禁用
-		}
-	}
     /**
      * 注销当前用户
      * @return void
@@ -150,19 +67,18 @@ class Member extends Model {
     private function autoLogin($user){
         /* 更新登录信息 */
         $data = array(
-            'id'             => $user['id'],
+            'uid'             => $user['uid'],
             'login'           => array('exp', '`login`+1'),
-            'last_login_time' => App::getBeginTime(),
+            'last_login_time' => app()->getBeginTime(),
             'last_login_ip'   => get_client_ip(1),
         );
-        $this->get($user['id'])->save($data);
+        $this->getByUid($user['uid'])->save($data);
 
         /* 记录登录SESSION和COOKIES */
         $auth = array(
-            'uid'             => $user['id']
-            ,'username'        => $user['nickname']
-			,'salt'			  => $user['salt']
-            ,'last_login_time' => $user['last_login_time']
+            'uid'             => $user['uid'],
+            'username'        => $user['nickname'],
+            'last_login_time' => $user['last_login_time'],
         );
 
         session('user_auth', $auth);
@@ -170,69 +86,8 @@ class Member extends Model {
 
     }
 
-    public function getNickName($id){
-        return $this->where('id',(int)$id)->value('nickname');
+    public function getNickName($uid){
+        return $this->where(array('uid'=>(int)$uid))->getField('nickname');
     }
-	/**
-	 * 获取用户信息
-	 * @param  string  $uid         用户ID或用户名
-	 * @param  boolean $is_username 是否使用用户名查询
-	 * @return array                用户信息
-	 */
-	public function info($uid, $is_username = false){
-		$map = array();
-		if($is_username){ //通过用户名获取
-			$map[] = ['username','=',$uid];
-		} else {
-			$map[] = ['id','=',$uid];
-		}
 
-		$user = $this->where($map)->field('id,username,email,mobile,status')->find()->toArray();
-		if(is_array($user) && $user['status'] = 1){
-			return array($user['id'], $user['username'], $user['email'], $user['mobile']);
-		} else {
-			return -1; //用户不存在或被禁用
-		}
-	}
-	/**
-	 * 更新用户信息
-	 * @param int $uid 用户id
-	 * @param string $password 密码，用来验证
-	 * @param array $data 修改的字段数组
-	 * @return true 修改成功，false 修改失败
-	 * @author huajie <banhuajie@163.com>
-	 */
-	public function updateUserFields($uid, $password, $data){
-		if(empty($uid) || empty($password) || empty($data)){
-			$this->error = '参数错误！';
-			return false;
-		}
-
-		//更新前检查用户密码
-		if(!$this->verifyUser($uid, $password)){
-			$this->error = '验证出错：密码不正确！';
-			return false;
-		}
-
-		//更新用户信息
-		//$data = $this->create($data);
-		if($data){
-			return $this->get($uid)->save($data);
-		}
-		return false;
-	}
-	/**
-	 * 验证用户密码
-	 * @param int $uid 用户id
-	 * @param string $password_in 密码
-	 * @return true 验证成功，false 验证失败
-	 * @author huajie <banhuajie@163.com>
-	 */
-	protected function verifyUser($uid, $password_in){
-		$password = $this->getFieldById($uid, 'password');
-		if(encrypt_password($password_in, session('user_auth.salt')) === $password){
-			return true;
-		}
-		return false;
-	}
 }

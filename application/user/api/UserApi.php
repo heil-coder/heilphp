@@ -1,15 +1,22 @@
 <?php
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
+// +----------------------------------------------------------------------
 
 namespace app\user\api;
 use app\user\api\Api;
-use app\user\model\Member;
+use app\user\model\UcenterMember;
 
 class UserApi extends Api{
     /**
      * 构造方法，实例化操作模型
      */
     protected function _init(){
-        $this->model = new Member();
+        $this->model = new UcenterMember();
     }
 
     /**

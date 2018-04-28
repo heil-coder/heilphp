@@ -28,10 +28,17 @@ class Common extends Controller {
             }
 
             /* 调用UC登录接口登录 */
-            $User = model('Member');
+            $User = new UserApi;
             $res = $User->login($username, $password);
-            if(true === $res){ //登录成功
-                $this->success('登录成功！', Url('Index/index'));
+            if(0 < $res){ //登录成功
+                /* 登录用户 */
+                $Member = model('Member');
+                if($Member->login($res)){ //登录用户
+                    //TODO:跳转到登录前页面
+                    $this->success('登录成功！', Url('Index/index'));
+                } else {
+                    $this->error($Member->getError());
+                }
             } else { //登录失败
                 switch($res) {
                     case -1: $error = '用户不存在或被禁用！'; break; //系统级别禁用
