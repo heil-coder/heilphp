@@ -71,7 +71,7 @@ class User extends Admin{
             $this->error('请选择要操作的数据!');
         }
 		$map = [];
-        $map[] =   ['id','in',$id];
+        $map[] =   ['uid','in',$id];
         switch ( strtolower($method) ){
             case 'forbiduser':
                 $this->forbid('Member', $map );
