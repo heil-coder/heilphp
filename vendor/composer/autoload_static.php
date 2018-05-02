@@ -15,6 +15,7 @@ class ComposerStaticInitd28cf80f8169c4160df3d3be994a1305
         array (
             'think\\composer\\' => 15,
             'think\\captcha\\' => 14,
+            'think\\' => 6,
         ),
         'a' => 
         array (
@@ -30,6 +31,10 @@ class ComposerStaticInitd28cf80f8169c4160df3d3be994a1305
         'think\\captcha\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-captcha/src',
+        ),
+        'think\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-image/src',
         ),
         'app\\' => 
         array (

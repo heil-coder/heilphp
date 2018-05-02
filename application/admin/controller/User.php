@@ -42,12 +42,16 @@ class User extends Admin{
     }
     public function add($username = '', $password = '', $repassword = '', $email = ''){
         if(Request::isPost()){
-
             /* 调用注册接口注册用户 */
-            $User   =   model('Member');
-            $uid    =   $User->register($username, $password,$repassword, $email,$mobile = '');
-            if(is_numeric($uid) && $uid > 0){ //注册成功
-				$this->success('用户添加成功！',Url('index'));
+            $User   =   new UserApi;
+            $uid    =   $User->register($username, $password,$repassword, $email);
+            if(0 < $uid){ //注册成功
+                $user = array('uid' => $uid, 'nickname' => $username, 'status' => 1);
+                if(!db('Member')->insert($user)){
+                    $this->error('用户添加失败！');
+                } else {
+                    $this->success('用户添加成功！',Url('index'));
+                }
             } else { //注册失败，显示错误信息
                 $this->error($uid);
             }
@@ -71,7 +75,7 @@ class User extends Admin{
             $this->error('请选择要操作的数据!');
         }
 		$map = [];
-        $map[] =   ['id','in',$id];
+        $map[] =   ['uid','in',$id];
         switch ( strtolower($method) ){
             case 'forbiduser':
                 $this->forbid('Member', $map );
@@ -170,7 +174,7 @@ class User extends Admin{
 			}
 		}
 		else{
-			$nickname = db('Member')->getFieldById(UID, 'nickname');
+			$nickname = db('Member')->getFieldByUid(UID, 'nickname');
 			$this->assign('nickname', $nickname);
 			$this->assign('meta_title','修改昵称');
 			return view();
@@ -183,23 +187,23 @@ class User extends Admin{
 	public function editPassword(){
 		if(Request::isPost()){
 			//获取参数
-			$password   =   Request::post('old');
+			$password   =   Input('post.old');
 			empty($password) && $this->error('请输入原密码');
-			$data['password'] = Request::post('password');
+			$data['password'] = Input('post.password');
 			empty($data['password']) && $this->error('请输入新密码');
-			$repassword = Request::post('repassword');
+			$repassword = Input('post.repassword');
 			empty($repassword) && $this->error('请输入确认密码');
 
 			if($data['password'] !== $repassword){
 				$this->error('您输入的新密码与确认密码不一致');
 			}
 
-			$user =   model('Member');
-			$res    =   $user->updateUserFields(UID, $password, $data);
-			if($res !== false){
+			$Api    =   new UserApi();
+			$res    =   $Api->updateInfo(UID, $password, $data);
+			if($res['status']){
 				$this->success('修改密码成功！');
 			}else{
-				$this->error($user->error);
+				$this->error($res['info']);
 			}
 		}
 		else{
@@ -207,12 +211,4 @@ class User extends Admin{
 			return view();
 		}
 	}
-
-    /**
-     * 修改密码提交
-     * @author huajie <banhuajie@163.com>
-     */
-    public function submitPassword(){
-
-    }
 }

@@ -161,16 +161,29 @@ function create_tables($db, $prefix = ''){
 
 function register_administrator($db, $prefix, $admin, $salt){
     show_msg('开始注册创始人帐号...');
+
+    $sql = "INSERT INTO `[PREFIX]ucenter_member` VALUES " .
+           "('1','[NAME]','[PASS]','[SALT]', '[EMAIL]', '', '[TIME]', '[IP]', 0, 0, '[TIME]', '1')";
+
     $password = encrypt_password($admin['password'], $salt);
+    $sql = str_replace(
+        array('[PREFIX]', '[NAME]', '[PASS]','[SALT]', '[EMAIL]', '[TIME]', '[IP]'),
+        array($prefix, $admin['username'], $password,$salt, $admin['email'], App::getBeginTime(), get_client_ip(1)),
+        $sql);
+    //执行sql
+    $db->execute($sql);
+
+
 
     $sql = "INSERT INTO `[PREFIX]member` VALUES ".
-           "('1', '[NAME]','[PASSWORD]','[SALT]','','','[NICK]', '0', '0000-00-00', '', '0', '1', '0', '[TIME]', '0', '[TIME]', '1',null);";
+           "('1','[NICK]', '0', '0000-00-00', '', '0', '1', '0', '[TIME]', '0', '[TIME]', '1',null);";
     $sql = str_replace(
-        array('[PREFIX]', '[NAME]','[PASSWORD]','[SALT]','[NICK]', '[TIME]'),
-        array($prefix, $admin['username'],$password,$salt,$admin['username'], App::getBeginTime()),
+        array('[PREFIX]','[NICK]', '[TIME]'),
+        array($prefix,$admin['username'], App::getBeginTime()),
         $sql);
     $db->execute($sql);
     show_msg('创始人帐号注册完成！');
+	exit();
 }
 
 /**
