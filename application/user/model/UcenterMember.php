@@ -55,6 +55,23 @@ class UcenterMember extends Model{
 	//	array('status', 'getStatus', self::MODEL_BOTH, 'callback'),
 	//);
 
+
+	protected function setPasswordAttr($value,$data){
+		if(!empty($this->password) && $value === $this->password){
+			return $value;
+		}
+		elseif(!empty($this->salt)){
+			return encrypt_password($value,$this->salt);
+		}
+		elseif(!empty($data['salt'])){
+			return encrypt_password($value,$data['salt']);
+		}
+		else{
+			return encrypt_password($value);
+		}
+	}
+	
+
 	/**
 	 * 检测用户名是不是被禁止注册
 	 * @param  string $username 用户名
@@ -94,27 +111,35 @@ class UcenterMember extends Model{
 	 * 注册一个新用户
 	 * @param  string $username 用户名
 	 * @param  string $password 用户密码
+	 * @param  string $repassword 确认用户密码
 	 * @param  string $email    用户邮箱
 	 * @param  string $mobile   用户手机号码
 	 * @return integer          注册成功-用户信息，注册失败-错误编号
 	 */
-	public function register($username, $password, $email, $mobile){
+	public function register($username, $password,$repassword, $email, $mobile){
 		$data = array(
-			'username' => $username,
-			'password' => $password,
-			'email'    => $email,
-			'mobile'   => $mobile,
+			'username' => $username
+			,'password' => $password
+			,'repassword' => $repassword
+			,'email'    => $email
+			,'mobile'   => $mobile
+			,'nickname'	=> $username
+			,'status'	=>1
+			,'salt'		=> build_salt()
 		);
 
 		//验证手机
 		if(empty($data['mobile'])) unset($data['mobile']);
 
-		/* 添加用户 */
-		if($this->create($data)){
-			$uid = $this->add();
-			return $uid ? $uid : 0; //0-未知错误，大于0-注册成功
-		} else {
-			return $this->getError(); //错误详情见自动验证注释
+		$validate = new \app\admin\validate\UcenterMember;
+		
+		if($validate->check($data)){
+			/* 添加用户 */
+			$res = $this->save($data);
+			return $res ? $this->id : false; //0-未知错误，大于0-注册成功
+		}
+		else{
+			return $validate->getError();
 		}
 	}
 
@@ -130,7 +155,7 @@ class UcenterMember extends Model{
 		$data = [];
 		$data['password'] = $password;
 		$scene = '';
-		$validate = new \app\admin\validate\Member;
+		$validate = new \app\admin\validate\UcenterMember;
 		switch ($type) {
 			case 1:
 				$map[] = ['username','=',$username];

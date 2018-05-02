@@ -42,12 +42,16 @@ class User extends Admin{
     }
     public function add($username = '', $password = '', $repassword = '', $email = ''){
         if(Request::isPost()){
-
             /* 调用注册接口注册用户 */
-            $User   =   model('Member');
-            $uid    =   $User->register($username, $password,$repassword, $email,$mobile = '');
-            if(is_numeric($uid) && $uid > 0){ //注册成功
-				$this->success('用户添加成功！',Url('index'));
+            $User   =   new UserApi;
+            $uid    =   $User->register($username, $password,$repassword, $email);
+            if(0 < $uid){ //注册成功
+                $user = array('uid' => $uid, 'nickname' => $username, 'status' => 1);
+                if(!db('Member')->insert($user)){
+                    $this->error('用户添加失败！');
+                } else {
+                    $this->success('用户添加成功！',Url('index'));
+                }
             } else { //注册失败，显示错误信息
                 $this->error($uid);
             }

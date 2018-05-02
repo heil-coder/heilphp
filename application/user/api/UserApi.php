@@ -23,12 +23,13 @@ class UserApi extends Api{
      * 注册一个新用户
      * @param  string $username 用户名
      * @param  string $password 用户密码
+     * @param  string $repassword 确认用户密码
      * @param  string $email    用户邮箱
      * @param  string $mobile   用户手机号码
      * @return integer          注册成功-用户信息，注册失败-错误编号
      */
-    public function register($username, $password, $email, $mobile = ''){
-        return $this->model->register($username, $password, $email, $mobile);
+    public function register($username, $password,$repassword, $email, $mobile = ''){
+        return $this->model->register($username, $password,$repassword, $email, $mobile);
     }
 
     /**
