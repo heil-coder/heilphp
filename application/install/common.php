@@ -183,7 +183,6 @@ function register_administrator($db, $prefix, $admin, $salt){
         $sql);
     $db->execute($sql);
     show_msg('创始人帐号注册完成！');
-	exit();
 }
 
 /**
