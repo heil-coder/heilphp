@@ -65,6 +65,9 @@ class UcenterMember extends Validate
 			->remove('password','length')
             ->remove('username', 'unique');
 	}
+	protected function sceneUpdateUserFields(){
+    	return $this->only(['password','email','mobile']);
+	}
 
 	/**
 	 * 检测用户名是不是被禁止注册

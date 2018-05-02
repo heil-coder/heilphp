@@ -278,9 +278,13 @@ class UcenterMember extends Model{
 		}
 
 		//更新用户信息
-		$data = $this->create($data);
-		if($data){
-			return $this->where(array('id'=>$uid))->save($data);
+		$validate = new \app\admin\validate\UcenterMember;
+		
+		if($validate->scene('updateUserFields')->check($data)){
+			return $this->get($uid)->save($data);
+		}
+		else{
+			$this->error = $validate->getError();
 		}
 		return false;
 	}
@@ -293,8 +297,8 @@ class UcenterMember extends Model{
 	 * @author huajie <banhuajie@163.com>
 	 */
 	protected function verifyUser($uid, $password_in){
-		$password = $this->getFieldById($uid, 'password');
-		if(think_ucenter_md5($password_in, UC_AUTH_KEY) === $password){
+		$user = $this->getById($uid);
+		if(encrypt_password($password_in, $user['salt']) === $user['password']){
 			return true;
 		}
 		return false;
