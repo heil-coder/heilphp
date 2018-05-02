@@ -19,6 +19,7 @@ use App;
  */
 
 class Member extends Model {
+	protected $pk = 'uid';
 
     //protected $_validate = array(
     //    array('nickname', '1,16', '昵称长度为1-16个字符', self::EXISTS_VALIDATE, 'length'),
@@ -87,7 +88,7 @@ class Member extends Model {
     }
 
     public function getNickName($uid){
-        return $this->where(array('uid'=>(int)$uid))->getField('nickname');
+        return $this->where(array('uid'=>(int)$uid))->value('nickname');
     }
 
 }
