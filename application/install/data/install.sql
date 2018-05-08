@@ -65,10 +65,11 @@ CREATE TABLE `heilphp_member` (
   `qq` char(15) NOT NULL DEFAULT '' COMMENT 'qq号',
   `score` mediumint(8) NOT NULL DEFAULT '0' COMMENT '用户积分',
   `login` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '登录次数',
-  `reg_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '注册IP',
   `reg_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
-  `last_login_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '最后登录IP',
+  `reg_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '注册IP',
   `last_login_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
+  `last_login_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '最后登录IP',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '会员状态',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`uid`),
@@ -687,8 +688,8 @@ CREATE TABLE `heilphp_ucenter_member` (
   `username` char(16) DEFAULT NULL COMMENT '用户名',
   `password` char(32) NOT NULL COMMENT '密码md5(字典排序)',
   `salt` char(10) DEFAULT NULL COMMENT '密码salt',
-  `email` char(32) NOT NULL COMMENT '用户邮箱',
-  `mobile` char(15) NOT NULL DEFAULT '' COMMENT '用户手机',
+  `email` char(32) DEFAULT NULL COMMENT '用户邮箱',
+  `mobile` char(15) DEFAULT NULL COMMENT '用户手机',
   `reg_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
   `reg_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '注册IP',
   `last_login_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
@@ -698,6 +699,7 @@ CREATE TABLE `heilphp_ucenter_member` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `mobile` (`mobile`),
   KEY `status` (`status`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
