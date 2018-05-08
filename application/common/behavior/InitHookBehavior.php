@@ -28,7 +28,6 @@ class InitHookBehavior{
             $rootPath = realpath($path . '/../') . '/';
         }
 
-		cache('hooks',null);
         $data = cache('hooks');
         if(!$data){
             $hooks = Db('Hooks')->column('name,addons');

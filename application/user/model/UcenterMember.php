@@ -12,6 +12,9 @@ use think\Model;
  * 会员模型
  */
 class UcenterMember extends Model{
+	protected $autoWriteTimestamp = true;
+    // 定义时间戳字段名
+    protected $createTime = 'reg_time';
 	/**
 	 * 数据表前缀
 	 * @var string
@@ -126,10 +129,12 @@ class UcenterMember extends Model{
 			,'nickname'	=> $username
 			,'status'	=>1
 			,'salt'		=> build_salt()
+			,'reg_ip'	=> get_client_ip(1)
 		);
 
 		//验证手机
 		if(empty($data['mobile'])) unset($data['mobile']);
+		if(empty($data['email'])) unset($data['email']);
 
 		$validate = new \app\admin\validate\UcenterMember;
 		

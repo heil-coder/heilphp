@@ -10,6 +10,38 @@
 // +----------------------------------------------------------------------
 
 // 应用公共文件
+
+/**
+ * 字符串截取，支持中文和其他编码
+ * @static
+ * @access public
+ * @param string $str 需要转换的字符串
+ * @param string $start 开始位置
+ * @param string $length 截取长度
+ * @param string $charset 编码格式
+ * @param string $suffix 截断显示字符
+ * @return string
+ */
+function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true) {
+    if(function_exists("mb_substr"))
+        $slice = mb_substr($str, $start, $length, $charset);
+    elseif(function_exists('iconv_substr')) {
+        $slice = iconv_substr($str,$start,$length,$charset);
+        if(false === $slice) {
+            $slice = '';
+        }
+    }else{
+        $re['utf-8']   = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
+        $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
+        $re['gbk']    = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
+        $re['big5']   = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
+        preg_match_all($re[$charset], $str, $match);
+        $slice = join("",array_slice($match[0], $start, $length));
+    }
+    return $suffix ? $slice.'...' : $slice;
+}
+
+
 /**
  * 插件显示内容里生成访问插件的url
  * @param string $url url
@@ -57,7 +89,7 @@ function time_format($time = NULL,$format='Y-m-d H:i'){
  * @param strng $name 插件名
  */
 function get_addon_class($name){
-    $class = "addons\\".lcfirst($name)."\\{$name}";
+    $class = "addons\\".lcfirst($name)."\\".ucfirst($name);
     return $class;
 }
 
@@ -254,6 +286,17 @@ function list_sort_by($list,$field, $sortby='asc') {
    }
    return false;
 }
+/**
+ * 字符串转换为数组，主要用于把分隔符调整到第二个参数
+ * @param  string $str  要分割的字符串
+ * @param  string $glue 分割符
+ * @return array
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+ */
+function str2arr($str, $glue = ','){
+    return explode($glue, $str);
+}
+
 /**
  * 数组转换为字符串，主要用于把分隔符调整到第二个参数
  * @param  array  $arr  要连接的数组
@@ -727,17 +770,30 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
  * @author huajie <banhuajie@163.com>
  * @author huajie <banhuajie@163.com>
  */
-function get_cover($cover_id, $field = null){
+function get_cover($cover_id, $field = 'path'){
     if(empty($cover_id)){
         return false;
     }
-    $picture = db('Picture')->where('status',1)->getById($cover_id);
+	$picture = db('Picture')->where([
+		['status','=',1]
+		,['id','=',$cover_id]
+	])->find();
     if($field == 'path'){
         if(!empty($picture['url'])){
             $picture['path'] = $picture['url'];
         }else{
-            $picture['path'] = __ROOT__.$picture['path'];
+            $tmpArr = explode('.',$picture['path']);
+			$tmpArr[0] = strtolower($tmpArr[0]);
+            $picture['path'] = implode('.',$tmpArr);
         }
     }
     return empty($field) ? $picture : $picture[$field];
+}
+function get_cover_info($id){
+	$path = get_cover($id,'path');
+	if(empty($path)){
+		return null;
+	}
+	$pic = \think\Image::open(Env::get('root_path').'public'.$path);
+	return array('path'=>$path,'width'=>$pic->width(),'height'=>$pic->height());
 }
