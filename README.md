@@ -12,6 +12,9 @@ heilphp
 > 分类编辑 数组参数写入失败
 > 内容批量粘贴异常
 
+> 安装 install.lock保存路径
+> step3 update时未升级语法结构
+
 # 数据返回
 > 使用ThinkPHP 5.1 控制器的success()和error()方法返回数据,可以对get、post或ajax请求方式都可以做适合的响应。
 
