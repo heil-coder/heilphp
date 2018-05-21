@@ -12,7 +12,7 @@
 // [ 应用入口文件 ]
 namespace think;
 
-if(!is_file(realpath(__DIR__ . '/../application/') . '/' . 'install/data/install.lock')){
+if(!is_file(realpath(__DIR__ . '/../data') . '/install.lock')){
 	header('Location:/install.php');
 	exit();
 }
