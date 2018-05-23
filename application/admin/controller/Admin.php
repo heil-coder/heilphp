@@ -178,14 +178,21 @@ class Admin extends Controller {
         }
 
         $Db->setOption('field',[]);
+        $Db->setOption('where',[]);
 
-		$page = $Db->where($options['where'])->paginate($listRows,$total);
+		$page = $Db->paginate($listRows,$total);
         $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
 
+        $Db->setOption('where',[]);
 
         $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
+		if(!$isSoftDelete || ($isSoftDelete && !empty($tmpOptions['where']['AND']['delete_time']))){
 		$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
+		}
+		else{
+		$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->limit($limit)->select();
+		}
 		return $listing;
     }
     /**
