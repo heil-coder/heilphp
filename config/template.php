@@ -30,4 +30,11 @@ return [
     'taglib_begin' => '{',
     // 标签库标签结束标记
     'taglib_end'   => '}',
+	//模板替换字符串
+	'tpl_replace_string'  =>  [
+		'__STATIC__'=>'/static'
+		,'__JS__' => '/static/js'
+		,'__CSS__' => '/static/js'
+		,'__IMAGES__' => '/static/images'
+	]
 ];
