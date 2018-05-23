@@ -63,7 +63,7 @@ class Addons extends Admin {
             $db_config = json_decode($db_config, true);
             foreach ($addon['config'] as $key => $value) {
                 if($value['type'] != 'group'){
-                    $addon['config'][$key]['value'] = $db_config[$key];
+                    $addon['config'][$key]['value'] = !empty($db_config[$key]) ? $db_config[$key] : '';
                 }else{
                     foreach ($value['options'] as $gourp => $options) {
                         foreach ($options['options'] as $gkey => $value) {
