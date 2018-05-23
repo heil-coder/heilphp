@@ -329,14 +329,15 @@ class Admin extends Controller {
         }
     }
     /**
-     * 获取控制器菜单数组,二级菜单元素位于一级菜单的'_child'元素中
+     * 获取控制器菜单数组,二级菜单元素位于一级菜单的'child'元素中
      * @author 朱亚杰  <xcoolcc@gmail.com>
 	 * @modify Jason <1878566968@qq.com>
      */
     final public function getMenus($controller=''){
-		empty($controlle) && $controller = Request::controller();
+		empty($controller) && $controller = Request::controller();
         $menus  =   session('ADMIN_MENU_LIST.'.$controller);
-        if(empty($menus) || 1){
+		//暂时解决 部分主菜单下子菜单不能读取问题
+        if(empty($menus)){
             // 获取主菜单
             $where['pid']   =   0;
             $where['hide']  =   0;

@@ -9,6 +9,7 @@ namespace app\install\controller;
 use think\Controller;
 use Request;
 use Session;
+use Cache;
 use Url;
 use Db;
 use Env;
@@ -26,6 +27,7 @@ class Install extends Controller{
     //安装第一步，检测运行所需的环境设置
     public function step1(){
 		session(null);
+		Cache::clear();
 		Session::set('error', false);
 
         //环境检测
