@@ -5,7 +5,7 @@
 		<h2>{$auth_group['id']?'编辑':'新增'}用户组</h2>
 	</div>
 
-    <form action="{:Url('authmanage/editgroup')}" enctype="application/x-www-form-urlencoded" method="POST"
+    <form action="{:Url('authmanage/writegroup')}" enctype="application/x-www-form-urlencoded" method="POST"
             class="form-horizontal">
         <div class="form-item">
             <label for="auth-title" class="item-label">用户组</label>
@@ -29,6 +29,6 @@
 {block name="script"}
 <script type="text/javascript" charset="utf-8">
     //导航高亮
-    //highlight_subnav('{:Url('AuthManager/index')}');
+    highlight_subnav('{:Url('AuthManager/index')}');
 </script>
 {/block}

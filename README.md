@@ -12,6 +12,8 @@ heilphp
 > 分类编辑 数组参数写入失败
 > 内容批量粘贴异常
 
+> step3 update时未升级语法结构
+
 # 数据返回
 > 使用ThinkPHP 5.1 控制器的success()和error()方法返回数据,可以对get、post或ajax请求方式都可以做适合的响应。
 
@@ -26,6 +28,7 @@ heilphp
 > 模型数据新增自动完成
 
 #已处理
+> 安装 install.lock保存路径
 > url模型编辑函数异常，暂未解决
 > 多字段验证唯一,如果其中一个值为null则无法生成正确的验证查询sql语句 (fieldName = null)
 ```
