@@ -509,15 +509,18 @@ class Article extends Admin {
         //获取左边菜单
         $this->getMenu();
 
-        $Document   =   D('Document');
-        $map        =   array('status'=>3,'uid'=>UID);
-        $list       =   $this->lists($Document,$map);
+        $Document   =   model('Document');
+		$map        =   [
+			['status','=',3]
+			,['uid','=',UID]
+		];
+        $list       =   $this->getListing($Document,$map);
         //获取状态文字
         //int_to_string($list);
 
         $this->assign('list', $list);
-        $this->meta_title = '草稿箱';
-        $this->display();
+        $this->assign('meta_title','草稿箱');
+		return view();
     }
 
     /**

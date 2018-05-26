@@ -797,3 +797,64 @@ function get_cover_info($id){
 	$pic = \think\Image::open(Env::get('root_path').'public'.$path);
 	return array('path'=>$path,'width'=>$pic->width(),'height'=>$pic->height());
 }
+
+/**
+ * phpmailer_smtp
+ * @param array $from [
+ *	'username'	=>'发件人帐号'
+ *	,'password'	=>'发件人密码'
+ *	,'nickname'	=>'发件人昵称'
+ *	,'host'	=>'发件人邮箱服务器地址'
+ *	,'port'	=>'远程服务器端口号'
+ *	]
+ *	@param string|array $to 收件人邮件地址
+ *	|
+ *	[
+ *		'地址1','地址2'
+ *	]
+ *	|
+ *	[
+ *		'地址1'=>'称呼1'
+ *		,'地址2'=>'称呼2'
+ *	]
+ *	@param array $data [
+ *		'title'	=> '邮件标题'
+ *		,'content'	=> '邮件正文内容'
+ *	]
+ */
+function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','host'=>'smtp.qq.com','port'=>465],$to,$data =['title'=>'','content'=>'']){
+	$mail = new \PHPMailer\PHPMailer\PHPMailer;
+	//配置
+	$mail->IsSMTP(); // 启用SMTP
+	$mail->Port = $from['port'];
+	$mail->SMTPSecure = 'ssl';
+	$mail->Host=$from['host']; //smtp服务器的名称（这里以QQ邮箱为例）
+	$mail->SMTPAuth = true; //启用smtp认证
+	$mail->Username = $from['username']; //你的邮箱名
+	$mail->Password = $from['password']; //邮箱密码
+	$mail->From = $from['username']; //发件人地址（也就是你的邮箱地址）
+	$mail->FromName = $from['nickname']; //发件人姓名
+	$mail->WordWrap = 50; //设置每行字符长度
+	$mail->IsHTML(true); // 是否HTML格式邮件
+	$mail->CharSet='utf-8'; //设置邮件编码
+	$mail->AltBody = "这是一个纯文本的身体在非营利的HTML电子邮件客户端"; //邮件正文不支持HTML的备用显示
+
+	//添加收件人地址
+	if(is_array($to)){
+		foreach($to as $key=>$val){
+			if(!is_numeric($key)){
+				$mail->AddAddress($key,$val);
+			}
+			else{
+				$mail->AddAddress($val);
+			}
+		}
+	}
+	else{
+		$mail->AddAddress($to);
+	}
+
+    $mail->Subject =$data['title']; //邮件主题
+    $mail->Body = $data['content']; //邮件内容
+    return($mail->Send());
+}
