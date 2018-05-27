@@ -69,7 +69,7 @@ function addons_url($url, $param = array()){
     );
     $params = array_merge($params, $param); //添加额外参数
 
-    return Url('Addons/execute', $params);
+    return Url('index/addons/execute', $params);
 }
 /**
  * 时间戳格式化
