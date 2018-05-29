@@ -858,3 +858,14 @@ function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','h
     $mail->Body = $data['content']; //邮件内容
     return($mail->Send());
 }
+/**
+ * 渲染模板输出
+ * @param string    $template 模板文件
+ * @param array     $vars 模板变量
+ * @param integer   $code 状态码
+ * @param callable  $filter 内容过滤
+ * @return \think\response\View
+ */
+function view($template = '', $vars = [], $code = 200, $filter = null){
+	return think\Response::create($template, 'view', $code)->assign($vars)->filter($filter);
+}

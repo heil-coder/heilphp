@@ -26,7 +26,7 @@ heilphp
 > get_attribute_type 函数修改可能引起的问题检查
 > 模型属性新增、修改后是否正确对模型字段做相应操作检查
 > 模型数据新增自动完成
-> extra_file_list 5.0手册说可以重写助手函数 这样就可以重写view()函数来实现更自主的模板文件选择
+> application/common.php中重写助手函数view(),来实现更自主的模板文件选择,
 
 #已处理
 > 安装 install.lock保存路径
