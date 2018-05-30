@@ -7,6 +7,8 @@
  */
 namespace app\api\controller;
 use app\api\controller\Base;
+use EasyWeChat\Foundation\Application;
+
 class Component extends Base{
     //公众号ID
     protected $weid = 0;
@@ -22,7 +24,6 @@ class Component extends Base{
 		parent::initialize();
         //获取微信开放平台配置信息
         $componentConfigKey = 'WECHAT_OPEN_COMPONENT_CONFIG';
-		exit();
         //$this->componentConfig = json_decode(base64_decode(getConfig($componentConfigKey)),true);
     }
 
@@ -33,8 +34,22 @@ class Component extends Base{
      * @return void
      */
     public function _empty(){
-        $this->index();
-    }
-    public function index(){
+		$this->index();
+	}
+	public function index(){
+		$options = [
+			// ...
+			'open_platform' => [
+				'app_id'   => 'component-app-id',
+				'secret'   => 'component-app-secret',
+				'token'    => 'component-token',
+				'aes_key'  => 'component-aes-key'
+			],
+			// ...
+		];
+
+		$app = new Application($options);
+		$openPlatform = $app->open_platform;
+		$openPlatform->server->serve();
 	}
 }
