@@ -40,10 +40,10 @@ class Component extends Base{
 		$options = [
 			// ...
 			'open_platform' => [
-				'app_id'   => 'component-app-id',
-				'secret'   => 'component-app-secret',
-				'token'    => 'component-token',
-				'aes_key'  => 'component-aes-key'
+				'app_id'   => 'wx48254a0207b9e357',
+				'secret'   => 'be0bdb08e2fad6ccc21d32e661f07c72',
+				'token'    => 'heilphp',
+				'aes_key'  => '4e84db09c229a435159ed4a9d58a80c4435159ed4a9'
 			],
 			// ...
 		];
@@ -51,5 +51,11 @@ class Component extends Base{
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
 		$openPlatform->server->serve();
+		$openPlatform->server->listen(function ($event) {
+			cache('test',$event);
+		});
+	}
+	public function test(){
+		dump(cache('test'));
 	}
 }
