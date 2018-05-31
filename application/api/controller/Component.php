@@ -119,6 +119,20 @@ class Component extends Base{
 	 * @author Jason <1878566968@qq.com>
 	 */
 	public function authorize(){
-	
+		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
+		$options = [
+			'open_platform' => [
+				'app_id'   => $openPlatformConfig['appId'],
+				'secret'   => $openPlatformConfig['appSecret'],
+				'token'    => $openPlatformConfig['token'],
+				'aes_key'  => $openPlatformConfig['encodingAesKey']
+			]
+		];
+		$app = new Application($options);
+		$openPlatform = $app->open_platform;
+		$url = $openPlatform->pre_auth
+			->redirect('http://heilphp.web.easychn.com'.url('api/component/authorize'))
+			->getTargetUrl();
+		header('Location:'.$url);
 	}
 }
