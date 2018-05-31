@@ -131,8 +131,11 @@ class Component extends Base{
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
 		$url = $openPlatform->pre_auth
-			->redirect('http://heilphp.web.easychn.com'.url('api/component/authorize'))
+			->redirect('http://heilphp.web.easychn.com'.url('api/component/test'))
 			->getTargetUrl();
 		header('Location:'.$url);
+	}
+	public function test(){
+		echo '<a href="'.url('api/component/authorize').'">授权</a>';	
 	}
 }
