@@ -37,6 +37,7 @@ class Component extends Base{
 		$this->index();
 	}
 	public function index(){
+		cache('test2',date('Y-m-d H:i:s'));
 		$options = [
 			// ...
 			'open_platform' => [
@@ -50,12 +51,13 @@ class Component extends Base{
 
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
-		$openPlatform->server->serve();
-		$openPlatform->server->listen(function ($event) {
+		$openPlatform->server->setMessageHandler(function ($event) {
 			cache('test',$event);
 		});
+		$openPlatform->server->serve();
 	}
 	public function test(){
 		dump(cache('test'));
+		dump(cache('test2'));
 	}
 }
