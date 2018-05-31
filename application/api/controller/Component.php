@@ -38,34 +38,71 @@ class Component extends Base{
 	}
 	public function index(){
 		cache('test2',date('Y-m-d H:i:s'));
-		$config = config('WECHAT_OPEN_PLATFORM_CONFIG');
+		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
 		$options = [
 			'open_platform' => [
-				'app_id'   => $config['appId'],
-				'secret'   => $config['appSecret'],
-				'token'    => $config['token'],
-				'aes_key'  => $config['encodingAesKey']
+				'app_id'   => $openPlatformConfig['appId'],
+				'secret'   => $openPlatformConfig['appSecret'],
+				'token'    => $openPlatformConfig['token'],
+				'aes_key'  => $openPlatformConfig['encodingAesKey']
 			]
 		];
 
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
 		$openPlatform->server->setMessageHandler(function ($event) {
-			cache('test',$event);
-			$data = [
-				'value'	=>$event['ComponentVerifyTicket']
-				,'update_time'	=>$event['CreateTime']
-			];
-			$Db = db('Config');
-			$Db->where('name','=','WECHAT_OPEN_PLATFORM_VERIFY_TICKET')->update($data);
-			cache('test3',$Db->getLastSql());
-			//cache('DB_CONFIG_DATA',null);
+
+
+			// 事件类型常量定义在 \EasyWeChat\OpenPlatform\Guard 类里
+			switch ($event->InfoType) {
+			case 'authorized':
+				// ...
+				break;
+			case 'unauthorized':
+				// ...
+				break;
+			case 'updateauthorized':
+				// ...
+				break;
+				//
+			case 'component_verify_ticket':
+				$data = [
+					'value'	=>$event['ComponentVerifyTicket']
+					,'update_time'	=>$event['CreateTime']
+				];
+				db('Config')->where('name','=','WECHAT_OPEN_PLATFORM_VERIFY_TICKET')->update($data);
+				cache('DB_CONFIG_DATA',null);
+				echo 'success';
+				break;
+			}
 		});
-		$openPlatform->server->serve();
 	}
-	public function test(){
-		dump(cache('test'));
-		dump(cache('test2'));
-		dump(cache('test3'));
+	public function getTokenFromServer(){
+		$openPlatformAccessToken = config('WECHAT_OPEN_PLATFORM_ACCESS_TOKEN');		
+		//当前时间 - token更新时间 小于 (2小时 -20分钟) 终止
+		if((app()->getBeginTime() - $openPlatformAccessToken['update_time']) <= (60*60*2 - 60*20)){
+			echo '未到更新时间';
+			exit();	
+		}
+		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
+		$options = [
+			'open_platform' => [
+				'app_id'   => $openPlatformConfig['appId'],
+				'secret'   => $openPlatformConfig['appSecret'],
+				'token'    => $openPlatformConfig['token'],
+				'aes_key'  => $openPlatformConfig['encodingAesKey']
+			]
+		];
+		$app = new Application($options);
+		$openPlatform = $app->open_platform;
+		$token = $openPlatform->access_token->getTokenFromServer();
+		$token['update_time'] = $data['update_time'] = app()->getBeginTime();
+		$string = '';
+		foreach($token as $key =>$val){
+			$string = $string ? ($string . "\r\n" . $key . ':' .$val) : ($key . ':' .$val);	
+		}
+		$data['value'] = $string;
+		db('Config')->where('name','=','WECHAT_OPEN_PLATFORM_ACCESS_TOKEN')->update($data);
+		cache('DB_CONFIG_DATA',null);
 	}
 }
