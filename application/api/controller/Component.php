@@ -37,7 +37,6 @@ class Component extends Base{
 		$this->index();
 	}
 	public function index(){
-		cache('test2',date('Y-m-d H:i:s'));
 		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
 		$options = [
 			'open_platform' => [
@@ -51,8 +50,6 @@ class Component extends Base{
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
 		$openPlatform->server->setMessageHandler(function ($event) {
-
-
 			// 事件类型常量定义在 \EasyWeChat\OpenPlatform\Guard 类里
 			switch ($event->InfoType) {
 			case 'authorized':
@@ -72,15 +69,25 @@ class Component extends Base{
 				];
 				db('Config')->where('name','=','WECHAT_OPEN_PLATFORM_VERIFY_TICKET')->update($data);
 				cache('DB_CONFIG_DATA',null);
-				echo 'success';
 				break;
 			}
 		});
+		$openPlatform->server->serve();
 	}
+	/**
+	 * getTokenFromServer
+	 * 获取平台token
+	 * @author jason <1878566968@qq.com>
+	 */
 	public function getTokenFromServer(){
+		$openPlatformVerifyTicket = config('WECHAT_OPEN_PLATFORM_VERIFY_TICKET');		
+		if(empty($openPlatformVerifyTicket)){
+			echo '请在component_verify_ticket更新后重试';
+			exit();	
+		}
 		$openPlatformAccessToken = config('WECHAT_OPEN_PLATFORM_ACCESS_TOKEN');		
-		//当前时间 - token更新时间 小于 (2小时 -20分钟) 终止
-		if((app()->getBeginTime() - $openPlatformAccessToken['update_time']) <= (60*60*2 - 60*20)){
+		//已存在token && 当前时间 - token更新时间 小于 (有效时长-20分钟)
+		if(!empty($openPlatformAccessToken) && (app()->getBeginTime() - $openPlatformAccessToken['update_time']) <= ($openPlatformAccessToken['expires_in'] - 60*20)){
 			echo '未到更新时间';
 			exit();	
 		}
@@ -104,5 +111,14 @@ class Component extends Base{
 		$data['value'] = $string;
 		db('Config')->where('name','=','WECHAT_OPEN_PLATFORM_ACCESS_TOKEN')->update($data);
 		cache('DB_CONFIG_DATA',null);
+		echo '更新成功';
+	}
+	/**
+	 * authorize
+	 * 账号授权
+	 * @author Jason <1878566968@qq.com>
+	 */
+	public function authorize(){
+	
 	}
 }
