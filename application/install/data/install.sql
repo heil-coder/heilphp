@@ -11,7 +11,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `heilphp_config`;
 CREATE TABLE `heilphp_config` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '配置ID',
-  `name` varchar(30) NOT NULL DEFAULT '' COMMENT '配置名称',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '配置名称',
   `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '配置类型',
   `title` varchar(50) NOT NULL DEFAULT '' COMMENT '配置说明',
   `group` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '配置分组',
@@ -53,9 +53,9 @@ INSERT INTO `heilphp_config` VALUES ('32', 'DEVELOP_MODE', '4', '开启开发者
 INSERT INTO `heilphp_config` VALUES ('33', 'ALLOW_VISIT', '3', '不受限控制器方法', '0', '', '', '1386644047', '1386644741', '1', '0:article/draftbox\r\n1:article/mydocument\r\n2:Category/tree\r\n3:Index/verify\r\n4:file/upload\r\n5:file/download\r\n6:user/updatePassword\r\n7:user/updateNickname\r\n8:user/submitPassword\r\n9:user/submitNickname\r\n10:file/uploadpicture', '0');
 INSERT INTO `heilphp_config` VALUES ('34', 'DENY_VISIT', '3', '超管专限控制器方法', '0', '', '仅超级管理员可访问的控制器方法', '1386644141', '1386644659', '1', '0:Addons/addhook\r\n1:Addons/edithook\r\n2:Addons/delhook\r\n3:Addons/updateHook\r\n4:Admin/getMenus\r\n5:Admin/recordList\r\n6:Authmanager/updateRules\r\n7:Authmanager/tree', '0');
 INSERT INTO `heilphp_config` VALUES ('36', 'ADMIN_ALLOW_IP', '2', '后台允许访问IP', '4', '', '多个用逗号分隔，如果不配置表示不限制IP访问', '1387165454', '1387165553', '1', '', '12');
-INSERT INTO `heilphp_config` VALUES ('41', 'WECHAT_OPEN_COMPONENT_CONFIG', '3', '微信开放平台配置', '5', '', 'appId,秘钥,加密key', '1518215910', '1518215910', '1', 'appId:appId\r\nappSecret:appSecret\r\ntoken:token\r\nencodingAesKey:encodingAesKey', '0');
-INSERT INTO `heilphp_config` VALUES ('42', 'WECHAT_OPEN_COMPONENT_VERIFY_TICKET', '1', '微信开放平台component_verify_ticket', '5', '', '微信开放平台验证ticket', '1518215910', '1518215910', '1', '', '0');
-INSERT INTO `heilphp_config` VALUES ('43', 'WECHAT_OPEN_COMPONENT_ACCESS_TOKEN', '3', '微信第三方平台接口调用凭据', '5', '', 'token,有效时长,更新时间', '1518215910', '1518215910', '1', '', '0');
+INSERT INTO `heilphp_config` VALUES ('41', 'WECHAT_OPEN_PLATFORM_CONFIG', '3', '微信开放平台配置', '5', '', 'appId,秘钥,加密key', '1518215910', '1518215910', '1', 'appId:appId\r\nappSecret:appSecret\r\ntoken:token\r\nencodingAesKey:encodingAesKey', '0');
+INSERT INTO `heilphp_config` VALUES ('42', 'WECHAT_OPEN_PLATFORM_VERIFY_TICKET', '1', '微信开放平台component_verify_ticket', '5', '', '微信开放平台验证ticket', '1518215910', '1518215910', '1', '', '0');
+INSERT INTO `heilphp_config` VALUES ('43', 'WECHAT_OPEN_PLATFORM_ACCESS_TOKEN', '3', '微信第三方平台接口调用凭据', '5', '', 'token,有效时长,更新时间', '1518215910', '1518215910', '1', '', '0');
 
 
 -- -----------------------------

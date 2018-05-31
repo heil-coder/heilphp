@@ -23,7 +23,7 @@ class Component extends Base{
     public function initialize(){
 		parent::initialize();
         //获取微信开放平台配置信息
-        $componentConfigKey = 'WECHAT_OPEN_COMPONENT_CONFIG';
+        $componentConfigKey = 'WECHAT_OPEN_PLATFORM_CONFIG';
         //$this->componentConfig = json_decode(base64_decode(getConfig($componentConfigKey)),true);
     }
 
@@ -38,26 +38,34 @@ class Component extends Base{
 	}
 	public function index(){
 		cache('test2',date('Y-m-d H:i:s'));
+		$config = config('WECHAT_OPEN_PLATFORM_CONFIG');
 		$options = [
-			// ...
 			'open_platform' => [
-				'app_id'   => 'wx48254a0207b9e357',
-				'secret'   => 'be0bdb08e2fad6ccc21d32e661f07c72',
-				'token'    => 'heilphp',
-				'aes_key'  => '4e84db09c229a435159ed4a9d58a80c4435159ed4a9'
-			],
-			// ...
+				'app_id'   => $config['appId'],
+				'secret'   => $config['appSecret'],
+				'token'    => $config['token'],
+				'aes_key'  => $config['encodingAesKey']
+			]
 		];
 
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
 		$openPlatform->server->setMessageHandler(function ($event) {
 			cache('test',$event);
+			$data = [
+				'value'	=>$event['ComponentVerifyTicket']
+				,'update_time'	=>$event['CreateTime']
+			];
+			$Db = db('Config');
+			$Db->where('name','=','WECHAT_OPEN_PLATFORM_VERIFY_TICKET')->update($data);
+			cache('test3',$Db->getLastSql());
+			//cache('DB_CONFIG_DATA',null);
 		});
 		$openPlatform->server->serve();
 	}
 	public function test(){
 		dump(cache('test'));
 		dump(cache('test2'));
+		dump(cache('test3'));
 	}
 }
