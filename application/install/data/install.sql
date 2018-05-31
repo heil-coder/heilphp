@@ -718,3 +718,40 @@ CREATE TABLE `heilphp_ucenter_setting` (
   `value` text NOT NULL COMMENT '配置数据',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='设置表';
+
+
+--
+-- 表的结构 `heilphp_api_wechat`
+--
+
+CREATE TABLE IF NOT EXISTS `heilphp_api_wechat` (
+  `id` int(8) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL COMMENT '用户ID',
+  `is_connect` tinyint(1) NOT NULL COMMENT '是否连接',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0' COMMENT '默认公众号',
+  `token` varchar(32) NOT NULL COMMENT 'TOKEN',
+  `access_token` varchar(1000) NOT NULL COMMENT 'ACCESS_TOKEN',
+  `encodingaeskey` varchar(255) NOT NULL COMMENT 'AESKEY',
+  `jsapi_ticket` varchar(1000) NOT NULL COMMENT 'jsapi_ticket',
+  `type` tinyint(2) NOT NULL COMMENT '类型 1 普通订阅号 2 普通服务号 3 认证的订阅号 4 认证服务号/认证媒体/政府订阅号',
+  `name` varchar(30) NOT NULL COMMENT '名称',
+  `wechat` varchar(30) NOT NULL COMMENT '微信号',
+  `original` varchar(50) NOT NULL COMMENT '原始ID',
+  `country` varchar(10) NOT NULL COMMENT '国家',
+  `province` varchar(3) NOT NULL COMMENT '省',
+  `city` varchar(15) NOT NULL COMMENT '市',
+  `username` varchar(30) NOT NULL COMMENT '用户名',
+  `password` varchar(32) NOT NULL COMMENT '密码',
+  `lastupdate` int(11) NOT NULL COMMENT '最后更新时间',
+  `appid` varchar(50) NOT NULL COMMENT 'appId',
+  `secret` varchar(50) NOT NULL COMMENT 'appSecret',
+  `version` tinyint(2) NOT NULL COMMENT '商户版本',
+  `mchid` int(11) NOT NULL COMMENT '商户ID',
+  `mchsecret` varchar(50) NOT NULL COMMENT '商户密钥',
+  `subscribeurl` varchar(120) NOT NULL COMMENT '快速关注网址',
+  `is_bind` tinyint(1) DEFAULT NUll COMMENT '是否为微信开放平台绑定账号',
+  `authorizer_refresh_token` varchar(255) NOT NULL COMMENT '授权公众号的接口调用凭据刷新令牌',
+  `info` text NOT NULL COMMENT 'base64信息',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
+
