@@ -214,7 +214,7 @@ class Component extends Base{
 		foreach($list as $val){
 			$accessToken = $openPlatform->getAuthorizerToken($val['appid'],$val['authorizer_refresh_token'])->toArray();
 			$app->access_token = $openPlatform->authorizer_access_token;
-			$openPlatform->createAuthorizerApplication($val['appid'],$accessToken);
+			$openPlatform->createAuthorizerApplication($val['appid'],$accessToken['authorizer_refresh_token']);
 			$js = $app->js;
 			$jsapi_ticket= $js->ticket();
 			$data = [
