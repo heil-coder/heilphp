@@ -724,6 +724,7 @@ CREATE TABLE `heilphp_ucenter_setting` (
 -- 表的结构 `heilphp_api_wechat`
 --
 
+DROP TABLE IF EXISTS `heilphp_api_wechat`;
 CREATE TABLE IF NOT EXISTS `heilphp_api_wechat` (
   `id` int(8) NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL COMMENT '用户ID',
