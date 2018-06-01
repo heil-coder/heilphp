@@ -205,17 +205,20 @@ class Component extends Base{
 
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
-		$js = $app->js;
 
 		$Wechat = Db('ApiWechat');		
 		$map = [];
-		//$map[] = ['update_time','<',app()->getBeginTime() - 60*30];
+		$map[] = ['update_time','<',app()->getBeginTime() - 60*30];
 		$map[] = ['is_bind','=',1];
 		$list = $Wechat->where($map)->limit(30)->select();
 		foreach($list as $val){
 			$accessToken = $openPlatform->getAuthorizerToken($val['appid'],$val['authorizer_refresh_token'])->toArray();
+			$app->access_token = $openPlatform->access_token;
+			$js = $app->js;
+			$jsapi_ticket= $js->ticket();
 			$data = [
 				'access_token'	=> $accessToken['authorizer_access_token']
+				,'jsapi_ticket'	=> $jsapi_ticket 
 				,'authorizer_refresh_token'	=> $accessToken['authorizer_refresh_token']
 				,'update_time'	=> app()->getBeginTime()
 			];
