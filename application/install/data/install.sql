@@ -742,7 +742,7 @@ CREATE TABLE IF NOT EXISTS `heilphp_api_wechat` (
   `city` varchar(15) NOT NULL COMMENT '市',
   `username` varchar(30) NOT NULL COMMENT '用户名',
   `password` varchar(32) NOT NULL COMMENT '密码',
-  `lastupdate` int(11) NOT NULL COMMENT '最后更新时间',
+  `update_time` bigint(10) NOT NULL COMMENT '更新时间',
   `appid` varchar(50) NOT NULL COMMENT 'appId',
   `secret` varchar(50) NOT NULL COMMENT 'appSecret',
   `version` tinyint(2) NOT NULL COMMENT '商户版本',

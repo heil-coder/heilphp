@@ -119,6 +119,19 @@ class Component extends Base{
 	 * @author Jason <1878566968@qq.com>
 	 */
 	public function authorize(){
+		if(!request()->has('auth_code','get')){
+			$this->authorize_step1();
+		}
+		else{
+			$this->authorize_step2();	
+		}
+	}
+	/**
+	 * authorize_step1
+	 * 授权第一步 获取授权码
+	 * @author Jason <1878566968@qq.com>
+	 */
+	protected function authorize_step1(){
 		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
 		$options = [
 			'open_platform' => [
@@ -131,9 +144,84 @@ class Component extends Base{
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
 		$url = $openPlatform->pre_auth
-			->redirect('http://heilphp.web.easychn.com'.url('api/component/test'))
+			->redirect('http://heilphp.web.easychn.com'.url('api/component/authorize'))
 			->getTargetUrl();
 		header('Location:'.$url);
+	}
+	/**
+	 * authorize_step2
+	 * 授权第二步 获取授权账号信息
+	 * @author Jason <1878566968@qq.com>
+	 */
+	protected function authorize_step2(){
+		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
+		$options = [
+			'open_platform' => [
+				'app_id'   => $openPlatformConfig['appId'],
+				'secret'   => $openPlatformConfig['appSecret'],
+				'token'    => $openPlatformConfig['token'],
+				'aes_key'  => $openPlatformConfig['encodingAesKey']
+			]
+		];
+
+		$app = new Application($options);
+		$openPlatform = $app->open_platform;
+		$info = $openPlatform->getAuthorizationInfo($authorizationCode = null)->toArray();
+		$data = [
+			'is_connect'	=>	1
+			,'is_bind'		=>1
+			,'appid'		=>	$info['authorization_info']['authorizer_appid']
+			,'access_token'	=>	$info['authorization_info']['authorizer_access_token']	
+			,'authorizer_refresh_token'	=>	$info['authorization_info']['authorizer_refresh_token']	
+			,'update_time'	=>	app()->getBeginTime()
+		];
+		$Wechat = db('ApiWechat');
+		$map = [];
+		$map[] =['appid','=',$info['authorization_info']['authorizer_appid']];
+		$detail = $Wechat->where($map)->find();
+		if(empty($detail)){
+			$res = $Wechat->insert($data);	
+		}
+		else{
+			$res = $Wechat->where($map)->update($data);	
+		}
+		$this->success('授权成功',url('api/component/test'));
+	}
+	/**
+	 * refreshToken
+	 * 刷新access_token
+	 * @author Jason <1878566968@qq.com>
+	 */
+	public function refreshToken(){
+		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
+		$options = [
+			'open_platform' => [
+				'app_id'   => $openPlatformConfig['appId'],
+				'secret'   => $openPlatformConfig['appSecret'],
+				'token'    => $openPlatformConfig['token'],
+				'aes_key'  => $openPlatformConfig['encodingAesKey']
+			]
+		];
+
+		$app = new Application($options);
+		$openPlatform = $app->open_platform;
+		$js = $app->js;
+
+		$Wechat = Db('ApiWechat');		
+		$map = [];
+		//$map[] = ['update_time','<',app()->getBeginTime() - 60*30];
+		$map[] = ['is_bind','=',1];
+		$list = $Wechat->where($map)->limit(30)->select();
+		foreach($list as $val){
+			$accessToken = $openPlatform->getAuthorizerToken($val['appid'],$val['authorizer_refresh_token'])->toArray();
+			$data = [
+				'access_token'	=> $accessToken['authorizer_access_token']
+				,'authorizer_refresh_token'	=> $accessToken['authorizer_refresh_token']
+				,'update_time'	=> app()->getBeginTime()
+			];
+			$Wechat->where('id',$val['id'])->update($data);
+		}
+		echo '更新成功';
 	}
 	public function test(){
 		echo '<a href="'.url('api/component/authorize').'">授权</a>';	
