@@ -213,7 +213,8 @@ class Component extends Base{
 		$list = $Wechat->where($map)->limit(30)->select();
 		foreach($list as $val){
 			$accessToken = $openPlatform->getAuthorizerToken($val['appid'],$val['authorizer_refresh_token'])->toArray();
-			$app->access_token = $openPlatform->access_token;
+			$app->access_token = $openPlatform->authorizer_access_token;
+			$openPlatform->createAuthorizerApplication($val['appid'],$accessToken);
 			$js = $app->js;
 			$jsapi_ticket= $js->ticket();
 			$data = [
