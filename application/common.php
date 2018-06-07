@@ -867,5 +867,75 @@ function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','h
  * @return \think\response\View
  */
 function view($template = '', $vars = [], $code = 200, $filter = null){
+	$eqp = get_eqp();
+	$module = Request()->module();
+	$theme = 'test';
+	$view_base = config('template.view_base');
+	switch($eqp){
+		//手机
+		case 'phone':
+			//设定皮肤目录为视图根目录
+			config('template.view_base',$view_base.$theme.'/view_phone/');
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				config('template.view_base',$view_base.$theme.'/view/');
+			}
+			//不是默认皮肤 && 皮肤模板文件不存在
+			if($theme != 'default' && !view_exists($template)){
+				//设定默认皮肤目录为视图根目录
+				config('template.view_base',$view_base.'default/view_phone/');
+			}
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				config('template.view_base',$view_base.'default/view/');
+			}
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				//取消视图根目录设置
+				config('template.view_base','');
+			}
+			break;
+		//pc
+		default:
+			//设定皮肤目录为视图根目录
+			config('template.view_base',$view_base.$theme.'/view/');
+			//不是默认皮肤 && 皮肤模板文件不存在
+			if($theme != 'default' && !view_exists($template)){
+				//设定默认皮肤目录为视图根目录
+				config('template.view_base',$view_base.'default/view/');
+			}
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				//取消视图根目录设置
+				config('template.view_base','');
+			}
+			break;
+	}
 	return think\Response::create($template, 'view', $code)->assign($vars)->filter($filter);
+}
+/**
+ * view_exists
+ * 检测是否存在模板文件
+ * @param string $template 模板文件
+ */
+function view_exists($template = '',$code = 200){
+	return think\Response::create($template, 'view', $code)->exists($template);
+}
+
+
+/**
+ * get_eqp
+ * 获取设备类型
+ * add by Jason 2016-05-04 
+ */
+function get_eqp(){
+	$ua = strtolower($_SERVER['HTTP_USER_AGENT']);
+	$uachar = "/(nokia|sony|ericsson|mot|samsung|sgh|lg|philips|panasonic|alcatel|lenovo|cldc|midp|mobile|android)/i";
+	if ((preg_match($uachar, $ua))) {
+		$eqp = 'phone';
+	}
+	else{
+		$eqp = 'pc';
+	}
+	return $eqp;
 }
