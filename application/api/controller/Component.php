@@ -79,7 +79,7 @@ class Component extends Base{
 	 * 获取平台token
 	 * @author jason <1878566968@qq.com>
 	 */
-	public function getTokenFromServer(){
+	protected function getTokenFromServer(){
 		$openPlatformVerifyTicket = config('WECHAT_OPEN_PLATFORM_VERIFY_TICKET');		
 		if(empty($openPlatformVerifyTicket)){
 			echo '请在component_verify_ticket更新后重试';
@@ -88,8 +88,8 @@ class Component extends Base{
 		$openPlatformAccessToken = config('WECHAT_OPEN_PLATFORM_ACCESS_TOKEN');		
 		//已存在token && 当前时间 - token更新时间 小于 (有效时长-20分钟)
 		if(!empty($openPlatformAccessToken) && (app()->getBeginTime() - $openPlatformAccessToken['update_time']) <= ($openPlatformAccessToken['expires_in'] - 60*20)){
-			echo '未到更新时间';
-			exit();	
+			echo '<p>开放平台component_access_token未到更新时间</p>';
+			return null;	
 		}
 		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
 		$options = [
@@ -103,6 +103,10 @@ class Component extends Base{
 		$app = new Application($options);
 		$openPlatform = $app->open_platform;
 		$token = $openPlatform->access_token->getTokenFromServer();
+		if(empty($token['component_access_token'])){
+			echo '<p>开放平台component_access_token获取错误</p>';
+			return null;
+		}
 		$token['update_time'] = $data['update_time'] = app()->getBeginTime();
 		$string = '';
 		foreach($token as $key =>$val){
@@ -193,6 +197,7 @@ class Component extends Base{
 	 * @author Jason <1878566968@qq.com>
 	 */
 	public function refreshToken(){
+		$this->getTokenFromServer();
 		$openPlatformConfig = config('WECHAT_OPEN_PLATFORM_CONFIG');
 		$options = [
 			'open_platform' => [
@@ -211,12 +216,20 @@ class Component extends Base{
 		$map[] = ['update_time','<',app()->getBeginTime() - 60*30];
 		$map[] = ['is_bind','=',1];
 		$list = $Wechat->where($map)->limit(30)->select();
+		if(empty($list)){
+			echo '<p>暂无需更新authorizer_access_token的公众号</p>';
+		}
 		foreach($list as $val){
 			$accessToken = $openPlatform->getAuthorizerToken($val['appid'],$val['authorizer_refresh_token'])->toArray();
 			$app->access_token = $openPlatform->authorizer_access_token;
 			$openPlatform->createAuthorizerApplication($val['appid'],$accessToken['authorizer_refresh_token']);
 			$js = $app->js;
 			$jsapi_ticket= $js->ticket();
+			//如果没有收到jsapi_ticket
+			if(empty($jsapi_ticket)){
+			echo '<p>'.$val['id'].'更新失败</p>';
+				continue;
+			}
 			$data = [
 				'access_token'	=> $accessToken['authorizer_access_token']
 				,'jsapi_ticket'	=> $jsapi_ticket 
@@ -224,8 +237,8 @@ class Component extends Base{
 				,'update_time'	=> app()->getBeginTime()
 			];
 			$Wechat->where('id',$val['id'])->update($data);
+			echo '<p>'.$val['id'].'更新成功</p>';
 		}
-		echo '更新成功';
 	}
 	public function test(){
 		echo '<a href="'.url('api/component/authorize').'">授权</a>';	
