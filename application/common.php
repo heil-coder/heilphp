@@ -867,9 +867,21 @@ function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','h
  * @return \think\response\View
  */
 function view($template = '', $vars = [], $code = 200, $filter = null){
-	$eqp = get_eqp();
 	$module = Request()->module();
-	$theme = 'test';
+	//如果不是安装模块
+	if($module != 'install'){
+		/* 读取数据库中的配置 */
+		$config =   cache('DB_CONFIG_DATA');
+		if(!$config){
+			$config =   api('Config/getListing');
+			cache('DB_CONFIG_DATA',$config);
+		}
+		config($config,'app'); //添加配置
+	}
+
+	$eqp = get_eqp();
+	$theme = config(strtoupper('DEFAULT_THEME_'.$module.'_'.$eqp));
+	$theme = $theme ?: 'default';
 	$view_base = config('template.view_base');
 	switch($eqp){
 		//手机
