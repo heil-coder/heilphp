@@ -1,4 +1,5 @@
 .idea
 *.log
+/*.zip
 *.swp
 thinkphp/.git
