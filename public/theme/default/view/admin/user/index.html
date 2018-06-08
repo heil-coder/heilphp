@@ -1,0 +1,10 @@
+{extend name="public/base" /}
+
+
+{block name='script'}
+<script src="/theme/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+    //导航高亮
+    highlight_subnav('{:Url('user/index')}');
+</script>
+{/block}

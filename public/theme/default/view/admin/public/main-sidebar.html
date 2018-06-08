@@ -15,7 +15,7 @@
 				<img src="__STATIC__/AdminLTE/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
 			</div>
 			<div class="info">
-				<a href="#" class="d-block">Alexander Pierce</a>
+				<a href="#" class="d-block">{:session('user_auth.username')}</a>
 			</div>
 		</div>
 
@@ -24,38 +24,38 @@
 			<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 				<!-- Add icons to the links using the .nav-icon class
 		with font-awesome or any other icon font library -->
+
+
+		{notempty name="_extra_menu"}
+		{// 动态扩展菜单 //}
+		{:extra_menu($_extra_menu,$__MENU__)}
+		{/notempty}
+		{volist name="__MENU__.child" id="sub_menu"}
+		<!-- 子导航 -->
+		{notempty name="sub_menu"}
 		<li class="nav-item has-treeview menu-open">
-			<a href="#" class="nav-link active">
+			<a href="#" class="nav-link">
 				<i class="nav-icon fa fa-dashboard"></i>
 				<p>
-				启动页面
+				{$key}	
 				<i class="right fa fa-angle-left"></i>
 				</p>
 			</a>
 			<ul class="nav nav-treeview">
+				{volist name="sub_menu" id="menu"}
+
 				<li class="nav-item">
-					<a href="#" class="nav-link active">
+					<a href="{$menu.url|Url}" class="nav-link">
 						<i class="fa fa-circle-o nav-icon"></i>
-						<p>活动页面</p>
+						<p>{$menu.title}</p>
 					</a>
 				</li>
-				<li class="nav-item">
-					<a href="#" class="nav-link">
-						<i class="fa fa-circle-o nav-icon"></i>
-						<p>无效页面</p>
-					</a>
-				</li>
+				{/volist}
 			</ul>
 		</li>
-		<li class="nav-item">
-			<a href="#" class="nav-link">
-				<i class="nav-icon fa fa-th"></i>
-				<p>
-				简单链接 
-				<span class="right badge badge-danger">New</span>
-				</p>
-			</a>
-		</li>
+		{/notempty}
+		<!-- /子导航 -->
+		{/volist}
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->

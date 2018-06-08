@@ -2,4 +2,5 @@
 *.log
 /*.zip
 *.swp
+*.swo
 thinkphp/.git
