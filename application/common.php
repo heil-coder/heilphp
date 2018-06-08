@@ -951,3 +951,16 @@ function get_eqp(){
 	}
 	return $eqp;
 }
+
+/**
+ * time_version
+ * 用于生成time_version识别码，以便于统一更新用户缓存文件
+ */
+function time_version(){
+	$version = cache('time_version');
+	if(empty($version)){
+		$version = app()->getBeginTime();
+		cache('time_version',$version);
+	}
+	return $version;
+}
