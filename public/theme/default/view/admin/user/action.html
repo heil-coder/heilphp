@@ -6,12 +6,12 @@
 	<div class="container-fluid">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">用户列表</h1>
+				<h1 class="m-0 text-dark">行为列表</h1>
 			</div><!-- /.col -->
 			<div class="col-sm-6">
 				<ol class="breadcrumb float-sm-right">
 					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
-					<li class="breadcrumb-item active">用户列表</li>
+					<li class="breadcrumb-item active">行为列表</li>
 				</ol>
 			</div><!-- /.col -->
 		</div><!-- /.row -->
@@ -43,12 +43,11 @@
 								<thead>
 									<tr>
 										<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
-										<th class="">UID</th>
-										<th class="">昵称</th>
-										<th class="">积分</th>
-										<th class="">登录次数</th>
-										<th class="">最后登录时间</th>
-										<th class="">最后登录IP</th>
+										<th class="">编号</th>
+										<th class="">标识</th>
+										<th class="">名称</th>
+										<th class="">类型</th>
+										<th class="">规则</th>
 										<th class="">状态</th>
 										<th class="">操作</th>
 									</tr>
@@ -57,21 +56,16 @@
 									{notempty name="_list"}
 									{volist name="_list" id="vo"}
 									<tr>
-										<td><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}" /></td>
-										<td>{$vo.uid} </td>
-										<td>{$vo.nickname}</td>
-										<td>{$vo.score}</td>
-										<td>{$vo.login}</td>
-										<td><span>{$vo.last_login_time|time_format}</span></td>
-										<td><span>{:long2ip($vo['last_login_ip'])}</span></td>
+										<td><input class="ids" type="checkbox" name="ids[]" value="{$vo.id}" /></td>
+										<td>{$vo.id} </td>
+										<td>{$vo.name}</td>
+										<td><a href="{:Url('editAction?id='.$vo['id'])}">{$vo.title}</a></td>
+										<td><span>{:get_action_type($vo['type'])}</span></td>
+										<td>{$vo.remark}</td>
 										<td>{$vo.status_text}</td>
-										<td>{eq name="vo.status" value="1"}
-											<a href="{:Url('User/changeStatus?method=forbidUser&id='.$vo['uid'])}" class="ajax-get">禁用</a>
-											{else/}
-											<a href="{:Url('User/changeStatus?method=resumeUser&id='.$vo['uid'])}" class="ajax-get">启用</a>
-											{/eq}
-											<a href="{:Url('Authmanage/group?uid='.$vo['uid'])}" class="authorize">授权</a>
-											<a href="{:Url('User/changeStatus?method=deleteUser&id='.$vo['uid'])}" class="confirm ajax-get">删除</a>
+										<td><a href="{:Url('User/editAction?id='.$vo['id'])}">编辑</a>
+											<a href="{:Url('User/setStatus?model=action&ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="ajax-get">{$vo.status|show_status_op}</a>
+											<a href="{:Url('User/setStatus?model=action&status=-1&ids='.$vo['id'])}" class="confirm ajax-get">删除</a>
 										</td>
 									</tr>
 									{/volist}
@@ -95,9 +89,7 @@
 				</div>
 			</div>
 
-			<div class="page">
-				{$_page|raw}
-			</div>
+
 
 
 		</div>
@@ -113,6 +105,6 @@
 <script src="/theme/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" charset="utf-8">
 //导航高亮
-highlight_subnav('{:Url('user/index')}');
+highlight_subnav('{:Url('user/action')}');
 </script>
 {/block}
