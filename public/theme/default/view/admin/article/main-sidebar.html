@@ -1,0 +1,127 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+	<!-- Brand Logo -->
+	<a href="{:Url('index/index')}" class="brand-link">
+		<img src="__STATIC__/AdminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+																			   style="opacity: .8">
+		<span class="brand-text font-weight-light">HeilPHP</span>
+	</a>
+
+	<!-- Sidebar -->
+	<div class="sidebar">
+		<!-- Sidebar user panel (optional) -->
+		<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+			<div class="image">
+				<img src="__STATIC__/AdminLTE/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+			</div>
+			<div class="info">
+				<a href="#" class="d-block">{:session('user_auth.username')}{$Request.module}</a>
+			</div>
+		</div>
+
+		<!-- Sidebar Menu -->
+		<nav class="mt-2">
+			<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+				<!-- Add icons to the links using the .nav-icon class
+		with font-awesome or any other icon font library -->
+
+
+		{eq name="Request.module" value="admin"}
+		{eq name="Request.controller" value="Index"}
+		{eq name="Request.action" value="index"}
+		{volist name="__MENU__.main" id="menu"}
+		<li class="nav-item has-treeview menu-open">
+			<a href="{$menu.url|Url}" class="nav-link {present name="menu.class"}{eq name="menu.class" value="current"}active{/eq}{/present}">
+				<i class="nav-icon fa fa-dashboard"></i>
+				<p>
+				{$menu.title}
+				</p>
+			</a>
+		</li>
+		{/volist}
+		{/eq}
+		{/eq}
+		{/eq}
+		{notempty name="_extra_menu"}
+		{// 动态扩展菜单 //}
+		{:extra_menu($_extra_menu,$__MENU__)}
+		{/notempty}
+		{volist name="__MENU__.child" id="sub_menu"}
+
+		<li class="nav-item has-treeview {in name="Request.action"  value="mydocument,draftbox,examine"}menu-open{/in}">
+			<a href="#" class="nav-link">
+				<i class="nav-icon fa fa-dashboard"></i>
+				<p>
+				个人中心
+				<i class="right fa fa-angle-left"></i>
+				</p>
+			</a>
+			<ul class="nav nav-treeview">
+				<li class="nav-item">
+					<a href="{$menu.url|Url}" class="nav-link {eq name="Request.action" value="mydocument"}active{/eq}">
+						<i class="fa fa-circle-o nav-icon"></i>
+						<p>我的文档</p>
+					</a>
+				</li>
+				{eq name="show_draftbox" value="1"}
+				<li class="nav-item">
+					<a href="{:Url('article/draftbox')}" class="nav-link {eq name="Request.action" value="draftbox"}active{/eq}">
+						<i class="fa fa-circle-o nav-icon"></i>
+						<p>草稿箱</p>
+					</a>
+				</li>
+				{/eq}
+				{eq name="show_examine" value="1"}
+				<li class="nav-item">
+					<a href="{:Url('article/examine')}" class="nav-link {eq name="Request.action" value="examine"}active{/eq}">
+						<i class="fa fa-circle-o nav-icon"></i>
+						<p>草稿箱</p>
+					</a>
+				</li>
+				{/eq}
+			</ul>
+		</li>
+
+		<!-- 子导航 -->
+		{notempty name="sub_menu"}
+		<li class="nav-item has-treeview">
+			<a href="#" class="nav-link">
+				<i class="nav-icon fa fa-dashboard"></i>
+				<p>
+				{$key}	
+				<i class="right fa fa-angle-left"></i>
+				</p>
+			</a>
+			<ul class="nav nav-treeview">
+				{volist name="sub_menu" id="menu"}
+
+				<li class="nav-item">
+					<a href="{$menu.url|Url}" class="nav-link">
+						<i class="fa fa-circle-o nav-icon"></i>
+						<p>{$menu.title}</p>
+					</a>
+				</li>
+				{/volist}
+			</ul>
+		</li>
+		{/notempty}
+		<!-- /子导航 -->
+		{/volist}
+
+		<!-- 回收站 -->
+		{eq name="show_recycle" value="1"}
+		<li class="nav-item has-treeview">
+			<a href="{:Url('article/recycle')}" class="nav-link">
+				<i class="nav-icon fa fa-trash"></i>
+				<p>
+				回收站
+				</p>
+			</a>
+		</li>
+		{/eq}
+			</ul>
+		</nav>
+		<!-- /.sidebar-menu -->
+	</div>
+	<!-- /.sidebar -->
+</aside>
