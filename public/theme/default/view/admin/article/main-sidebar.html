@@ -82,31 +82,35 @@
 			</ul>
 		</li>
 
-		<!-- 子导航 -->
+
+	{volist name="nodes" id="sub_menu"}
+        <!-- 子导航 -->
 		{notempty name="sub_menu"}
-		<li class="nav-item has-treeview">
-			<a href="#" class="nav-link">
-				<i class="nav-icon fa fa-dashboard"></i>
+			<li class="nav-item has-treeview">
+				<a href="{gt name="sub_menu['allow_publish']" value="0"}{$sub_menu.url|Url}{else /}#{/gt}" class="nav-link">
+				<i class="nav-icon fa fa-file-text"></i>
 				<p>
-				{$key}	
-				<i class="right fa fa-angle-left"></i>
+				{$sub_menu.title}
 				</p>
 			</a>
+			{present name="sub_menu['_child']"}
 			<ul class="nav nav-treeview">
-				{volist name="sub_menu" id="menu"}
-
+				{volist name="sub_menu['_child']" id="menu"}
 				<li class="nav-item">
-					<a href="{$menu.url|Url}" class="nav-link">
+					<a href="{gt name="menu['allow_publish']" value="0"}{$menu.url|Url}{else/}javascript:void(0);{/gt}" class="nav-link {eq name="Request.action" value="draftbox"}active{/eq}">
 						<i class="fa fa-circle-o nav-icon"></i>
 						<p>{$menu.title}</p>
 					</a>
+
 				</li>
 				{/volist}
 			</ul>
-		</li>
+			{/present}
+			</li>
 		{/notempty}
-		<!-- /子导航 -->
-		{/volist}
+        <!-- /子导航 -->
+	{/volist}
+
 
 		<!-- 回收站 -->
 		{eq name="show_recycle" value="1"}
