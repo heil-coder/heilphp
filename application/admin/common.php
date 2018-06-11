@@ -318,7 +318,12 @@ function get_list_field($data, $grid){
                 // 替换数据变量
                 $href   =   preg_replace_callback('/\[([a-z_]+)\]/', function($match) use($data){return !empty($data[$match[1]]) ? $data[$match[1]]: '';}, $href);
 
-                $val[]  =   '<a href="'.Url($href).'">'.$show.'</a>';
+				if($show == '删除'){
+					$val[]  =   '<a class="confirm ajax-get" href="'.Url($href).'">'.$show.'</a>';
+				}
+				else{
+					$val[]  =   '<a href="'.Url($href).'">'.$show.'</a>';
+				}
             }
         }
         $value  =   implode(' ',$val);
