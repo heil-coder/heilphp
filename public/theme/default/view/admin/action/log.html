@@ -31,8 +31,8 @@
 						<div class="pull-left">
 							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
 							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>清空</button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-remove"></i>删除</button></a>
+							<button type="button" class="btn btn-sm btn-danger ajax-get confirm" url="{:Url('clear')}"><i class="fa fa-trash"></i>清空</button>
+							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" target-form="ids" url="{:Url('remove')}"><i class="fa fa-remove"></i>删除</button>
 						</div>
 					</div>
 					<div class="card-body p-0">

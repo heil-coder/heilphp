@@ -267,5 +267,5 @@ function showBtn() {
 
 //导航高亮
 function highlight_subnav(url){
-    $('.side-sub-menu').find('a[href="'+url+'"]').closest('li').addClass('current');
+    $('.nav-sidebar .nav-treeview').find('a.nav-link[href="'+url+'"]').addClass('active');
 }

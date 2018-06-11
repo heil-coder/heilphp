@@ -196,7 +196,7 @@ class Admin extends Controller {
 
         $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
 		if(!$isSoftDelete || ($isSoftDelete && $hasSoftDeleteCondition)){
-			$Db = $Db->setOption('where',$tmpOptions['where']);
+			$isSoftDelete && $Db = $Db->setOption('where',$tmpOptions['where']);
 			$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
 		}
 		else{

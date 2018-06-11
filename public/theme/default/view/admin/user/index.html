@@ -31,10 +31,10 @@
 						<div class="pull-left">
 							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
 							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-eye"></i>启用</button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-warning"><i class="fa fa-eye-slash"></i>禁用</button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-remove"></i>删除</button></a>
+							<a href="{:Url('add')}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
+							<button type="button" class="btn btn-sm btn-success ajax-post" url="{:Url('changeStatus?method=resumeUser')}" target-form="ids"><i class="fa fa-eye"></i>启用</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" url="{:Url('changeStatus?method=forbidUser')}" target-form="ids"><i class="fa fa-eye-slash"></i>禁用</button>
+							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" url="{:Url('changeStatus?method=deleteUser')}" target-form="ids"><i class="fa fa-remove"></i>删除</button>
 						</div>
 					</div>
 					<div class="card-body p-0">
