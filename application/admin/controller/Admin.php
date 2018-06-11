@@ -160,9 +160,17 @@ class Admin extends Controller {
             $options['where']   =  1; 
 		}
 		$tmpOptions = $Db->getOptions();
+		$hasSoftDeleteCondition = false;
+		if(!empty($tmpOptions['where']['AND'])){
+			foreach($tmpOptions['where']['AND'] as $val){
+				if(in_array('delete_time',$val)){
+					$hasSoftDeleteCondition = true;
+				}
+			}
+		}
 		$options      =   array_merge( $Db->getOptions(), $options );
 
-		if(!$isSoftDelete || ($isSoftDelete && !empty($tmpOptions['where']['AND']['delete_time']))){
+		if(!$isSoftDelete || ($isSoftDelete && $hasSoftDeleteCondition)){
 			$total = $Db->where($options['where'])->count();
 		}
 		else{
@@ -187,11 +195,12 @@ class Admin extends Controller {
         $Db->setOption('where',[]);
 
         $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
-		if(!$isSoftDelete || ($isSoftDelete && !empty($tmpOptions['where']['AND']['delete_time']))){
-		$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
+		if(!$isSoftDelete || ($isSoftDelete && $hasSoftDeleteCondition)){
+			$Db = $Db->setOption('where',$tmpOptions['where']);
+			$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
 		}
 		else{
-		$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->limit($limit)->select();
+			$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->limit($limit)->select();
 		}
 		return $listing;
     }
@@ -207,17 +216,20 @@ class Admin extends Controller {
 	 * @modify Jason <1878566968@qq.com>
      */
     final protected function editRow ( $model ,$data, $where , $msg ){
+		if(is_string($model)){
+			$model = model($model);
+		}
+
         $id    = array_unique(Request::param('id/a',[]));
         $id    = is_array($id) ? implode(',',$id) : $id;
         //如存在id字段，则加入该条件
-		$fields = model($model)->getTableFields();
+		$fields = $model->getTableFields();
         if(in_array('id',$fields) && !empty($id)){
 			$where[] =  ['id','in', $id];
         }
 
         $msg   = array_merge( array( 'success'=>'操作成功！', 'error'=>'操作失败！', 'url'=>'' ,'ajax'=>Request::isAjax()) , (array)$msg );
-		$test = model($model);
-        if( model($model)->where($where)->update($data)!==false ) {
+        if( ($a = $model->where($where)->update($data))!==false ) {
             $this->success($msg['success'],$msg['url'],$msg['ajax']);
         }else{
             $this->error($msg['error'],$msg['url'],$msg['ajax']);
@@ -247,6 +259,22 @@ class Admin extends Controller {
      */
     protected function resume (  $model , $where = array() , $msg = array( 'success'=>'状态恢复成功！', 'error'=>'状态恢复失败！')){
         $data    =  array('status' => 1);
+        $this->editRow(   $model , $data, $where, $msg);
+    }
+    /**
+     * 还原条目
+     * @param string $model 模型名称,供D函数使用的参数
+     * @param array  $where 查询时的where()方法的参数
+     * @param array  $msg   执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
+     *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
+     * @author huajie  <banhuajie@163.com>
+     */
+    protected function restore (  $model , $where = array() , $msg = array( 'success'=>'状态还原成功！', 'error'=>'状态还原失败！')){
+        $data    = ['delete_time' => null];
+		if(is_string($model)){
+			$model = model($model);
+		}
+		$model = $model->whereNotNull('delete_time');
         $this->editRow(   $model , $data, $where, $msg);
     }
     /**
