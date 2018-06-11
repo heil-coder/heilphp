@@ -46,7 +46,6 @@
 		{// 动态扩展菜单 //}
 		{:extra_menu($_extra_menu,$__MENU__)}
 		{/notempty}
-		{volist name="__MENU__.child" id="sub_menu"}
 
 		<li class="nav-item has-treeview {in name="Request.action"  value="mydocument,draftbox,examine"}menu-open{/in}">
 			<a href="#" class="nav-link">
@@ -58,7 +57,7 @@
 			</a>
 			<ul class="nav nav-treeview">
 				<li class="nav-item">
-					<a href="{$menu.url|Url}" class="nav-link {eq name="Request.action" value="mydocument"}active{/eq}">
+					<a href="{:Url('article/mydocument')}" class="nav-link {eq name="Request.action" value="mydocument"}active{/eq}">
 						<i class="fa fa-circle-o nav-icon"></i>
 						<p>我的文档</p>
 					</a>
@@ -75,7 +74,7 @@
 				<li class="nav-item">
 					<a href="{:Url('article/examine')}" class="nav-link {eq name="Request.action" value="examine"}active{/eq}">
 						<i class="fa fa-circle-o nav-icon"></i>
-						<p>草稿箱</p>
+						<p>待审核</p>
 					</a>
 				</li>
 				{/eq}
