@@ -35,6 +35,10 @@
 
 			<!-- Content Wrapper. Contains page content -->
 			<div class="content-wrapper">
+				{block name="content-top-header"}
+				{include file="public/content-top-alert" /}
+				{/block}
+
 				{block name="content-header"}
 				{include file="public/content-header" /}
 				{/block}

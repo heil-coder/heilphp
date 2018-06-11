@@ -35,9 +35,14 @@
 							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
 							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
 							<a href="#"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-eye"></i>启用</button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-warning"><i class="fa fa-eye-slash"></i>禁用</button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-remove"></i>删除</button></a>
+							<button type="button" class="btn btn-sm btn-success ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>1))}"><i class="fa fa-eye"></i>启用</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>0))}"><i class="fa fa-eye-slash"></i>禁用</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/move")}"><i class="fa fa-cut"></i>移动</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/copy")}"><i class="fa fa-copy"></i>复制</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" hide-data="true" url="{:Url("Article/paste")}"><i class="fa fa-paste"></i>粘贴</button>
+
+							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" target-form="ids" url="{:Url("Article/setStatus",array("status"=>-1))}"><i class="fa fa-remove"></i>删除</button>
+							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort',array('cate_id'=>$cate_id,'pid'=>input('pid',0)),'')}"><i class="fa fa-sort"></i>排序</button>
 						</div>
 					</div>
 					<div class="card-body p-0">
@@ -100,7 +105,24 @@
 {block name='script'}
 <script src="/theme/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" charset="utf-8">
-//导航高亮
-highlight_subnav('{:Url('article/index')}');
+$(function(){
+	//点击排序
+	$('.list_sort').click(function(){
+		var url = $(this).attr('url');
+		var ids = $('.ids:checked');
+		var param = '';
+		if(ids.length > 0){
+			var str = new Array();
+			ids.each(function(){
+				str.push($(this).val());
+			});
+			param = str.join(',');
+		}
+
+		if(url != undefined && url != ''){
+			window.location.href = url + '/ids/' + param;
+		}
+	});
+})
 </script>
 {/block}
