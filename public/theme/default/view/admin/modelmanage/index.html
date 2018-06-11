@@ -1,0 +1,112 @@
+{extend name="public/base" /}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">模型列表</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item active">模型列表</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="card">
+					<div class="card-header border-transparent">
+						<div class="pull-left">
+							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
+							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
+							<a href="{:Url('modelmanage/add')}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
+							<button type="button" class="btn btn-sm btn-success ajax-post" target-form="ids" url="{:Url('modelmanage/setStatus',array('status'=>1))}"><i class="fa fa-eye"></i>启用</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url('modelmanage/setStatus',array('status'=>0))}"><i class="fa fa-eye-slash"></i>禁用</button>
+							<a href="{:Url('modelmanage/generate')}"><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-cogs"></i>生成</button></a>
+						</div>
+					</div>
+					<div class="card-body p-0">
+						<div class="table-responsive">
+							<table class="table m-0">
+								<thead>
+									<tr>
+										<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+										<th class="">编号</th>
+										<th class="">标识</th>
+										<th class="">名称</th>
+										<th class="">创建时间</th>
+										<th class="">状态</th>
+										<th class="">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									{notempty name="_list"}
+									{volist name="_list" id="vo"}
+									<tr>
+										<td><input class="ids" type="checkbox" name="ids[]" value="{$vo.id}" /></td>
+										<td>{$vo.id} </td>
+										<td>{$vo.name}</td>
+										<td><a data-id="{$vo.id}" href="{:Url('modelmanage/edit?id='.$vo['id'])}">{$vo.title}</a></td>
+										<td><span>{$vo.create_time|time_format}</span></td>
+										<td>{$vo.status_text}</td>
+										<td>
+											<a href="{:Url('think/lists?model='.$vo['name'])}">数据</a>
+											<a href="{:Url('modelmanage/setstatus?ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="ajax-get">{$vo.status|show_status_op}</a>
+											<a href="{:Url('modelmanage/edit?id='.$vo['id'])}">编辑</a>
+											<a href="{:Url('modelmanage/del?ids='.$vo['id'])}" class="confirm ajax-get">删除</a>
+										</td>
+									</tr>
+									{/volist}
+									{else/}
+									<td colspan="9" class="text-center"> aOh! 暂时还没有内容! </td>
+									{/notempty}
+								</tbody>
+							</table>
+						</div>
+						<!-- /.table-responsive -->
+					</div>
+					<!-- /.card-body -->
+					{notempty name="_page"}
+					<div class="card-footer clearfix">
+						<div class="page">
+							{$_page|raw}
+						</div>
+					</div>
+					<!-- /.card-footer -->
+					{/notempty}
+				</div>
+			</div>
+
+			<div class="page">
+				{$_page|raw}
+			</div>
+
+
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="/theme/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+//导航高亮
+highlight_subnav('{:Url('modelmanage/index')}');
+</script>
+{/block}
