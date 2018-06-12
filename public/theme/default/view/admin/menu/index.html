@@ -6,12 +6,12 @@
 	<div class="container-fluid">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">文档列表({$_total})</h1>
+				<h1 class="m-0 text-dark">{present name="data"}[ {$data.title} ] 子{/present}菜单管理</h1>
 			</div><!-- /.col -->
 			<div class="col-sm-6">
 				<ol class="breadcrumb float-sm-right">
 					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
-					<li class="breadcrumb-item active">文档列表</li>
+					<li class="breadcrumb-item active">菜单管理</li>
 				</ol>
 			</div><!-- /.col -->
 		</div><!-- /.row -->
@@ -20,9 +20,6 @@
 <!-- /.content-header -->
 {/block}
 
-{block name="main-sidebar"}
-	{include file="article/main-sidebar" /}
-{/block}
 {block name="content-content"}
 <!-- Main content -->
 <section class="content">
@@ -34,15 +31,10 @@
 						<div class="pull-left">
 							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
 							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
-							<a href="#"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
-							<button type="button" class="btn btn-sm btn-success ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>1))}"><i class="fa fa-eye"></i>启用</button>
-							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>0))}"><i class="fa fa-eye-slash"></i>禁用</button>
-							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/move")}"><i class="fa fa-cut"></i>移动</button>
-							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/copy")}"><i class="fa fa-copy"></i>复制</button>
-							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" hide-data="true" url="{:Url("Article/paste")}"><i class="fa fa-paste"></i>粘贴</button>
-
-							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" target-form="ids" url="{:Url("Article/setStatus",array("status"=>-1))}"><i class="fa fa-remove"></i>删除</button>
-							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort',array('cate_id'=>$cate_id,'pid'=>input('pid',0)),'')}"><i class="fa fa-sort"></i>排序</button>
+							<a href="{:Url('add',['pid'=>input('param.pid')])}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url('del')}"><i class="fa fa-remove"></i>删除</button>
+							<a href="{:Url('import',array('pid'=>$Request.param.pid))}"><button type="button" class="btn btn-sm btn-success">导入</button></a>
+							<button class="btn btn-sm btn-success list_sort" url="{:Url('sort',['pid'=>input('param.pid')],'')}">排序</button>
 						</div>
 					</div>
 					<div class="card-body p-0">
@@ -50,22 +42,47 @@
 							<table class="table m-0">
 								<thead>
 									<tr>
-										<th class="row-selected row-selected">
-											<input class="check-all" type="checkbox">
+										<th class="row-selected">
+											<input class="checkbox check-all" type="checkbox">
 										</th>
-										{volist name="list_grids" id="field"}
-										<th>{$field.title}</th>
-										{/volist}
+										<th>ID</th>
+										<th>名称</th>
+										<th>上级菜单</th>
+										<th>分组</th>
+										<th>URL</th>
+										<th>排序</th>
+										<th>仅开发者模式显示</th>
+										<th>隐藏</th>
+										<th>操作</th>
 									</tr>
 								</thead>
 								<tbody>
 									{notempty name="list"}
-									{volist name="list" id="data"}
+									{volist name="list" id="menu"}
 									<tr>
-										<td><input class="ids" type="checkbox" value="{$data['id']}" name="ids[]"></td>
-										{volist name="list_grids" id="grid"}
-										<td>{:get_list_field($data,$grid)}</td>
-										{/volist}
+										<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$menu.id}"></td>
+										<td>{$menu.id}</td>
+										<td>
+											<a href="{:Url('index?pid='.$menu['id'])}">{$menu.title}</a>
+										</td>
+										<td>{$menu.up_title|default='无'}</td>
+										<td>{$menu.group}</td>
+										<td>{$menu.url}</td>
+										<td>{$menu.sort}</td>
+										<td>
+											<a href="{:Url('toogleDev',array('id'=>$menu['id'],'value'=>abs($menu['is_dev']-1)))}" class="ajax-get">
+												{$menu.is_dev_text}
+											</a>
+										</td>
+										<td>
+											<a href="{:Url('toogleHide',array('id'=>$menu['id'],'value'=>abs($menu['hide']-1)))}" class="ajax-get">
+												{$menu.hide_text}
+											</a>
+										</td>
+										<td>
+											<a title="编辑" href="{:Url('edit?id='.$menu['id'])}">编辑</a>
+											<a class="confirm ajax-get" title="删除" href="{:Url('del?id='.$menu['id'])}">删除</a>
+										</td>
 									</tr>
 									{/volist}
 									{else/}
@@ -80,7 +97,7 @@
 					{notempty name="_page"}
 					<div class="card-footer clearfix">
 						<div class="page">
-							{$_page|raw}
+							{/*$_page|raw*/}
 						</div>
 					</div>
 					<!-- /.card-footer -->
@@ -99,6 +116,8 @@
 {block name='script'}
 <script src="/theme/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" charset="utf-8">
+//导航高亮
+highlight_subnav('{:Url('menu/index')}');
 $(function(){
 	//点击排序
 	$('.list_sort').click(function(){

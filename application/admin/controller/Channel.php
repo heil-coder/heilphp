@@ -132,7 +132,7 @@ class Channel extends Admin {
 	 * @modify Jason<1878566968@qq.com>
      */
     public function del(){
-        $id = array_unique(Input('id/a',0));
+        $id = array_unique(Input('id/a',[]));
 
         if ( empty($id) ) {
             $this->error('请选择要操作的数据!');

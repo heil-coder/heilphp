@@ -118,7 +118,7 @@ class Menu extends Admin{
      * 删除后台菜单
      */
     public function del(){
-        $id = array_unique(Request::param('id/a',0));
+        $id = array_unique(Request::param('id/a',[]));
 
         if ( empty($id) ) {
             $this->error('请选择要操作的数据!');

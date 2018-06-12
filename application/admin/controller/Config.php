@@ -24,11 +24,11 @@ class Config extends Admin{
         /* 查询条件初始化 */
         $map = array();
         $map[]  = ['status','=',1];
-        if(isset($_GET['group'])){
-            $map[]   =  ['group','=',Request::get('group/d',0)];
+        if(!empty(input('param.group'))){
+            $map[]   =  ['group','=',input('param.group/d',0)];
         }
-        if(isset($_GET['name'])){
-            $map[]    =   ['name','like', '%'.Request::get('name/s','').'%'];
+        if(!empty(input('param.name/s',''))){
+            $map[]    =   ['name','like', '%' . input('param.name/s','') . '%'];
         }
 
         $list = $this->getListing('Config', $map,'sort,id');
@@ -111,7 +111,7 @@ class Config extends Admin{
      * 删除配置
      */
     public function del(){
-        $id = array_unique(Request::param('id/a',0));
+        $id = array_unique(Request::param('id/a',[]));
 
         if ( empty($id) ) {
             $this->error('请选择要操作的数据!');
