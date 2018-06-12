@@ -11,6 +11,7 @@ heilphp
 > 分类编辑修改子文档绑定模型时action_log('update_category')报错
 > 分类编辑 数组参数写入失败
 > 内容批量粘贴异常
+> 菜单编辑写入失败
 
 > step3 update时未升级语法结构
 
