@@ -37,5 +37,6 @@ return [
 		,'__JS__' => '/static/js'
 		,'__CSS__' => '/static/js'
 		,'__IMAGES__' => '/static/images'
+		,'__THEME__' => '/theme'
 	]
 ];
