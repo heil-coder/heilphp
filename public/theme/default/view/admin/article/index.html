@@ -21,7 +21,7 @@
 {/block}
 
 {block name="main-sidebar"}
-	{include file="article/main-sidebar" /}
+{include file="article/main-sidebar" /}
 {/block}
 {block name="content-content"}
 <!-- Main content -->
@@ -34,6 +34,29 @@
 						<div class="pull-left">
 							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
 							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
+
+							{gt name="allow" value="0"}
+							{if count($model) gt 1}
+							<div class="btn-group">
+								<button id="btnGroupDropAdd" type="button" class="btn btn-sm btn-danger dropdown-toggle" data-toggle="dropdown">新增  
+									<span class="caret"></span>
+									<span class="sr-only">新增</span>
+								</button>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="btnGroupDropAdd">
+									{volist name="model" id="vo"}
+									<li><a href="{:Url('article/add',array('cate_id'=>$cate_id,'model_id'=>$vo,'pid'=>input('pid',0),'group_id'=>$group_id))}">{$vo|get_document_model='title'}</a></li>
+									{/volist}
+								</ul>
+							</div>
+							{else /}
+							<a href="{:Url('article/add',array('cate_id'=>$cate_id,'pid'=>input('pid',0),'model_id'=>$model[0],'group_id'=>$group_id))}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
+							{/if}
+							{else /}
+							<button class="btn disabled" >新 增1
+								{if condition="count($model) gt 1"}<i class="btn-arrowdown"></i>{/if}
+							</button>
+							{/gt}
+
 							<a href="#"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
 							<button type="button" class="btn btn-sm btn-success ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>1))}"><i class="fa fa-eye"></i>启用</button>
 							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>0))}"><i class="fa fa-eye-slash"></i>禁用</button>

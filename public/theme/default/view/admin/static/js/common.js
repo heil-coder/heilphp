@@ -201,11 +201,11 @@
                 $(this).find("i").removeClass("btn-arrowup");
             }
         })
-        $(".dropdown").click(function(e) {
-            e.stopPropagation();
-        });
+        //$(".dropdown").click(function(e) {
+        //    e.stopPropagation();
+        //});
         $(document).click(function() {
-            $(".content-wrapper .dropdown").hide();
+            //$(".content-wrapper .dropdown").hide();
             $(".btn-group-click .btn").find("i").removeClass("btn-arrowup");
         });
     })();
