@@ -205,7 +205,7 @@
             e.stopPropagation();
         });
         $(document).click(function() {
-            $(".dropdown").hide();
+            $(".content-wrapper .dropdown").hide();
             $(".btn-group-click .btn").find("i").removeClass("btn-arrowup");
         });
     })();
