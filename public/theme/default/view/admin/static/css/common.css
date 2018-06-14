@@ -39,6 +39,9 @@
 .has_config.hidden,.has_adminlist.hidden{
 	display:none!important;
 }
+.main-sidebar{
+	z-index:1000;
+}
 
 /* = 分页
 ------------------------------------------ */
