@@ -9,7 +9,6 @@
 
 namespace app\admin\model;
 use think\Model;
-use app\admin\model\AuthGroup;
 use Request;
 use Env;
 use Hook;
@@ -36,9 +35,10 @@ class Document extends Model{
     //);
 
 
-	protected $auto = ['attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];
-	protected function setUidAttr(){
-		return is_login();
+	protected $auto = ['uid','attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];
+
+	protected function setUidAttr($value){
+		return UID ?: is_login();
 	}
 	protected function setTitleAttr($value){
 		return htmlspecialchars($value);	
@@ -92,7 +92,7 @@ class Document extends Model{
         if(empty($id)){	//新增
         	$cate = input('post.category_id');
         	$check 	=	db('Category')->getFieldById($cate,'check');  	
-            $status = 	$check ? 2 : 1;
+            $status = 	$this->auto['status'] ?: ($check ? 2 : 1);
         }else{				//更新
             $status = $this->getFieldById($id, 'status');
             //编辑草稿改变状态
@@ -155,7 +155,7 @@ class Document extends Model{
      */
     public function edit($data = null){
         /* 检查文档类型是否符合要求 */
-        $res = $this->checkDocumentType( Input('type',2), Input('pid') );
+        $res = $this->checkDocumentType( Input('param.type',2), Input('param.pid') );
         if(!$res['status']){
             $this->error = $res['info'];
             return false;
@@ -315,10 +315,10 @@ class Document extends Model{
      * @author huajie <banhuajie@163.com>
      */
     public function autoSave(){
-        $post = I('post.');
+		$data = Request::param();
 
         /* 检查文档类型是否符合要求 */
-        $res = $this->checkDocumentType( I('type',2), I('pid') );
+        $res = $this->checkDocumentType( Input('param.type',2), Input('param.pid') );
         if(!$res['status']){
             $this->error = $res['info'];
             return false;
@@ -327,7 +327,7 @@ class Document extends Model{
         //触发自动保存的字段
         $save_list = array('name','title','description','position','link_id','cover_id','deadline','create_time','content');
         foreach ($save_list as $value){
-            if(!empty($post[$value])){
+            if(!empty($data[$value])){
                 $if_save = true;
                 break;
             }
@@ -339,47 +339,50 @@ class Document extends Model{
         }
 
         //重置自动验证
-        $this->_validate = array(
-            array('name', '/^[a-zA-Z]\w{0,39}$/', '文档标识不合法', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
-            array('name', '', '标识已经存在', self::VALUE_VALIDATE, 'unique', self::MODEL_BOTH),
-            array('title', '1,80', '标题长度不能超过80个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-            array('description', '1,140', '简介长度不能超过140个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-            array('category_id', 'require', '分类不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
-            array('category_id', 'check_category', '该分类不允许发布内容', self::EXISTS_VALIDATE , 'function', self::MODEL_UPDATE),
-            array('category_id,type', 'check_category', '内容类型不正确', self::MUST_VALIDATE, 'function', self::MODEL_INSERT),
-            array('model_id,pid,category_id', 'check_catgory_model', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'function', self::MODEL_INSERT),
-            array('deadline', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
-            array('create_time', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
-        );
-        $this->_auto[] = array('status', '3', self::MODEL_BOTH);
+        //$this->_validate = array(
+        //    array('name', '/^[a-zA-Z]\w{0,39}$/', '文档标识不合法', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
+        //    array('name', '', '标识已经存在', self::VALUE_VALIDATE, 'unique', self::MODEL_BOTH),
+        //    array('title', '1,80', '标题长度不能超过80个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
+        //    array('description', '1,140', '简介长度不能超过140个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
+        //    array('category_id', 'require', '分类不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
+        //    array('category_id', 'check_category', '该分类不允许发布内容', self::EXISTS_VALIDATE , 'function', self::MODEL_UPDATE),
+        //    array('category_id,type', 'check_category', '内容类型不正确', self::MUST_VALIDATE, 'function', self::MODEL_INSERT),
+        //    array('model_id,pid,category_id', 'check_catgory_model', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'function', self::MODEL_INSERT),
+        //    array('deadline', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
+        //    array('create_time', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
+        //);
+        //$this->_auto[] = array('status', '3', self::MODEL_BOTH);
+		$this->auto['status'] = 3;
 
-        if(!($data = $this->create())){
-            return false;
-        }
+        //if(!($data = $this->create())){
+        //    return false;
+        //}
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = $this->add(); //添加基础内容
-            if(!$id){
+            $this->save($data); //添加基础内容
+            if(!$this->id){
                 $this->error = '新增基础内容出错！';
                 return false;
             }
-            $data['id'] = $id;
+			$id = $this->id;
         } else { //更新数据
-            $status = $this->save(); //更新基础内容
+            $status = $this->find($data['id'])->save($data); //更新基础内容
             if(false === $status){
                 $this->error = '更新基础内容出错！';
                 return false;
             }
+			$id = $data['id'];
         }
 
         /* 添加或新增扩展内容 */
         $logic = $this->logic($data['model_id']);
-        if(!$logic->autoSave($id)){
+        $logic->checkModelAttr($data['model_id']);
+        if(!$logic->edit($id)){
             if(isset($id)){ //新增失败，删除基础数据
                 $this->delete($id);
             }
-            $this->error = $logic->getError();
+            $this->error = $logic->error;
             return false;
         }
 

@@ -488,16 +488,17 @@ class Article extends Admin {
     /**
      * 写文章时自动保存至草稿箱
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function autoSave(){
-        $res = D('Document')->autoSave();
+        $res = model('Document')->autoSave();
         if($res !== false){
             $return['data']     =   $res;
             $return['info']     =   '保存草稿成功';
             $return['status']   =   1;
-            $this->ajaxReturn($return);
-        }else{
-            $this->error('保存草稿失败：'.D('Document')->getError());
+			return json($return);
+		}else{
+            $this->error('保存草稿失败：'.model('Document')->getError());
         }
     }
 
