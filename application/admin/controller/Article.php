@@ -656,7 +656,7 @@ class Article extends Admin {
                     $p_root = $Model->getFieldById($pid, 'root');
                     $data['root'] = $p_root == 0 ? $pid : $p_root;
                 }
-                $res = $Model->where($map)->save($data);
+                $res = $Model->where($map)->update($data);
             }
             session('moveArticle', null);
             if(false !== $res){
