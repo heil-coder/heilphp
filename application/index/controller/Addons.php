@@ -47,8 +47,7 @@ class Addons extends Controller{
         config('TMPL_PARSE_STRING', $TMPL_PARSE_STRING);
 
 		if(!empty($_addons) && !empty($_controller) && !empty($_action)){
-			//$Addons = action("\\addons\\".lcfirst($_addons)."\\controller\\{$_controller}")->$_action();
-			$Addons = controller("\\addons\\".lcfirst($_addons)."\\controller\\{$_controller}Controller");
+			$Addons = controller("\\addons\\".lcfirst($_addons)."\\controller\\{$_controller}");
 			$Addons->$_action();
 		} else {
 			$this->error('没有指定插件名称，控制器或操作！');

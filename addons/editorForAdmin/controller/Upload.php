@@ -10,7 +10,7 @@
 namespace addons\editorForAdmin\controller;
 use app\index\controller\Addons;
 
-class UploadController extends Addons{
+class Upload extends Addons{
 
 	public $uploader = null;
 
@@ -21,16 +21,35 @@ class UploadController extends Addons{
 		$setting = Config('EDITOR_UPLOAD');
 
 		/* 调用文件上传组件上传文件 */
-		$this->uploader = new Upload($setting, 'Local');
-		$info   = $this->uploader->upload($_FILES);
-		$info = Request()->file('file');	
-		if($info){
-			$url = Config('EDITOR_UPLOAD.rootPath').$info['imgFile']['savepath'].$info['imgFile']['savename'];
-			$url = str_replace('./', '/', $url);
-			$info['fullpath'] = env('root_path').$url;
+		$file = Request()->file('imgFile');	
+		$info = $file->validate(['ext'=>'jpg,jpeg,png,gif,bmp'])->move(env('root_path').'public/uploads/picture');
+		if(empty($info)){
+			$this->error = $file->getError();
+			$return = [
+				'error'	=> 1
+				,'message'	=> $this->error
+			];
+			return null;
 		}
-		session('upload_error', $this->uploader->getError());
-		return $info;
+
+		$data = [
+			'type'	=>		'local'
+			,'path'	=>		'/uploads/picture/'.$info->getSaveName()
+			,'md5'	=>		$info->hash('md5')
+			,'sha1'	=>		$info->hash('sha1')
+		];
+
+		$map = [];
+		$map[] = ['md5','=',$data['md5']];
+		$map[] = ['sha1','=',$data['sha1']];
+		$res = Db('Picture')->where($map)->find();
+		if(empty($res)){
+			$res = Db('Picture')->insertGetId($data);
+			$data['id'] = $res;
+		}
+
+		$return['fullpath'] = $data['path'];
+		return $return;
 	}
 
 	//keditor编辑器上传图片处理
@@ -44,7 +63,7 @@ class UploadController extends Addons{
 			unset($return['info'], $return['data']);
 		} else {
 			$return['error'] = 1;
-			$return['message']   = session('upload_error');
+			$return['message']   = $this->error;
 		}
 
 		/* 返回JSON数据 */

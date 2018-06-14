@@ -716,3 +716,21 @@ CREATE TABLE `heilphp_ucenter_setting` (
   `value` text NOT NULL COMMENT '配置数据',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='设置表';
+
+
+--
+-- 表的结构 `heilphp_picture`
+--
+
+DROP TABLE IF EXISTS `heilphp_picture`;
+CREATE TABLE IF NOT EXISTS `heilphp_picture` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id自增',
+  `type` varchar(50) NOT NULL,
+  `path` varchar(255) NOT NULL DEFAULT '' COMMENT '路径',
+  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '图片链接',
+  `md5` char(32) NOT NULL DEFAULT '' COMMENT '文件md5',
+  `sha1` char(40) NOT NULL DEFAULT '' COMMENT '文件 sha1编码',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100000 ;
