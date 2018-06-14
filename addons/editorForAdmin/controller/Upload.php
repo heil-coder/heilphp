@@ -16,19 +16,18 @@ class Upload extends Addons{
 
 	/* 上传图片 */
 	public function upload(){
-		session('upload_error', null);
 		/* 上传配置 */
 		$setting = Config('EDITOR_UPLOAD');
 
 		/* 调用文件上传组件上传文件 */
 		$file = Request()->file('imgFile');	
+		if(empty($file)){
+			$this->error = '没有检测到文件上传';
+			return null;
+		}
 		$info = $file->validate(['ext'=>'jpg,jpeg,png,gif,bmp'])->move(env('root_path').'public/uploads/picture');
 		if(empty($info)){
 			$this->error = $file->getError();
-			$return = [
-				'error'	=> 1
-				,'message'	=> $this->error
-			];
 			return null;
 		}
 
@@ -48,7 +47,10 @@ class Upload extends Addons{
 			$data['id'] = $res;
 		}
 
-		$return['fullpath'] = $data['path'];
+		$return = [
+			'fullpath' => $data['path']
+			,'imgFile' =>$info->getInfo()
+			];
 		return $return;
 	}
 
@@ -72,16 +74,21 @@ class Upload extends Addons{
 
 	//ueditor编辑器上传图片处理
 	public function ue_upimg(){
-
 		$img = $this->upload();
+
 		$return = array();
-		$return['url'] = $img['fullpath'];
-		$title = htmlspecialchars($_POST['pictitle'], ENT_QUOTES);
-		$return['title'] = $title;
-		$return['original'] = $img['imgFile']['name'];
-		$return['state'] = ($img)? 'SUCCESS' : session('upload_error');
+		if($img){
+			$return['url'] = $img['fullpath'];
+			$title = htmlspecialchars($_POST['pictitle'], ENT_QUOTES);
+			$return['title'] = $title;
+			$return['original'] = $img['imgFile']['name'];
+			$return['state'] = 'SUCCESS';
+		}
+		else{
+			$return['state'] = '上传失败';
+		}
 		/* 返回JSON数据 */
-		$this->ajaxReturn($return);
+		exit(json_encode($return));
 	}
 
 }
