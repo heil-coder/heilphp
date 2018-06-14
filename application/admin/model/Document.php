@@ -35,7 +35,7 @@ class Document extends Model{
     //);
 
 
-	protected $auto = ['uid','attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];
+	protected $auto = ['uid','status','attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];
 
 	protected function setUidAttr($value){
 		return UID ?: is_login();
