@@ -89,6 +89,9 @@
 							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/copy")}"><i class="fa fa-copy"></i>复制</button>
 							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" hide-data="true" url="{:Url("Article/paste")}"><i class="fa fa-paste"></i>粘贴</button>
 
+							<input type="hidden" class="hide-data" name="cate_id" value="{$cate_id}"/>
+							<input type="hidden" class="hide-data" name="pid" value="{$pid}"/>
+
 							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" target-form="ids" url="{:Url("Article/setStatus",array("status"=>-1))}"><i class="fa fa-remove"></i>删除</button>
 							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort',array('cate_id'=>$cate_id,'pid'=>input('pid',0)),'')}"><i class="fa fa-sort"></i>排序</button>
 						</div>
