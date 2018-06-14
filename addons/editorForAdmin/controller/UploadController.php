@@ -7,11 +7,10 @@
 // | Author: huajie <banhuajie@163.com>
 // +----------------------------------------------------------------------
 
-namespace Addons\EditorForAdmin\Controller;
-use Home\Controller\AddonsController;
-use Think\Upload;
+namespace addons\editorForAdmin\controller;
+use app\index\controller\Addons;
 
-class UploadController extends AddonsController{
+class UploadController extends Addons{
 
 	public $uploader = null;
 
@@ -19,15 +18,16 @@ class UploadController extends AddonsController{
 	public function upload(){
 		session('upload_error', null);
 		/* 上传配置 */
-		$setting = C('EDITOR_UPLOAD');
+		$setting = Config('EDITOR_UPLOAD');
 
 		/* 调用文件上传组件上传文件 */
 		$this->uploader = new Upload($setting, 'Local');
 		$info   = $this->uploader->upload($_FILES);
+		$info = Request()->file('file');	
 		if($info){
-			$url = C('EDITOR_UPLOAD.rootPath').$info['imgFile']['savepath'].$info['imgFile']['savename'];
+			$url = Config('EDITOR_UPLOAD.rootPath').$info['imgFile']['savepath'].$info['imgFile']['savename'];
 			$url = str_replace('./', '/', $url);
-			$info['fullpath'] = __ROOT__.$url;
+			$info['fullpath'] = env('root_path').$url;
 		}
 		session('upload_error', $this->uploader->getError());
 		return $info;
