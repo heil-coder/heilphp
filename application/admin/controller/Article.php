@@ -156,9 +156,9 @@ class Article extends Admin {
             $cate_id = $this->cate_id;
         }
         if(!empty($cate_id)){
-            $pid = input('pid',0);
+            $pid = input('param.pid/d',null);
             // 获取列表绑定的模型
-            if ($pid == 0) {
+            if (empty($pid)) {
                 $models     =   get_category($cate_id, 'model');
 				// 获取分组定义
 				$groups		=	get_category($cate_id, 'groups');
@@ -331,9 +331,9 @@ class Article extends Admin {
         //获取左边菜单
         $this->getMenu();
 
-        $cate_id    =   Request::param('cate_id',0);
-        $model_id   =   Request::param('model_id',0);
-		$group_id	=	Request::param('get.group_id','');
+        $cate_id    =   input('param.cate_id/d',null);
+        $model_id   =   input('param.model_id/d',null);
+		$group_id	=	input('param.group_id/d',null);
 
         empty($cate_id) && $this->error('参数不能为空！');
         empty($model_id) && $this->error('该分类未绑定模型！');
@@ -346,14 +346,14 @@ class Article extends Admin {
         $model    =   get_document_model($model_id);
 
         //处理结果
-        $info['pid']            =   Request::param('pid',0);
+        $info['pid']            =   input('param.pid',0);
         $info['model_id']       =   $model_id;
         $info['category_id']    =   $cate_id;
 		$info['group_id']		=	$group_id;
 
         if($info['pid']){
             // 获取上级文档
-            $article            =   M('Document')->field('id,title,type')->find($info['pid']);
+            $article            =   db('Document')->field('id,title,type')->find($info['pid']);
             $this->assign('article',$article);
         }
 
