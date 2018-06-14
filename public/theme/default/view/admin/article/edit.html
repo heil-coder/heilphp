@@ -321,7 +321,7 @@ $(function(){
 			if(title != '' || name != '' || des != ''){
 				$('#autoSave').click();
 			}
-		}, 1000*parseInt({:C('DRAFT_AOTOSAVE_INTERVAL')}));
+		}, 1000*parseInt({:Config('DRAFT_AOTOSAVE_INTERVAL')}));
 	}
 	autoSaveDraft();
 
