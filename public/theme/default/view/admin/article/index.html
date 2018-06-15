@@ -70,12 +70,12 @@
 								</button>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="btnGroupDropAdd">
 									{volist name="model" id="vo"}
-									<li><a href="{:Url('article/add',array('cate_id'=>$cate_id,'model_id'=>$vo,'pid'=>input('pid',0),'group_id'=>$group_id))}">{$vo|get_document_model='title'}</a></li>
+									<li><a href="{:Url('article/add',array('cate_id'=>$cate_id,'model_id'=>$vo,'pid'=>$pid,'group_id'=>$group_id))}">{$vo|get_document_model='title'}</a></li>
 									{/volist}
 								</ul>
 							</div>
 							{else /}
-							<a href="{:Url('article/add',array('cate_id'=>$cate_id,'pid'=>input('pid',0),'model_id'=>$model[0],'group_id'=>$group_id))}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
+							<a href="{:Url('article/add',array('cate_id'=>$cate_id,'pid'=>$pid,'model_id'=>$model[0],'group_id'=>$group_id))}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
 							{/if}
 							{else /}
 							<button class="btn btn-sm btn-success disabled"><i class="fa fa-plus"></i>新 增
@@ -93,7 +93,7 @@
 							<input type="hidden" class="hide-data" name="pid" value="{$pid}"/>
 
 							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" target-form="ids" url="{:Url("Article/setStatus",array("status"=>-1))}"><i class="fa fa-remove"></i>删除</button>
-							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort',array('cate_id'=>$cate_id,'pid'=>input('pid',0)),'')}"><i class="fa fa-sort"></i>排序</button>
+							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort',array('cate_id'=>$cate_id,'pid'=>$pid),'')}"><i class="fa fa-sort"></i>排序</button>
 						</div>
 					</div>
 					<div class="card-body p-0">

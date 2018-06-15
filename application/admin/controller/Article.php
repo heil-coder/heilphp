@@ -10,7 +10,6 @@
 namespace app\admin\controller;
 use app\admin\controller\Admin;
 use app\admin\model\AuthGroup;
-use Request;
 
 /**
  * 后台内容控制器
@@ -33,19 +32,19 @@ class Article extends Admin {
      */
     protected function checkDynamic(){
         $cates = AuthGroup::getAuthCategories(UID);
-        switch(strtolower(Request::action())){
+        switch(strtolower(Request()->action())){
             case 'index':   //文档列表
             case 'add':   // 新增
-				$cate_id =  Request::param('cate_id');
+				$cate_id =  input('param.cate_id/d');
                 break;
             case 'edit':    //编辑
             case 'update':  //更新
-                $doc_id  =  Request::param('id');
+                $doc_id  =  input('param.id/d');
                 $cate_id =  db('Document')->where('id',$doc_id)->value('category_id');
                 break;
             case 'setstatus': //更改状态
             case 'permit':    //回收站
-                $doc_id  =  Request::param('ids/a');;
+                $doc_id  =  input('param.ids/a',[]);
                 $cate_id =  db('Document')->where('id','in',$doc_id)->column('category_id');
                 $cate_id =  array_unique($cate_id);
                 break;
@@ -82,12 +81,12 @@ class Article extends Admin {
         $cate           =   list_to_tree($cate);    //生成分类树
 
         //获取分类id
-        $cate_id        =   Request::param('cate_id');
+        $cate_id        =   input('param.cate_id/d');
         $this->cate_id  =   $cate_id;
 
         //是否展开分类
         $hide_cate = false;
-        if(Request::action()!= 'recycle' && Request::action() != 'draftbox' && Request::action() != 'mydocument'){
+        if(Request()->action()!= 'recycle' && Request()->action() != 'draftbox' && Request()->action() != 'mydocument'){
             $hide_cate  =   true;
         }
 
@@ -247,35 +246,33 @@ class Article extends Admin {
     protected function getDocumentList($cate_id=0,$model_id=null,$position=null,$field=true,$group_id=null){
         /* 查询条件初始化 */
         $map = array();
-        if(Request::has('title')){
-            $map[]  = ['title','like','%'.Request::param('title/s').'%'];
+        if(Request()->has('title')){
+            $map[]  = ['title','like','%'.input('param.title/s').'%'];
         }
-        if(Request::has('status')){
-			$status = Request::param('status');
+        if(Request()->has('status')){
+			$status = input('param.status/d');
             $map[] = ['status','=',$status];
         }else{
             $status = null;
             $map[] = ['status','in','0,1,2'];
         }
-        if ( Request::has('time-start') ) {
+        if (Request()->has('time-start') ) {
             $map[] = ['update_time','>=',strtotime(input('time-start'))];
         }
-        if ( Request::has('time-end') ) {
+        if (Request()->has('time-end') ) {
             $map[] = ['update_time','<=',24*60*60 + strtotime(input('time-end'))];
         }
-        if ( Request::has('nickname') ) {
+        if (Request()->has('nickname') ) {
             $map[] = ['uid','in',db('Member')->where('nickname','like','%'.input('nickname').'%')->column('id')];
         }
 
         // 构建列表数据
         $Document = db('Document');
 
-        if($cate_id){
-        }
-        $map[]         =   ['pid','=',Request::param('pid',0)];
+        $map[]         =   ['pid','=',input('param.pid/d',0)];
         //非子文档列表 && 收到分类id条件
-		if(!Request::has('pid') && $cate_id){
-            $map['category_id'] =   ['category_id','=',$cate_id];
+		if(!Request()->has('pid') && $cate_id){
+            $map[] =   ['category_id','=',$cate_id];
 		}
         $Document->alias('DOCUMENT');
         if(!is_null($model_id)){
@@ -299,9 +296,9 @@ class Article extends Admin {
 
         $list = $this->getListing($Document,$map,'level DESC,id DESC',$field);
 
-        if(Request::has('pid')){
+        if(Request()->has('pid')){
             // 获取上级文档
-            $article    =   $Document->field('id,title,type')->find(Request::has('pid'));
+            $article    =   $Document->field('id,title,type')->find(input('param.pid/d'));
             $this->assign('article',$article);
         }
         //检查该分类是否允许发布内容
@@ -309,7 +306,7 @@ class Article extends Admin {
 
         $this->assign('status', $status);
         $this->assign('allow',  $allow_publish);
-        $this->assign('pid',    Request::param('pid'));
+        $this->assign('pid',    input('param.pid/d',null));
 
         $this->assign('meta_title','文档列表');
         return $list;
@@ -761,15 +758,15 @@ class Article extends Admin {
             $pid        =   Input('get.pid/d');
 
             //获取排序的数据
-            $map['status'] = ['status','>',-1];
+            $map[] = ['status','>',-1];
             if(!empty($ids)){
-                $map['id'] = ['id','in',$ids];
+                $map[] = ['id','in',$ids];
             }else{
                 if(!is_null($cate_id)){
-                    $map['category_id'] = ['category_id','=',$cate_id];
+                    $map[] = ['category_id','=',$cate_id];
                 }
                 if(!is_null($pid)){
-                    $map['pid'] = ['pid','=',$pid];
+                    $map[] = ['pid','=',$pid];
                 }
             }
             $list = db('Document')->where($map)->field('id,title')->order('level DESC,id DESC')->select();
