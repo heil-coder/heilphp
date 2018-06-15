@@ -288,7 +288,7 @@ class Article extends Admin {
             }            
         }
         if(!is_null($position)){
-            $map[] = "position & {$position} = {$position}";
+			$Document = $Document->where('position','exp'," & {$position} = {$position}");
         }
 		if(!is_null($group_id)){
 			$map[]	=	['group_id','=',$group_id];

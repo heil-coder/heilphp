@@ -162,8 +162,12 @@ class Admin extends Controller {
 		$tmpOptions = $Db->getOptions();
 		$hasSoftDeleteCondition = false;
 		if(!empty($tmpOptions['where']['AND'])){
+			if(in_array('delete_time',$tmpOptions['where']['AND'])){
+				$hasSoftDeleteCondition = true;
+				break;
+			}
 			foreach($tmpOptions['where']['AND'] as $val){
-				if(in_array('delete_time',$val)){
+				if(is_array($val) && in_array('delete_time',$val)){
 					$hasSoftDeleteCondition = true;
 					break;
 				}
@@ -196,8 +200,8 @@ class Admin extends Controller {
         $Db->setOption('where',[]);
 
         $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
+		!empty($tmpOptions['where']) && $Db = $Db->setOption('where',$tmpOptions['where']);
 		if(!$isSoftDelete || ($isSoftDelete && $hasSoftDeleteCondition)){
-			$isSoftDelete && $Db = $Db->setOption('where',$tmpOptions['where']);
 			$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
 		}
 		else{
