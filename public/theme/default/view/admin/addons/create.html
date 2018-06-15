@@ -5,7 +5,7 @@
 {block name="style"}
 <link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
 <link rel="stylesheet" href="__THEME__/default/view/admin/static/js/codemirror/codemirror.css">
-<link rel="stylesheet" href="__THEME__/default/view/admin/static/js/codemirror/theme/{:config('CODEMIRROR_THEME')}.css">
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/js/codemirror__THEME__/{:config('CODEMIRROR_THEME')}.css">
 <style>
 .CodeMirror,#preview_window{
 	width:700px;
@@ -177,7 +177,7 @@
 {/block}
 
 {block name='script'}
-<script src="/theme/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" src="__THEME__/default/view/admin/static/js/codemirror/codemirror.js"></script>
 <script type="text/javascript" src="__THEME__/default/view/admin/static/js/codemirror/xml.js"></script>
 <script type="text/javascript" src="__THEME__/default/view/admin/static/js/codemirror/javascript.js"></script>
