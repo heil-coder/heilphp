@@ -288,7 +288,7 @@ class Article extends Admin {
             }            
         }
         if(!is_null($position)){
-			$Document = $Document->where('position','exp'," & {$position} = {$position}");
+			$Document = $Document->where('position','exp'," & {$position} > 0");
         }
 		if(!is_null($group_id)){
 			$map[]	=	['group_id','=',$group_id];
@@ -563,7 +563,7 @@ class Article extends Admin {
      */
     public function permit(){
         /*参数过滤*/
-        $ids = input('param.ids');
+        $ids = input('param.ids/a',[]);
         if(empty($ids)){
             $this->error('请选择要操作的数据');
         }
@@ -571,11 +571,7 @@ class Article extends Admin {
         /*拼接参数并修改状态*/
         $Model  =   'Document';
         $map    =   array();
-        if(is_array($ids)){
-            $map['id'] = array('in', $ids);
-        }elseif (is_numeric($ids)){
-            $map['id'] = $ids;
-        }
+        $map[] = ['id','in',$ids];
         $this->restore($Model,$map);
     }
 
@@ -584,7 +580,7 @@ class Article extends Admin {
      * @author huajie <banhuajie@163.com>
      */
     public function clear(){
-        $res = D('Document')->remove();
+        $res = model('Document')->remove();
         if($res !== false){
             $this->success('清空回收站成功！');
         }else{

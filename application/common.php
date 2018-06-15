@@ -513,6 +513,34 @@ function get_model_attribute($model_id, $group = true,$fields=true){
     return $attr;
 }
 /**
+ * 获取数据的所有子孙数据的id值
+ * @author 朱亚杰 <xcoolcc@gmail.com>
+ * @modify Jason <1878566968@qq.com>
+ */
+
+function get_stemma($pids, &$model, $field='id'){
+    $collection = array();
+
+    //非空判断
+    if(empty($pids)){
+        return $collection;
+    }
+
+    if( is_array($pids) ){
+        $pids = trim(implode(',',$pids),',');
+    }
+    $result     = $model->field($field)->where('pid','IN',(string)$pids)->select()->toArray();
+    $child_ids  = array_column ((array)$result,'id');
+
+    while( !empty($child_ids) ){
+        $collection = array_merge($collection,$result);
+        $result     = $model->field($field)->where('pid','IN',$child_ids)->select()->toArray();
+        $child_ids  = array_column((array)$result,'id');
+    }
+    return $collection;
+}
+
+/**
  * 系统非常规MD5加密方法
  * @param  string $str 要加密的字符串
  * @return string

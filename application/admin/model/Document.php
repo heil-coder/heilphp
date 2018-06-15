@@ -9,6 +9,7 @@
 
 namespace app\admin\model;
 use think\Model;
+use think\model\concern\SoftDelete;
 use Request;
 use Env;
 use Hook;
@@ -17,6 +18,7 @@ use Hook;
  * 文档基础模型
  */
 class Document extends Model{
+	use SoftDelete;
 	public $error;
 	protected $autoWriteTimestamp = true;
     /* 自动验证规则 */
@@ -281,12 +283,13 @@ class Document extends Model{
     public function remove(){
         //查询假删除的基础数据
         if ( is_administrator() ) {
-            $map = array('status'=>-1);
-        }else{
+			$base_list = $this->onlyTrashed()->field('id,model_id')->select()->toArray();
+		}
+		else{
             $cate_ids = AuthGroupModel::getAuthCategories(UID);
-            $map = array('status'=>-1,'category_id'=>array( 'IN',trim(implode(',',$cate_ids),',') ));
+			$map[] = ['category_id','IN',trim(implode(',',$cate_ids),',')];
+			$base_list = $this->onlyTrashed()->where($map)->field('id,model_id')->select()->toArray();
         }
-        $base_list = $this->where($map)->field('id,model_id')->select();
         //删除扩展模型数据
         $base_ids = array_column($base_list,'id');
         //孤儿数据
@@ -295,16 +298,16 @@ class Document extends Model{
         $all_list  = array_merge( $base_list,$orphan );
         foreach ($all_list as $key=>$value){
             $logic = $this->logic($value['model_id']);
-            $logic->delete($value['id']);
+            $logic->where('id',$value['id'])->delete();
         }
 
         //删除基础数据
         $ids = array_merge( $base_ids, (array)array_column($orphan,'id') );
         if(!empty($ids)){
-            $res = $this->where( array( 'id'=>array( 'IN',trim(implode(',',$ids),',') ) ) )->delete();
+            $res = Db($this->getName())->where('id','IN',trim(implode(',',$ids),','))->delete();
         }
 
-        return $res;
+        return isset($res) ? $res : true;
     }
 
 
