@@ -262,15 +262,15 @@ class Authmanage extends Admin{
         $prefix   = config('database.prefix');
         $l_table  = $prefix.(AuthGroup::MEMBER);
         $r_table  = $prefix.(AuthGroup::AUTH_GROUP_ACCESS);
-        $model    = db(AuthGroup::MEMBER)->alias('m')->join ( $r_table.' a','m.id=a.uid' );
+        $model    = db(AuthGroup::MEMBER)->alias('m')->join ( $r_table.' a','m.uid=a.uid' );
 		$_REQUEST = array();
 		$list = $this->getListing($model
 			,[
 				['a.group_id','=',$group_id]
 				,['m.status','>=',0]
 			]
-			,'m.id asc'
-			,'m.id,m.nickname,m.last_login_time,m.last_login_ip,m.status');
+			,'m.uid asc'
+			,'m.uid,m.nickname,m.last_login_time,m.last_login_ip,m.status');
         int_to_string($list);
         $this->assign( '_list',     $list );
         $this->assign('auth_group', $auth_group);
