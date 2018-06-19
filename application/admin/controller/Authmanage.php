@@ -302,7 +302,7 @@ class Authmanage extends Admin{
      * @author 朱亚杰 <zhuyajie@topthink.net>
      */
     public function addToGroup(){
-        $uid = input('uid');
+        $uid = input('param.uid/d');
         $gid = input('group_id/a');
         if( empty($uid) ){
             $this->error('参数有误');
@@ -312,7 +312,7 @@ class Authmanage extends Admin{
             if ( is_administrator($uid) ) {
                 $this->error('该用户为超级管理员');
             }
-            if( !db('Member')->where('id',$uid)->find() ){
+            if( !db('Member')->where('uid',$uid)->find() ){
                 $this->error('用户不存在');
             }
         }
