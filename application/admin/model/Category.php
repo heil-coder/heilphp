@@ -155,6 +155,7 @@ class Category extends Model{
         /* 添加或更新数据 */
         if(empty($data['id'])){
             $res = $this->save($data);
+			$data['id'] = $this->id;
         }else{
 			$res = $this->get($data['id'])->save($data);
         }
@@ -163,7 +164,7 @@ class Category extends Model{
         cache('sys_category_list', null);
 
         //记录行为
-        action_log('update_category', 'category', $this->id, UID);
+        action_log('update_category', 'category', $data['id'], UID);
 
         return $res;
     }
