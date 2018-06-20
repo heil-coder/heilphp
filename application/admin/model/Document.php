@@ -94,7 +94,7 @@ class Document extends Model{
         if(empty($id)){	//新增
         	$cate = input('post.category_id');
         	$check 	=	db('Category')->getFieldById($cate,'check');  	
-            $status = 	$this->auto['status'] ?: ($check ? 2 : 1);
+            $status = 	!empty($this->auto['status']) ? $this->auto['status'] : ($check ? 2 : 1);
         }else{				//更新
             $status = $this->getFieldById($id, 'status');
             //编辑草稿改变状态
