@@ -1,9 +1,38 @@
 {extend name="public/base" /}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
 
-{block name="body"}
-	<div class="main-title cf">
-		<h2>新增模型</h2>
-	</div>
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					新增模型
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('modelmanage/index')}">模型管理</a></li>
+					<li class="breadcrumb-item active">新增模型</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
 
 	<!-- 标签页导航 -->
 	<div class="tab-wrap">
@@ -68,9 +97,20 @@
 			</form>
 		</div>
 	</div>
+
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
 {/block}
-{block name="script"}
+
+{block name='script'}
 <script type="text/javascript" src="__STATIC__/js/jquery.dragsort-0.5.1.min.js"></script>
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" charset="utf-8">
     //导航高亮
     highlight_subnav('{:Url('modelmanage/add')}');
