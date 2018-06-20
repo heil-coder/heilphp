@@ -15,6 +15,7 @@ use Request;
  * 分类模型
  */
 class Category extends Model{
+	public $error = null;
 	protected $autoWriteTimestamp = true;
 
     /* 自动完成规则 */

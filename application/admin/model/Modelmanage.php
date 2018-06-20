@@ -24,6 +24,7 @@ use Request;
  * @modify Jason<1878566968@qq.com>
  */
 class Modelmanage extends Model{
+	public $error = null;
 	protected $name= 'model';
 	protected $autoWriteTimestamp = true;
 
@@ -60,8 +61,9 @@ class Modelmanage extends Model{
         }
 
 		$validate = new \app\admin\validate\Model;
-		if(!$validate->check($data)){
-		
+		if(!$validate->scene('add')->check($data)){
+			$this->error = $validate->getError();
+			return false;
 		}
 
         /* 添加或新增基础内容 */
