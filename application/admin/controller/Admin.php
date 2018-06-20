@@ -279,7 +279,7 @@ class Admin extends Controller {
 		if(is_string($model)){
 			$model = model($model);
 		}
-		$model = $model->whereNotNull('delete_time');
+		$model = $model->onlyTrashed();
         $this->editRow(   $model , $data, $where, $msg);
     }
     /**
