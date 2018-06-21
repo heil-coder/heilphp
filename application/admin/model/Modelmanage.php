@@ -24,7 +24,6 @@ use Request;
  * @modify Jason<1878566968@qq.com>
  */
 class Modelmanage extends Model{
-	public $error = null;
 	protected $name= 'model';
 	protected $autoWriteTimestamp = true;
 
