@@ -30,7 +30,8 @@ class Document extends Validate
 		]
 		,'category_id'	=>	[
 			'require'
-			//,'checkCategory'
+			,'checkCategory'
+			,'checkCategoryModel'
 		]
     ];
 
@@ -50,17 +51,18 @@ class Document extends Validate
     ];
 
 	protected function checkCategory($id,$rule,$data){
-		if (is_array($id)) {
-			$id['type']	=	!empty($id['type'])?$id['type']:2;
-			$type = get_category($id['category_id'], 'type');
-			$type = explode(",", $type);
-			return in_array($id['type'], $type);
-		} else {
-			$publish = get_category($id, 'allow_publish');
-			return $publish ? true : false;
-		}
+		//检查是否允许发布内容
+		$publish = get_category($id, 'allow_publish');
+		if($publish === false) return '该分类不允许发布内容';
+		//检查类型是否允许发布
+		$data['type']	=	!empty($data['type']) ? $data['type'] : 2;
+		$type = get_category($id, 'type');
+		$type = explode(",", $type);
+		return in_array($data['type'], $type) ? true : '该分类不允许发布该类型内容';
 	}
 	protected function checkCategoryModel($id,$rule,$data){
-	
+		$cate   =   get_category($id);
+		$array  =   explode(',', $data['pid'] ? $cate['model_sub'] : $cate['model']);
+		return in_array($data['model_id'], $array) ? true : '该分类没有绑定当前模型';
 	}
 }

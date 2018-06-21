@@ -383,6 +383,16 @@ function check_category($id){
     }
 }
 /**
+ * 检测分类是否绑定了指定模型
+ * @param  array $info 模型ID和分类ID数组
+ * @return boolean     true-绑定了模型，false-未绑定模型
+ */
+function check_category_model($info){
+    $cate   =   get_category($info['category_id']);
+    $array  =   explode(',', $info['pid'] ? $cate['model_sub'] : $cate['model']);
+    return in_array($info['model_id'], $array);
+}
+/**
  * 获取分类信息并缓存分类
  * @param  integer $id    分类ID
  * @param  string  $field 要获取的字段名
