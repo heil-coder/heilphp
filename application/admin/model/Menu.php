@@ -26,7 +26,7 @@ class Menu extends Model {
 	 * 编辑配置
 	 */
 	public function edit(){
-        $data = Request()->only('title,pid,sort,url,hide,tip,group,is_dev,status');
+        $data = Request()->only('id,title,pid,sort,url,hide,tip,group,is_dev,status');
 		if(empty($data)){
 			return false;	
 		}
