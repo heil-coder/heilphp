@@ -8,7 +8,6 @@
 // +----------------------------------------------------------------------
 
 namespace app\admin\controller;
-use Request;
 
 /**
  * 后台菜单控制器
@@ -21,12 +20,12 @@ class Menu extends Admin{
      * @author Jason	<1878566968@qq.com>
      */
     public function index(){
-        $pid  = Request::param('pid/d',0);
+        $pid  = input('param.pid/d',0);
         if($pid){
             $data = db('Menu')->where('id',$pid)->field(true)->find();
             $this->assign('data',$data);
         }
-        $title      =   trim(Request::param('title'));
+        $title      =   trim(input('param.title'));
         $type       =   Config('CONFIG_GROUP_LIST');
         $all_menu   =   db('Menu')->column('id,title');
         $map[] =   ['pid','=',$pid];
@@ -52,9 +51,9 @@ class Menu extends Admin{
      * 新增菜单
      */
     public function add(){
-        if(Request::param('title')){
+        if(input('param.title')){
             $mMenu = model('Menu');
-            $data = Request::only('title,pid,sort,url,hide,tip,group,is_dev,status');
+            $data = Request()->only('title,pid,sort,url,hide,tip,group,is_dev,status');
             if($data){
                 $id = $mMenu->save($data);
                 if($id){
@@ -69,7 +68,7 @@ class Menu extends Admin{
                 $this->error($mMenu->getError());
             }
         } else {
-            $this->assign('info',array('pid'=>Request::param('pid')));
+            $this->assign('info',array('pid'=>input('param.pid')));
             $menus = db('Menu')->field(true)->select();
             $menus = model('Tree')->toFormatTree($menus);
             $menus = array_merge(array(0=>array('id'=>0,'title_show'=>'顶级菜单')), $menus);
@@ -82,11 +81,11 @@ class Menu extends Admin{
      * 编辑配置
      */
     public function edit($id = 0){
-        if(Request::isPost()){
+        if(Request()->isPost()){
             $mMenu = model('Menu');
-            $data = Request::only('title,pid,sort,url,hide,tip,group,is_dev,status');
+            $data = Request()->only('title,pid,sort,url,hide,tip,group,is_dev,status');
             if($data){
-                if($mMenu->where('id',Request::param('id/d'))->find()->save($data)!== false){
+                if($mMenu->where('id',input('param.id/d'))->find()->save($data)!== false){
                     session('ADMIN_MENU_LIST',null);
                     //记录行为
                     //action_log('update_menu', 'Menu', $data['id'], UID);
@@ -118,7 +117,7 @@ class Menu extends Admin{
      * 删除后台菜单
      */
     public function del(){
-        $id = array_unique(Request::param('id/a',[]));
+        $id = array_unique(input('param.id/a',[]));
 
         if ( empty($id) ) {
             $this->error('请选择要操作的数据!');
@@ -132,6 +131,48 @@ class Menu extends Admin{
             $this->success('删除成功');
         } else {
             $this->error('删除失败！');
+        }
+    }
+    /**
+     * 菜单排序
+     * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
+     */
+    public function sort(){
+        if(Request()->isGet()){
+            $ids = Input('param.ids');
+            $pid = Input('param.pid/d',0);
+
+            //获取排序的数据
+			$map = [
+				['status','>',-1]
+			];
+            if(!empty($ids)){
+                $map[] = ['id','in',$ids];
+            }else{
+                if($pid !== ''){
+                    $map[] = ['pid','=',$pid];
+                }
+            }
+            $list = Db('Menu')->where($map)->field('id,title')->order('sort asc,id asc')->select();
+
+            $this->assign('list', $list);
+            $this->assign('meta_title','菜单排序');
+			return view();
+        }elseif (Request()->isPost()){
+            $ids = Input('post.ids');
+            $ids = explode(',', $ids);
+            foreach ($ids as $key=>$value){
+                $res = Db('Menu')->where('id',$value)->setField('sort', $key+1);
+            }
+            if($res !== false){
+                session('ADMIN_MENU_LIST',null);
+                $this->success('排序成功！');
+            }else{
+                $this->error('排序失败！');
+            }
+        }else{
+            $this->error('非法请求！');
         }
     }
 }
