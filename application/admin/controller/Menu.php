@@ -83,19 +83,13 @@ class Menu extends Admin{
     public function edit($id = 0){
         if(Request()->isPost()){
             $mMenu = model('Menu');
-            $data = Request()->only('title,pid,sort,url,hide,tip,group,is_dev,status');
-            if($data){
-                if($mMenu->where('id',input('param.id/d'))->find()->save($data)!== false){
-                    session('ADMIN_MENU_LIST',null);
-                    //记录行为
-                    //action_log('update_menu', 'Menu', $data['id'], UID);
-                    $this->success('更新成功', Cookie('__forward__'));
-                } else {
-                    $this->error('更新失败');
-                }
-            } else {
-                $this->error($mMenu->getError());
-            }
+			$res = $mMenu->edit();
+			if($res !== false){
+				session('ADMIN_MENU_LIST',null);
+				$this->success('更新成功', Cookie('__forward__'));
+			} else {
+				$this->error($mMenu->getError() ?: '更新失败');
+			}
         } else {
             $info = array();
             /* 获取数据 */
