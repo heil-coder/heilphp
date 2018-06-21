@@ -36,7 +36,36 @@ class Config extends Model {
         }
         return $config;
     }
+	/**
+	 * 编辑配置
+	 */
+	public function edit(){
+        $data = Request()->only(['id','name','type','title','group','extra','remark','value','sort']);
+		if(empty($data)){
+			return false;	
+		}
 
+		$validate = new \app\admin\validate\Config;
+		if(!$validate->check($data)){
+			$this->error = $validate->getError();
+			return false;
+		}
+
+		if(empty($data['id'])){
+			$res = $this->save($data);
+			$data['id'] = $this->id;
+		}
+		else{
+			$res = $this->get($data['id'])->save($data);
+		}
+		if($res === false){
+			return false;	
+		}
+		else{
+			return $res;
+		}
+        action_log('update_config','config',$data['id'],UID);
+	}
     /**
      * 根据配置类型解析配置
      * @param  integer $type  配置类型
@@ -59,5 +88,4 @@ class Config extends Model {
         }
         return $value;
     }
-
 }
