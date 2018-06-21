@@ -51,22 +51,15 @@ class Menu extends Admin{
      * 新增菜单
      */
     public function add(){
-        if(input('param.title')){
+        if(Request()->isPost()){
             $mMenu = model('Menu');
-            $data = Request()->only('title,pid,sort,url,hide,tip,group,is_dev,status');
-            if($data){
-                $id = $mMenu->save($data);
-                if($id){
-                    session('ADMIN_MENU_LIST',null);
-                    //记录行为
-                    //action_log('update_menu', 'Menu', $id, UID);
-                    $this->success('新增成功', Cookie('__forward__'));
-                } else {
-                    $this->error('新增失败');
-                }
-            } else {
-                $this->error($mMenu->getError());
-            }
+			$res = $mMenu->edit();
+			if($res !== false){
+				session('ADMIN_MENU_LIST',null);
+				$this->success('更新成功', Cookie('__forward__'));
+			} else {
+				$this->error($mMenu->getError() ?: '更新失败');
+			}
         } else {
             $this->assign('info',array('pid'=>input('param.pid')));
             $menus = db('Menu')->field(true)->select();

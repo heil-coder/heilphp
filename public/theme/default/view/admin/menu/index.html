@@ -32,7 +32,7 @@
 							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
 							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
 							<a href="{:Url('add',['pid'=>input('param.pid')])}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
-							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url('del')}"><i class="fa fa-remove"></i>删除</button>
+							<button type="button" class="btn btn-sm btn-danger ajax-post" target-form="ids" url="{:Url('del')}"><i class="fa fa-remove"></i>删除</button>
 							<a href="{:Url('import',array('pid'=>$Request.param.pid))}"><button type="button" class="btn btn-sm btn-success">导入</button></a>
 							<button class="btn btn-sm btn-success list_sort" url="{:Url('sort',['pid'=>input('param.pid')],'')}">排序</button>
 						</div>
