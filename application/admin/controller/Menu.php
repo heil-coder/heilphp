@@ -127,6 +127,48 @@ class Menu extends Admin{
             $this->error('删除失败！');
         }
     }
+	/**
+	 * 菜单导入
+	 */
+    public function import(){
+        if(Request()->isPost()){
+            $tree = Input('post.tree');
+            $lists = explode(PHP_EOL, $tree);
+            $menuModel = Db('Menu');
+            if($lists == []){
+                $this->error('请按格式填写批量导入的菜单，至少一个菜单');
+            }else{
+                $pid = Input('post.pid/d',0);
+                foreach ($lists as $key => $value) {
+                    $record = explode('|', $value);
+                    if(count($record) == 2){
+						$data[] = [
+							'title'=>$record[0],
+							'url'=>$record[1],
+							'pid'=>$pid,
+							'sort'=>0,
+							'hide'=>0,
+							'tip'=>'',
+							'is_dev'=>0,
+							'group'=>''
+						];
+                    }
+                }
+				if(!empty($data)){
+					$menuModel->insertAll($data);
+				}
+                session('ADMIN_MENU_LIST',null);
+                $this->success('导入成功',Url('index',['pid'=>$pid]));
+            }
+        }else{
+            $this->assign('meta_title','批量导入后台菜单');
+            $pid = Input('param.pid/d');
+            $this->assign('pid', $pid);
+            $data = db('Menu')->where('id',$pid ?: 0)->field(true)->find();
+            $this->assign('data', $data);
+			return view();
+        }
+    }
     /**
      * 菜单排序
      * @author huajie <banhuajie@163.com>
