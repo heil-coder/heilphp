@@ -7,6 +7,14 @@
 // | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: huajie <banhuajie@163.com>
+// +----------------------------------------------------------------------
+
 namespace app\admin\controller;
 use app\admin\controller\Admin;
 use app\admin\model\AuthGroup;
@@ -323,6 +331,7 @@ class Article extends Admin {
     /**
      * 文档新增页面初始化
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function add(){
         //获取左边菜单
@@ -367,6 +376,7 @@ class Article extends Admin {
     /**
      * 文档编辑页面初始化
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function edit(){
         //获取左边菜单
@@ -411,6 +421,7 @@ class Article extends Admin {
     /**
      * 更新一条数据
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function update(){
         $document   =   model('Document');
@@ -454,6 +465,7 @@ class Article extends Admin {
     /**
      * 回收站列表
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function recycle(){
         //获取左边菜单
@@ -502,6 +514,7 @@ class Article extends Admin {
     /**
      * 草稿箱
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function draftBox(){
         //获取左边菜单
@@ -578,6 +591,7 @@ class Article extends Admin {
     /**
      * 清空回收站
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function clear(){
         $res = model('Document')->remove();
@@ -591,6 +605,7 @@ class Article extends Admin {
     /**
      * 移动文档
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function move() {
         if(empty($_POST['ids'])) {
@@ -604,6 +619,7 @@ class Article extends Admin {
     /**
      * 拷贝文档
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function copy() {
         if(empty($_POST['ids'])) {
@@ -617,6 +633,7 @@ class Article extends Admin {
     /**
      * 粘贴文档
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function paste() {
         $moveList = session('moveArticle');
@@ -696,6 +713,7 @@ class Article extends Admin {
     /**
      * 检查数据是否符合粘贴的要求
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     protected function checkPaste($list, $cate_id, $pid){
         $return = array('status'=>1);
@@ -743,6 +761,7 @@ class Article extends Admin {
     /**
      * 文档排序
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function sort(){
         if(Request()->isGet()){

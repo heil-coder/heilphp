@@ -733,4 +733,25 @@ CREATE TABLE IF NOT EXISTS `heilphp_picture` (
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
   `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100000 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100000 COMMENT = '图片表';
+
+
+--
+-- 表的结构 `heilphp_file`
+--
+
+DROP TABLE IF EXISTS `heilphp_file`;
+CREATE TABLE IF NOT EXISTS `heilphp_file` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id自增',
+  `name` varchar(50) NULL COMMENT '原始文件名',
+  `savename` varchar(50) NULL COMMENT '保存文件名',
+  `savepath` varchar(255) NULL COMMENT '文件保存路径',
+  `ext` char(6) NULL COMMENT '文件后缀',
+  `mime` char(40) NULL COMMENT '文件mime类型',
+  `size` bigint(10) NULL COMMENT '文件大小',
+  `md5` char(32) NULL COMMENT '文件MD5',
+  `sha1` char(40) NULL COMMENT '文件MD5',
+  `location` tinyint(1) unsigned NULL COMMENT '文件保存位置 0-本地,1-FTP',
+  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '上传时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100000 COMMENT = '文件表';
