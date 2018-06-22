@@ -38,6 +38,7 @@ class File extends Admin{
         /* 记录附件信息 */
         if($info){
 			$return['msg'] = $info['name'] ?: '上传成功';
+			$return['data'] = $info;
         } else {
 			$return['msg'] = $File->getError() ?: '上传失败';
         }
