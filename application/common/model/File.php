@@ -52,30 +52,28 @@ class File extends Model{
 			$this->error = '没有接收到上传文件';
 			return false;	
 		}
-		$info = $file->move(env('root_path').'public/uploads/file');
 		if(extension_loaded('php_fileinfo')){
-			$mime = $info->getMime();
+			$mime = $file->getMime();
 		}
 
-		$data = [
-			'name'				=> $info->getInfo('name')
-			,'savename'			=> $info->getFileName()
-			,'savepath'			=> '/uploads/file/'.$info->getSaveName()
-			,'size'				=> $info->getInfo('size')
-			,'md5'				=> $info->hash('md5')
-			,'sha1'				=> $info->hash('sha1')
-		];
-		$this->insert['location'] = 'ftp' === strtolower($driver) ? 1 : 0;
-
 		$map = [];
-		$map[] = ['md5','=',$data['md5']];
-		$map[] = ['sha1','=',$data['sha1']];
+		$map[] = ['md5','=',$file->hash('md5')];
+		$map[] = ['sha1','=',$file->hash('sha1')];
 		$res = $this->where($map)->find();
 		if($res){
-			unlink(env('root_path').'public/uploads/file/'.$info->getSaveName());
 			return $res;	
 		}
 		else{
+			$this->insert['location'] = 'ftp' === strtolower($driver) ? 1 : 0;
+			$info = $file->move(env('root_path').'public/uploads/file');
+			$data = [
+				'name'				=> $info->getInfo('name')
+				,'savename'			=> $info->getFileName()
+				,'savepath'			=> '/uploads/file/'.$info->getSaveName()
+				,'size'				=> $info->getInfo('size')
+				,'md5'				=> $info->hash('md5')
+				,'sha1'				=> $info->hash('sha1')
+			];
 			$res = $this->isUpdate(false)->save($data);
 			$data['id'] = $this->id;
 			return $data;
