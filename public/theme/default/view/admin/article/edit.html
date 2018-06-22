@@ -273,7 +273,7 @@ $(function(){
     });
     showTab();
 
-	{if condition="Config('OPEN_DRAFTBOX') and ($Request.action eq 'add' or $data['status'] eq 3)"}
+	{if condition="Config('OPEN_DRAFTBOX') and ($Request.action eq 'add' or $info['status'] eq 3)"}
 	//保存草稿
 	var interval;
 	$('#autoSave').click(function(){
@@ -285,11 +285,11 @@ $(function(){
 
         $(that).addClass('disabled').attr('autocomplete','off').prop('disabled',true);
         $.post(target,query).success(function(data){
-            if (data.status==1) {
-                updateAlert(data.info ,'alert-success');
+            if (data.code ==1) {
+                updateAlert(data.msg,'alert-success');
                 $('input[name=id]').val(data.data.id);
             }else{
-                updateAlert(data.info);
+                updateAlert(data.msg);
             }
             setTimeout(function(){
                 $('#top-alert').find('button').click();

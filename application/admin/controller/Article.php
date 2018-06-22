@@ -503,8 +503,8 @@ class Article extends Admin {
         $res = model('Document')->autoSave();
         if($res !== false){
             $return['data']     =   $res;
-            $return['info']     =   '保存草稿成功';
-            $return['status']   =   1;
+            $return['msg']     =   '保存草稿成功';
+            $return['code']   =   1;
 			return json($return);
 		}else{
             $this->error('保存草稿失败：'.model('Document')->getError());

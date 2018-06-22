@@ -124,7 +124,7 @@ class Document extends Model{
 
         /* 获取模型数据 */
         $logic  = $this->logic($info['model_id']);
-        $detail = $logic->detail($id); //获取指定ID的数据
+        $detail = $logic->detail($id)->toArray(); //获取指定ID的数据
         if(!$detail){
             $this->error = $logic->error;
             return false;
@@ -168,22 +168,21 @@ class Document extends Model{
                 $this->error = '新增基础内容出错！';
                 return false;
             }
-			$id = $this->id;
+			$data['id'] = $this->id;
         } else { //更新数据
             $status = $this->find($data['id'])->save($data); //更新基础内容
             if(false === $status){
                 $this->error = '更新基础内容出错！';
                 return false;
             }
-			$id = $data['id'];
         }
 
         /* 添加或新增扩展内容 */
         $logic = $this->logic($data['model_id']);
         $logic->checkModelAttr($data['model_id']);
-        if(!$logic->edit($id)){
-            if(isset($id)){ //新增失败，删除基础数据
-                $this->delete($id);
+        if(!$logic->edit($data['id'])){
+            if(isset($data['id'])){ //新增失败，删除基础数据
+                $this->delete($data['id']);
             }
             $this->error = $logic->error;
             return false;
@@ -192,9 +191,7 @@ class Document extends Model{
 		Hook::listen('documentSaveComplete', array('model_id'=>$data['model_id']));
 
         //行为记录
-        if($id){
-            action_log('add_document', 'document', $id, UID);
-        }
+        action_log('add_document', 'document', $data['id'], UID);
 
         //内容添加或更新完成
         return $data;

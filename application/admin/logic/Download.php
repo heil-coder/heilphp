@@ -68,13 +68,13 @@ class Download extends Base{
         /* 添加或更新数据 */
         if(empty($data['id'])){//新增数据
             $data['id'] = $id;
-            $res = $this->isUpdate(false)->insert($data);
+            $res = $this->insert($data);
             if(!$id){
                 $this->error = '新增详细内容失败！';
                 return false;
             }
         } else { //更新数据
-            $status = $this->isUpdate(true)->save($data);
+            $status = $this->get($data['id'])->save($data);
             if(false === $status){
                 $this->error = '更新详细内容失败！';
                 return false;
