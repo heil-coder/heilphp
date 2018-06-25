@@ -1,0 +1,18 @@
+
+    <!-- 底部
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+          <p> 本站由 <strong><a href="http://www.heilphp.com" target="_blank">HeilPHP</a></strong> 强力驱动</p>
+      </div>
+    </footer>
+
+{include file="public/var"/}
+{block name="script"}{/block} <!-- 用于加载js代码 -->
+<!-- 页面footer钩子，一般用于加载插件JS文件和JS代码 -->
+{php}
+Hook::listen('pageFooter','widget');
+{/php}
+<div class="hidden"><!-- 用于加载统计代码等隐藏元素 -->
+	{block name="hidden"}{/block}
+</div>
