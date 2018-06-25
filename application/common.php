@@ -444,6 +444,29 @@ function get_table_name($model_id = null){
     return $name;
 }
 /**
+ * 根据条件字段获取指定表的数据
+ * @param mixed $value 条件，可用常量或者数组
+ * @param string $condition 条件字段
+ * @param string $field 需要返回的字段，不传则返回整个数据
+ * @param string $table 需要查询的表
+ * @author huajie <banhuajie@163.com>
+ */
+function get_table_field($value = null, $condition = 'id', $field = null, $table = null){
+    if(empty($value) || empty($table)){
+        return false;
+    }
+
+    //拼接参数
+    $map[$condition] = $value;
+    $info = db(ucfirst($table))->where($map);
+    if(empty($field)){
+        $info = $info->field(true)->find();
+    }else{
+        $info = $info->value($field);
+    }
+    return $info;
+}
+/**
  * 获取属性信息并缓存
  * @param  integer $id    属性ID
  * @param  string  $field 要获取的字段名

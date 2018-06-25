@@ -153,7 +153,7 @@ function uploadPicture{$field.name}(file, data){
 					'<div class="upload-pre-item"><img src="' + src + '"/></div>'
 					);
 	} else {
-		updateAlert(data.info);
+		updateAlert(data.msg);
 		setTimeout(function(){
 			$('#top-alert').find('button').click();
 			$(that).removeClass('disabled').prop('disabled',false);
@@ -165,7 +165,7 @@ function uploadPicture{$field.name}(file, data){
 										{case value="file"}
 										<div class="controls">
 											<input type="file" id="upload_file_{$field.name}">
-											<input type="hidden" name="{$field.name}" value="{:think_encrypt(json_encode(get_table_field($data[$field['name']],'id','','File')))}"/>
+											<input type="hidden" name="{$field.name}" value="{$data[$field['name']]}"/>
 											<div class="upload-img-box">
 												{present name="data[$field['name']]"}
 												<div class="upload-pre-file"><span class="upload_icon_all"></span>{$data[$field['name']]|get_table_field=###,'id','name','File'}</div>
@@ -194,10 +194,10 @@ function uploadFile{$field.name}(file, data){
 		var name = "{$field.name}";
 		$("input[name="+name+"]").val(data.data);
 		$("input[name="+name+"]").parent().find('.upload-img-box').html(
-				"<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.info + "</div>"
+				"<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.msg+ "</div>"
 				);
 	} else {
-		updateAlert(data.info);
+		updateAlert(data.msg);
 		setTimeout(function(){
 			$('#top-alert').find('button').click();
 			$(that).removeClass('disabled').prop('disabled',false);
@@ -273,7 +273,7 @@ $(function(){
     });
     showTab();
 
-	{if condition="Config('OPEN_DRAFTBOX') and ($Request.action eq 'add' or $info['status'] eq 3)"}
+	{if condition="Config('OPEN_DRAFTBOX') and ($Request.action eq 'add' or $data['status'] eq 3)"}
 	//保存草稿
 	var interval;
 	$('#autoSave').click(function(){

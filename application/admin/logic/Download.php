@@ -40,6 +40,9 @@ class Download extends Base{
             $this->error = '获取详细信息出错！';
             return false;
         }
+		else{
+			$data = $data->toArray();
+		}
         $file = model('File')->field(true)->find($data['file_id']);
         return $data;
     }

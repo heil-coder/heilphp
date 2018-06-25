@@ -124,7 +124,7 @@ class Document extends Model{
 
         /* 获取模型数据 */
         $logic  = $this->logic($info['model_id']);
-        $detail = $logic->detail($id)->toArray(); //获取指定ID的数据
+        $detail = $logic->detail($id); //获取指定ID的数据
         if(!$detail){
             $this->error = $logic->error;
             return false;
