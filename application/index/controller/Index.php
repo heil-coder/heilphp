@@ -6,7 +6,6 @@ class Index extends Controller
 {
     public function index()
     {
-
         $category = model('Category')->getTree();
         $lists    = model('Document')->lists(null);
 

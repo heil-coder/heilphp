@@ -14,7 +14,7 @@
 ================================================== -->
     <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav">
-            {:W('Category/lists', array(1, true))}
+            {:Widget('Category/lists', array(1, true))}
         </ul>
     </div>
 {/block}
@@ -24,7 +24,7 @@
         <!-- Contents
         ================================================== -->
         <section id="contents">
-            <article:list name="article" category="1" child="true">
+			{Article:list name="article" category="1" child="true"}
                 <div class="">
                     <h3><a href="{:Url('Article/detail?id='.$article['id'])}">{$article.title}</a></h3>
                 </div>
@@ -32,15 +32,15 @@
                     <p class="lead">{$article.description}</p>
                 </div>
                 <div>
-                    <span><a href="{:U('Article/detail?id='.$article['id'])}">查看全文</a></span>
+                    <span><a href="{:Url('Article/detail?id='.$article['id'])}">查看全文</a></span>
                     <span class="pull-right">
                         <span class="author">{$article.uid|get_username}</span>
-                        <span>于 {$article.create_time|date='Y-m-d H:i',###}</span> 发表在 <span>
+                        <span>于 {$article.create_time|date='Y-m-d H:i'}</span> 发表在 <span>
                         <a href="{:Url('Article/lists?category='.get_category_name($article['category_id']))}">{$article.category_id|get_category_title}</a></span> ( 阅读：{$article.view} )
                     </span>
                 </div>
                 <hr/>
-            </article:list>
+			{/Article:list}
 
         </section>
     </div>

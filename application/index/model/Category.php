@@ -51,9 +51,9 @@ class Category extends Model{
         /* 获取分类信息 */
         $map = array();
         if(is_numeric($id)){ //通过ID查询
-            $map['id'] = $id;
+            $map[] = ['id','=',$id];
         } else { //通过标识查询
-            $map['name'] = $id;
+            $map[] = ['name','=',$id];
         }
         return $this->field($field)->where($map)->find();
     }
@@ -74,7 +74,7 @@ class Category extends Model{
 
         /* 获取所有分类 */
         $map  = array('status' => 1);
-        $list = $this->field($field)->where($map)->order('sort')->select();
+        $list = $this->field($field)->where($map)->order('sort')->select()->toArray();
         $list = list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_', $root = $id);
         
         /* 获取返回数据 */
@@ -123,7 +123,7 @@ class Category extends Model{
      */
     public function getChildrenId($cate){
         $field = 'id,name,pid,title,link_id';
-        $category = D('Category')->getTree($cate, $field);
+        $category = model('Category')->getTree($cate, $field);
         $ids[]    = $cate;
         foreach ($category['_'] as $key => $value) {
             $ids[] = $value['id'];
