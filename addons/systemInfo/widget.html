@@ -1,3 +1,4 @@
+{if !config('template.view_base')}
 <div class="span{$addons_config.width}">
 	<div class="columns-mod">
 		<div class="hd cf">
@@ -12,12 +13,12 @@
 						<th>HeilPHP版本</th>
 						<td>{$Think.HEILPHP_VERSION}&nbsp;&nbsp;&nbsp;
 							{notempty name="addons_config.new_version"}
-								<a href="http://www.heilphp.com" target="_blank">
-									发现新版本[{$addons_config.new_version}]
-								</a>&nbsp;&nbsp;&nbsp;&nbsp;
-								<a href="{:Url('/update/index')}" target="_blank">
-                                    在线更新
-                                </a>
+							<a href="http://www.heilphp.com" target="_blank">
+								发现新版本[{$addons_config.new_version}]
+							</a>&nbsp;&nbsp;&nbsp;&nbsp;
+							<a href="{:Url('/update/index')}" target="_blank">
+								在线更新
+							</a>
 							{/notempty}
 						</td>
 					</tr>
@@ -32,20 +33,69 @@
 					<tr>
 						<th>OneThink版本</th>
 						<td>V1.1开发版</td>
-					<tr>
-						<th>运行环境</th>
-						<td>{$_SERVER['SERVER_SOFTWARE']}</td>
-					</tr>
-					<tr>
-						<th>MYSQL版本</th>
-						<td>{$system_info_mysql.0.v}</td>
-					</tr>
-					<tr>
-						<th>上传限制</th>
-						<td>{:ini_get('upload_max_filesize')}</td>
-					</tr>
+						<tr>
+							<th>运行环境</th>
+							<td>{$_SERVER['SERVER_SOFTWARE']}</td>
+						</tr>
+						<tr>
+							<th>MYSQL版本</th>
+							<td>{$system_info_mysql.0.v}</td>
+						</tr>
+						<tr>
+							<th>上传限制</th>
+							<td>{:ini_get('upload_max_filesize')}</td>
+						</tr>
 				</table>
 			</div>
 		</div>
 	</div>
 </div>
+{else /}
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card">
+			<div class="card-header no-border">
+				<h3 class="card-title">系统信息</h3>
+				<div class="card-tools">
+					<a href="#" class="btn btn-sm btn-tool">
+						<i class="fa fa-download"></i>
+					</a>
+					<a href="#" class="btn btn-sm btn-tool">
+						<i class="fa fa-bars"></i>
+					</a>
+				</div>
+			</div>
+			<div class="card-body">
+				<table class="table table-condensed">
+					<tbody>
+						<tr>
+							<td>1.</td>
+							<td>版本</td>
+							<td class="text-right">
+								<span class="badge bg-danger">v0.1.1开发版</span>
+							</td>
+						</tr>
+						<tr>
+							<td>2.</td>
+							<td>基础框架</td>
+							<td class="text-right">
+								OneThink <span class="badge bg-info">V1.1开发版</span>,ThinkPHP <span class="badge bg-info">5.1+</span>
+							</td>
+						</tr>
+						<tr>
+							<td>3.</td>
+							<td>系统环境</td>
+							<td class="text-right">
+								<p>操作系统<span class="badge bg-info">Linux</span>,运行环境<span class="badge bg-info">kangle/3.5.7</span></p>
+								<p>PHP<span class="badge bg-info">5.6</span>,MYSQL<span class="badge bg-info">5.1.73</span></p>
+								<p>上传限制<span class="badge bg-info">2048M</span></p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</div>
+{/if}
