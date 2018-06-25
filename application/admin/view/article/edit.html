@@ -118,14 +118,14 @@
 								function uploadPicture{$field.name}(file, data){
 							    	var data = $.parseJSON(data);
 							    	var src = '';
-							        if(data.status){
+							        if(data.code){
 							        	$("#cover_id_{$field.name}").val(data.id);
 							        	src = data.url || '__ROOT__' + data.path
 							        	$("#cover_id_{$field.name}").parent().find('.upload-img-box').html(
 							        		'<div class="upload-pre-item"><img src="' + src + '"/></div>'
 							        	);
 							        } else {
-							        	updateAlert(data.info);
+							        	updateAlert(data.msg);
 							        	setTimeout(function(){
 							                $('#top-alert').find('button').click();
 							                $(that).removeClass('disabled').prop('disabled',false);
@@ -137,7 +137,7 @@
 							{case value="file"}
 								<div class="controls">
 									<input type="file" id="upload_file_{$field.name}">
-									<input type="hidden" name="{$field.name}" value="{:think_encrypt(json_encode(get_table_field($data[$field['name']],'id','','File')))}"/>
+									<input type="hidden" name="{$field.name}" value="{$data[$field['name']]}"/>
 									<div class="upload-img-box">
 										{present name="data[$field['name']]"}
 											<div class="upload-pre-file"><span class="upload_icon_all"></span>{$data[$field['name']]|get_table_field=###,'id','name','File'}</div>
@@ -162,14 +162,14 @@
 							    });
 								function uploadFile{$field.name}(file, data){
 									var data = $.parseJSON(data);
-							        if(data.status){
+							        if(data.code){
 							        	var name = "{$field.name}";
-							        	$("input[name="+name+"]").val(data.data);
+							        	$("input[name="+name+"]").val(data.data.id);
 							        	$("input[name="+name+"]").parent().find('.upload-img-box').html(
-							        		"<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.info + "</div>"
+							        		"<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.msg+ "</div>"
 							        	);
 							        } else {
-							        	updateAlert(data.info);
+							        	updateAlert(data.msg);
 							        	setTimeout(function(){
 							                $('#top-alert').find('button').click();
 							                $(that).removeClass('disabled').prop('disabled',false);
@@ -249,11 +249,11 @@ $(function(){
 
         $(that).addClass('disabled').attr('autocomplete','off').prop('disabled',true);
         $.post(target,query).success(function(data){
-            if (data.status==1) {
-                updateAlert(data.info ,'alert-success');
+            if (data.code ==1) {
+                updateAlert(data.msg,'alert-success');
                 $('input[name=id]').val(data.data.id);
             }else{
-                updateAlert(data.info);
+                updateAlert(data.msg);
             }
             setTimeout(function(){
                 $('#top-alert').find('button').click();
