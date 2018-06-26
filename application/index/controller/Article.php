@@ -82,7 +82,7 @@ class Article extends Base{
 		} elseif (!empty($category['template_detail'])){ //分类已定制模板
 			$tmpl = $category['template_detail'];
 		} else { //使用默认模板
-			$tmpl = 'Article/'. get_document_model($info['model_id'],'name') .'/detail';
+			$tmpl = 'article/'. get_document_model($info['model_id'],'name') .'/detail';
 		}
 
 		/* 更新浏览数 */
@@ -93,6 +93,7 @@ class Article extends Base{
 		$this->assign('category', $category);
 		$this->assign('info', $info);
 		$this->assign('page', $p); //页码
+		return view($tmpl);
 		$this->display($tmpl);
 	}
 

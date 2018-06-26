@@ -86,28 +86,28 @@ class Article extends TagLib{
     }
 
     /* 获取下一篇文章信息 */
-    public function _next($tag, $content){
+    public function tagnext($tag, $content){
         $name   = $tag['name'];
         $info   = $tag['info'];
         $parse  = '<?php ';
-        $parse .= '$' . $name . ' = D(\'Document\')->next($' . $info . ');';
+        $parse .= '$' . $name . ' = model(\'Document\')->next($' . $info . ');';
         $parse .= ' ?>';
-        $parse .= '<notempty name="' . $name . '">';
+        $parse .= '{notempty name="' . $name . '"}';
         $parse .= $content;
-        $parse .= '</notempty>';
+        $parse .= '{/notempty}';
         return $parse;
     }
 
     /* 获取上一篇文章信息 */
-    public function _prev($tag, $content){
+    public function tagprev($tag, $content){
         $name   = $tag['name'];
         $info   = $tag['info'];
         $parse  = '<?php ';
-        $parse .= '$' . $name . ' = D(\'Document\')->prev($' . $info . ');';
+        $parse .= '$' . $name . ' = model(\'Document\')->prev($' . $info . ');';
         $parse .= ' ?>';
-        $parse .= '<notempty name="' . $name . '">';
+        $parse .= '{notempty name="' . $name . '"}';
         $parse .= $content;
-        $parse .= '</notempty>';
+        $parse .= '{/notempty}';
         return $parse;
     }
 

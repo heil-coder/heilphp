@@ -114,17 +114,17 @@ class Document extends Model{
      * @return array
      */
     public function prev($info){
-        $map = array(
-            'id'          => array('lt', $info['id']),
-            'pid'		  => 0,
-            'category_id' => $info['category_id'],
-            'status'      => 1,
-            'create_time' => array('lt', NOW_TIME),
-            '_string'     => 'deadline = 0 OR deadline > ' . NOW_TIME,  			
-        );
+        $map = [ 
+            ['id','<',$info['id']]
+            ,['pid','=',0]
+            ,['category_id','=',$info['category_id']]
+            ,['status','=',1]
+            ,['create_time','<',app()->getBeginTime()]
+		];
 
         /* 返回前一条数据 */
-        return $this->field(true)->where($map)->order('id DESC')->find();
+		return $this->field(true)->where('deadline',['>',app()->getBeginTime()],['=',0],'or')
+					->where($map)->order('id DESC')->find();
     }
 
     /**
@@ -133,17 +133,17 @@ class Document extends Model{
      * @return array
      */
     public function next($info){
-        $map = array(
-            'id'          => array('gt', $info['id']),
-            'pid'		  => 0,
-            'category_id' => $info['category_id'],
-            'status'      => 1,
-            'create_time' => array('lt', NOW_TIME),
-            '_string'     => 'deadline = 0 OR deadline > ' . NOW_TIME,  			
-        );
+        $map = [ 
+            ['id','>', $info['id']]
+            ,['pid','=',0]
+            ,['category_id','=',$info['category_id']]
+            ,['status','=',1]
+            ,['create_time','<',app()->getBeginTime()]
+		];
 
         /* 返回下一条数据 */
-        return $this->field(true)->where($map)->order('id')->find();
+		return $this->field(true)->where('deadline',['>',app()->getBeginTime()],['=',0],'or')
+			->where($map)->order('id')->find();
     }
 
     public function edit(){
@@ -298,7 +298,7 @@ class Document extends Model{
     private function logic($model){
         $name  = parse_name(get_document_model($model, 'name'), 1);
         $class = is_file(env('module_path'). 'logic/' . $name . 'php') ? $name : 'Base';
-        $class = Request()->module(). '\\logic\\' . $class;
+        $class = 'app\\'.Request()->module(). '\\logic\\' . $class;
         return new $class($name);  		
     }
 
