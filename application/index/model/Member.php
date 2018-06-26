@@ -41,7 +41,7 @@ class Member extends Model{
      */
     public function login($uid){
         /* 检测是否在当前应用注册 */
-        $user = $this->field(true)->find($uid);
+        $user = $this->field(true)->getByUid($uid);
         if(!$user){ //未注册
             /* 在当前应用中注册用户 */
         	$Api = new UserApi();
@@ -81,13 +81,13 @@ class Member extends Model{
      */
     private function autoLogin($user){
         /* 更新登录信息 */
-        $data = array(
+        $data = [ 
             'uid'             => $user['uid'],
-            'login'           => array('exp', '`login`+1'),
-            'last_login_time' => NOW_TIME,
+            'login'           => ['exp', 'login+1'],
+            'last_login_time' => app()->getBeginTime(),
             'last_login_ip'   => get_client_ip(1),
-        );
-        $this->save($data);
+		];
+        $this->getByUid($user['uid'])->save($data);
 
         /* 记录登录SESSION和COOKIES */
         $auth = array(
