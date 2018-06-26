@@ -40,13 +40,13 @@ class Article extends TagLib{
         $child  = empty($tag['child']) ? 'false' : $tag['child'];
         $row    = empty($tag['row'])   ? '10' : $tag['row'];
         $field  = empty($tag['field']) ? 'true' : $tag['field'];
+		$page = input('param.page/d',1);
 
         $parse  = '<?php ';
         $parse .= '$__CATE__ = model(\'Category\')->getChildrenId('.$cate.');';
-        //$parse .= '$__LIST__ = model(\'Document\')->page(!empty($_GET["p"])?$_GET["p"]:1,'.$row.')->lists(';
         $parse .= '$__LIST__ = model(\'Document\')->lists(';
         $parse .= '$__CATE__, \'level DESC,id DESC\', 1,';
-        $parse .= $field . ');';
+        $parse .= $field . ',[' . $page .','.$row.']);';
         $parse .= ' ?>';
         $parse .= '{volist name="__LIST__" id="'. $name .'"}';
         $parse .= $content;

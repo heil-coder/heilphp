@@ -62,9 +62,14 @@ class Document extends Model{
      * @param  string   $field    字段 true-所有字段
      * @return array              文档列表
      */
-    public function lists($category, $order = 'id DESC', $status = 1, $field = true){
+    public function lists($category, $order = 'id DESC', $status = 1, $field = true,$page = []){
         $map = $this->listMap($category, $status);
-        return $this->field($field)->where($map)->order($order)->select();
+		if(is_array($page) && !empty($page[0]) && !empty($page[1])){
+			return $this->field($field)->where($map)->order($order)->page($page[0],$page[1])->select();
+		}
+		else{
+			return $this->field($field)->where($map)->order($order)->select();
+		}
     }
 
     /**
