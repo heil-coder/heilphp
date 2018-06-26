@@ -650,7 +650,6 @@ function get_username($uid = 0){
     if(isset($list[$key])){ //已缓存，直接使用
         $name = $list[$key];
     } else { //调用接口获取用户信息
-        //$User = new app\user\api\UserApi();
         $User = controller('user/UserApi','api');
         $info = $User->info($uid);
         if($info && isset($info[1])){
