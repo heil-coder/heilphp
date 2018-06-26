@@ -392,6 +392,14 @@ function check_category_model($info){
     $array  =   explode(',', $info['pid'] ? $cate['model_sub'] : $cate['model']);
     return in_array($info['model_id'], $array);
 }
+/* 根据ID获取分类标识 */
+function get_category_name($id){
+    return get_category($id, 'name');
+}
+/* 根据ID获取分类名称 */
+function get_category_title($id){
+    return get_category($id, 'title');
+}
 /**
  * 获取分类信息并缓存分类
  * @param  integer $id    分类ID
@@ -642,7 +650,8 @@ function get_username($uid = 0){
     if(isset($list[$key])){ //已缓存，直接使用
         $name = $list[$key];
     } else { //调用接口获取用户信息
-        $User = model('Member');
+        //$User = new app\user\api\UserApi();
+        $User = controller('user/UserApi','api');
         $info = $User->info($uid);
         if($info && isset($info[1])){
             $name = $list[$key] = $info[1];

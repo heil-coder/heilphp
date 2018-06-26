@@ -23,7 +23,7 @@
 <!-- 页面header钩子，一般用于加载插件CSS文件和代码 -->
 {php}
 Hook::listen('pageHeader');
-{php}
+{/php}
 </head>
 <body>
 	<!-- 头部 -->
@@ -40,7 +40,7 @@ Hook::listen('pageHeader');
 	   <div class="span3 bs-docs-sidebar">
 		   {block name="publish"}{/block}
 		   <ul class="nav nav-list bs-docs-sidenav">
-			   {/*:Widget('Category/lists', array(isset($category['id']) ? $category['id']: 0, $Request.action == 'index'))*/}
+			   {:Widget('Category/lists', array(isset($category['id']) ? $category['id']: 0, $Request.action == 'index'))}
 		   </ul>
 	   </div>
 	   {/block}
