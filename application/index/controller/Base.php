@@ -29,10 +29,14 @@ class Base extends Controller {
 	}
 
 
-    protected function _initialize(){
+    protected function initialize(){
         /* 读取站点配置 */
-        $config = api('Config/lists');
-        Config($config); //添加配置
+        $config =   cache('DB_CONFIG_DATA');
+        if(!$config){
+            $config =   api('Config/getListing');
+            cache('DB_CONFIG_DATA',$config);
+        }
+		config($config,'app'); //添加配置
 
         if(!Config('WEB_SITE_CLOSE')){
             $this->error('站点已经关闭，请稍后访问~');

@@ -1,5 +1,13 @@
 <?php
 // +----------------------------------------------------------------------
+// | HeilPHP
+// +----------------------------------------------------------------------
+// | Copyright (c) 2018 http://www.heilphp.com All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: Jason <1878566968@qq.com>
+// +----------------------------------------------------------------------
+
+// +----------------------------------------------------------------------
 // | OneThink [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
@@ -22,29 +30,24 @@ class User extends Base{
 	}
 
 	/* 注册页面 */
-	public function register($username = '', $password = '', $repassword = '', $email = '', $verify = ''){
+	public function register($username = '', $password = '', $repassword = '', $email = '', $captcha = null){
         if(!Config('USER_ALLOW_REGISTER')){
             $this->error('注册已关闭');
         }
 		if(Request()->isPost()){ //注册用户
 			/* 检测验证码 */
-			if(!check_verify($verify)){
+			if(!captcha_check($captcha)){
 				$this->error('验证码输入错误！');
 			}
 
-			/* 检测密码 */
-			if($password != $repassword){
-				$this->error('密码和重复密码不一致！');
-			}			
-
 			/* 调用注册接口注册用户 */
             $User = new UserApi;
-			$uid = $User->register($username, $password, $email);
+			$uid = $User->register($username, $password,$repassword, $email);
 			if(0 < $uid){ //注册成功
 				//TODO: 发送验证邮件
-				$this->success('注册成功！',U('login'));
+				$this->success('注册成功！',Url('login'));
 			} else { //注册失败，显示错误信息
-				$this->error($this->showRegError($uid));
+				$this->error($uid);
 			}
 
 		} else { //显示注册表单
@@ -101,29 +104,6 @@ class User extends Base{
 	public function verify(){
 		$verify = new \Think\Verify();
 		$verify->entry(1);
-	}
-
-	/**
-	 * 获取用户注册错误信息
-	 * @param  integer $code 错误编码
-	 * @return string        错误信息
-	 */
-	private function showRegError($code = 0){
-		switch ($code) {
-			case -1:  $error = '用户名长度必须在16个字符以内！'; break;
-			case -2:  $error = '用户名被禁止注册！'; break;
-			case -3:  $error = '用户名被占用！'; break;
-			case -4:  $error = '密码长度必须在6-30个字符之间！'; break;
-			case -5:  $error = '邮箱格式不正确！'; break;
-			case -6:  $error = '邮箱长度必须在1-32个字符之间！'; break;
-			case -7:  $error = '邮箱被禁止注册！'; break;
-			case -8:  $error = '邮箱被占用！'; break;
-			case -9:  $error = '手机格式不正确！'; break;
-			case -10: $error = '手机被禁止注册！'; break;
-			case -11: $error = '手机号被占用！'; break;
-			default:  $error = '未知错误';
-		}
-		return $error;
 	}
 
 
