@@ -206,7 +206,7 @@ class Document extends Model{
      */
     private function logic($model){
         $name  = parse_name(get_document_model($model, 'name'), 1);
-        $class = is_file(Env::get('module_path') . 'logic/' . $name .'.php') ? $name : 'Base';
+        $class = is_file(Env('module_path') . 'logic/' . $name .'.php') ? $name : 'Base';
         $class = 'app\\'.Request::module() . '\\logic\\' . $class;
         return new $class($name);
     }

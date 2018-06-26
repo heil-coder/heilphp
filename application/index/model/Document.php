@@ -90,7 +90,7 @@ class Document extends Model{
      */
     public function detail($id){
         /* 获取基础数据 */
-        $info = $this->field(true)->find($id);
+        $info = $this->field(true)->getById($id)->toArray();
         if ( !$info ) {
             $this->error = '文档不存在';
             return false;
@@ -297,8 +297,8 @@ class Document extends Model{
      */
     private function logic($model){
         $name  = parse_name(get_document_model($model, 'name'), 1);
-        $class = is_file(MODULE_PATH . 'Logic/' . $name . 'Logic' . EXT) ? $name : 'Base';
-        $class = MODULE_NAME . '\\Logic\\' . $class . 'Logic';
+        $class = is_file(env('module_path'). 'logic/' . $name . 'php') ? $name : 'Base';
+        $class = Request()->module(). '\\logic\\' . $class;
         return new $class($name);  		
     }
 
