@@ -33,7 +33,7 @@ class Article extends Base{
 
 		/* 模板赋值并渲染模板 */
 		$this->assign('category', $category);
-		$this->display($category['template_index']);
+		return view($category['template_index']);
 	}
 
 	/* 文档模型列表页 */
