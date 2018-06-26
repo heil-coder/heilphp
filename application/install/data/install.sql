@@ -648,7 +648,7 @@ CREATE TABLE `heilphp_channel` (
 -- -----------------------------
 INSERT INTO `heilphp_channel` VALUES ('1', '0', '首页', 'Index/index', '1', '1379475111', '1379923177', '1', '0');
 INSERT INTO `heilphp_channel` VALUES ('2', '0', '博客', 'Article/index?category=blog', '2', '1379475131', '1379483713', '1', '0');
-INSERT INTO `heilphp_channel` VALUES ('3', '0', '官网', 'http://www.onethink.cn', '3', '1379475154', '1387163458', '1', '0');
+INSERT INTO `heilphp_channel` VALUES ('3', '0', '官网', 'http://www.heilphp.com', '3', '1379475154', '1387163458', '1', '1');
 
 -- -----------------------------
 -- Table structure for `heilphp_ucenter_admin`
