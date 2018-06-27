@@ -95,6 +95,30 @@
 							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" target-form="ids" url="{:Url("Article/setStatus",array("status"=>-1))}"><i class="fa fa-remove"></i>删除</button>
 							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort',array('cate_id'=>$cate_id,'pid'=>$pid),'')}"><i class="fa fa-sort"></i>排序</button>
 						</div>
+						<div class="search-form pull-right">
+							<div class="pull-left">
+								<div class="input-group input-group-sm mb-3">
+									<div class="input-group-prepend drop-down">
+										<button id="sch-sort-txt" data="{$status}" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+											{if condition="get_status_title($status) eq ''"}所有{else/}{:get_status_title($status)}{/if} 
+										</button>
+										<ul id="sub-sch-menu" class="dropdown-menu">
+											<li class="dropdown-item"><a href="javascript:;" value="">所有</a></li>
+											<li class="dropdown-divider"></li>
+											<li class="dropdown-item"><a href="javascript:;" value="1">正常</a></li>
+											<li class="dropdown-item"><a href="javascript:;" value="0">禁用</a></li>
+											<li class="dropdown-item"><a href="javascript:;" val="2">待审核</a></li>
+										</ul>
+									</div>
+									<!-- /btn-group -->
+									<input type="text" name="title" value="{:input('title')}" placeholder="请输入标题文档" class="form-control">
+									<span class="input-group-append">
+										<button type="button" id="search" class="btn btn-info btn-flat" url="{:Url('article/index','pid='.$pid.'&cate_id='.$cate_id,false)}"><i class="fa fa-search"></i></button>
+									</span>
+								</div>
+								<!-- /input-group -->
+							</div>
+						</div>
 					</div>
 					<div class="card-body p-0">
 						<div class="table-responsive">
@@ -152,6 +176,42 @@
 <script type="text/javascript" charset="utf-8">
 $(function(){
 	highlight_subnav('{:Url('article/index',['cate_id'=>input('param.cate_id')])}');
+
+	//搜索功能
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+		console.log(url);
+		var status = $("#sch-sort-txt").attr("data");
+		console.log(status);
+        var query  = $('.search-form').find('input').serialize();
+		console.log(query);
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+		if(status != ''){
+			query = 'status=' + status + "&" + query;
+        }
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+	});
+
+	/* 状态搜索子菜单 */
+	$(".search-form").find(".drop-down").hover(function(){
+		$(this).find('button').click();
+	},function(){
+		$(this).click();
+	});
+	$("#sub-sch-menu li").find("a").each(function(){
+		$(this).click(function(){
+			var text = $(this).text();
+			$("#sch-sort-txt").text(text).attr("data",$(this).attr("value"));
+			$("#sub-sch-menu").addClass("hidden");
+		})
+	});
+
 	//点击排序
 	$('.list_sort').click(function(){
 		var url = $(this).attr('url');
