@@ -766,7 +766,7 @@ DROP TABLE IF EXISTS `heilphp_seo`;
 CREATE TABLE IF NOT EXISTS `heilphp_seo` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id自增',
   `title` varchar(50) NULL COMMENT '设置说明',
-  `model` varchar(50) NULL COMMENT '模块',
+  `module` varchar(50) NULL COMMENT '模块',
   `controller` varchar(50) NULL COMMENT '控制器',
   `action` varchar(50) NULL COMMENT '方法',
   `seo_title` text NULL COMMENT 'SEO标题',

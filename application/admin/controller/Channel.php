@@ -95,7 +95,7 @@ class Channel extends Admin {
             $info = db('Channel')->find($id);
 
             if(false === $info){
-                $this->error('获取配置信息错误');
+                $this->error('获取导航信息错误');
             }
 
             $pid = input('parent.pid/');

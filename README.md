@@ -589,7 +589,7 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 |:--|:--|:--|:--|:--|:--|
 | id | int(10) unsigned |否|无|是| ID,自增主键 |
 | title| varchar(200) |是|无|--| 设置说明|
-| model| varchar(50) |是|无|--|模块|
+| module| varchar(50) |是|无|--|模块|
 | controller| varchar(50) |是|无|--|控制器|
 | action| varchar(50) |是|无|--|方法|
 | seo_title|text|是|无|--|SEO标题|

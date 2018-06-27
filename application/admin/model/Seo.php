@@ -7,24 +7,16 @@
 // | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com>
-// +----------------------------------------------------------------------
 
 namespace app\admin\model;
 use think\Model;
 
 /**
  * 导航模型
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
- * @modify Jason <1878566968@qq.com>
+ * @author Jason <1878566968@qq.com>
  */
 
-class Channel extends Model {
+class Seo extends Model {
 	protected $autoWriteTimestamp = true;
 
 	protected $insert = ['status'=>1];
@@ -33,23 +25,23 @@ class Channel extends Model {
 	 * 编辑配置
 	 */
 	public function edit(){
-        $data = Request()->only('id,pid,title,url,sort,create_time,update_time,status,target');
+        $data = input('param.');
 		if(empty($data)){
 			return false;	
 		}
 
-		$validate = new \app\admin\validate\Channel;
+		$validate = new \app\admin\validate\Seo;
 		if(!$validate->check($data)){
 			$this->error = $validate->getError();
 			return false;
 		}
 
 		if(empty($data['id'])){
-			$res = $this->save($data);
+			$res = $this->allowField(true)->save($data);
 			$data['id'] = $this->id;
 		}
 		else{
-			$res = $this->get($data['id'])->save($data);
+			$res = $this->get($data['id'])->allowField(true)->save($data);
 		}
 		if($res === false){
 			return false;	
@@ -57,6 +49,6 @@ class Channel extends Model {
 		else{
 			return $res;
 		}
-        action_log('update_channel', 'channel', $data['id'], UID);
+        action_log('update_seo', 'seo', $data['id'], UID);
 	}
 }
