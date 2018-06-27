@@ -279,6 +279,7 @@ INSERT INTO `heilphp_menu` VALUES ('120', '排序', '75', '0', 'Menu/sort', '1',
 INSERT INTO `heilphp_menu` VALUES ('121', '排序', '76', '0', 'Channel/sort', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('122', '数据列表', '58', '0', 'think/lists', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('123', '审核列表', '3', '0', 'Article/examine', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('124', 'SEO设置', '68', '10', 'seo/index', '0', '', '系统设置', '0','1');
 
 -- -----------------------------
 -- Table structure for `heilphp_addons`
@@ -731,7 +732,7 @@ CREATE TABLE IF NOT EXISTS `heilphp_picture` (
   `md5` char(32) NOT NULL DEFAULT '' COMMENT '文件md5',
   `sha1` char(40) NOT NULL DEFAULT '' COMMENT '文件 sha1编码',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
-  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `create_time` bigint(10) unsigned NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100000 COMMENT = '图片表';
 
@@ -750,8 +751,31 @@ CREATE TABLE IF NOT EXISTS `heilphp_file` (
   `mime` char(40) NULL COMMENT '文件mime类型',
   `size` bigint(10) NULL COMMENT '文件大小',
   `md5` char(32) NULL COMMENT '文件MD5',
-  `sha1` char(40) NULL COMMENT '文件MD5',
+  `sha1` char(40) NULL COMMENT '文件sha1编码',
   `location` tinyint(1) unsigned NULL COMMENT '文件保存位置 0-本地,1-FTP',
-  `create_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '上传时间',
+  `create_time` bigint(10) unsigned NULL DEFAULT '0' COMMENT '上传时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100000 COMMENT = '文件表';
+
+
+--
+-- 表的结构 `heilphp_seo`
+--
+
+DROP TABLE IF EXISTS `heilphp_seo`;
+CREATE TABLE IF NOT EXISTS `heilphp_seo` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id自增',
+  `title` varchar(50) NULL COMMENT '设置说明',
+  `model` varchar(50) NULL COMMENT '模块',
+  `controller` varchar(50) NULL COMMENT '控制器',
+  `action` varchar(50) NULL COMMENT '方法',
+  `seo_title` text NULL COMMENT 'SEO标题',
+  `seo_keywords` text NULL COMMENT 'SEO关键词',
+  `seo_description` text NULL COMMENT 'SEO描述',
+  `description` text NULL COMMENT 'SEO变量说明',
+  `create_time` bigint(10) unsigned NULL COMMENT '创建时间',
+  `update_time` bigint(10) unsigned NULL COMMENT '更新时间',
+  `sort` int(10) unsigned NULL COMMENT '排序',
+  `status` tinyint(1) unsigned NULL COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COMMENT = '搜索引擎优化表';

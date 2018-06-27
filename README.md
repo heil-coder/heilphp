@@ -549,3 +549,54 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | salt| char(10) |是|null|--| 密码salt|
 | email| varchar(50)| 是|无|--|邮箱|
 | mobile| char(15)| 是|无|--|手机|
+
+## ucenter_setting 用户设置表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| 设置ID,自增主键 |
+| type | tinyint(1) unsigned |否|0|--| 配置类型（1-用户配置） |
+| value| text |否|无|--| 配置数据 |
+
+## picture 图片表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| ID,自增主键 |
+| type |varchar(50)|否|无|--| 类型 |
+| path |varchar(255)|否|''|--| 路径 |
+| url |varchar(255)|否|''|--| 图片链接 |
+| md5 |char(32)|否|''|--| 文件md5 |
+| sha1 |char(40)|否|''|--| 文件sha1编码 |
+| status |tinyint(1)|否|0|--| 状态 |
+| create_time |bigint(10) unsigned|是|无|--| 创建时间 |
+
+## file 文件表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| ID,自增主键 |
+| name| varchar(50) |是|无|--| 原始文件名 |
+| savename| varchar(50) |是|无|--| 保存文件名 |
+| savepath| varchar(255) |是|无|--| 文件保存路径|
+| ext| char(6) |是|无|--| 文件后缀|
+| mime| char(40) |是|无|--| 文件mime类型|
+| size| bigint(10) |是|无|--| 文件大小|
+| md5| char(32) |是|无|--| 文件MD5|
+| sha1| char(40) |是|无|--| 文件sha1编码|
+| location| tinyint(1) unsigned |是|无|--|文件保存位置 0-本地,1-FTP|
+| create_time| bigint(10) unsigned |是|无|--|上传时间|
+
+## seo 搜索引擎优化表 
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| ID,自增主键 |
+| title| varchar(200) |是|无|--| 设置说明|
+| model| varchar(50) |是|无|--|模块|
+| controller| varchar(50) |是|无|--|控制器|
+| action| varchar(50) |是|无|--|方法|
+| seo_title|text|是|无|--|SEO标题|
+| seo_keywords|text|是|无|--|SEO关键词|
+| seo_description|text|是|无|--|SEO描述|
+| description|text|是|无|--|SEO变量说明|
+| create_time| bigint(10) unsigned|是|无|--|创建时间|
+| update_time| bigint(10) unsigned|是|无|--|更新时间|
+| sort|int(10) unsigned|是|无|--|排序|
+| status|tinyint(1) unsigned|是|无|--|状态|
