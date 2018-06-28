@@ -2,7 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>{:Config('WEB_SITE_TITLE')}</title>
+{block name="seo"}
+{include file="public/seo" /}
+{/block}
 <link href="__STATIC__/bootstrap/css/bootstrap.css" rel="stylesheet">
 <link href="__STATIC__/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 <link href="__STATIC__/bootstrap/css/docs.css" rel="stylesheet">
