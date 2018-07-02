@@ -600,3 +600,41 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | update_time| bigint(10) unsigned|是|无|--|更新时间|
 | sort|int(10) unsigned|是|无|--|排序|
 | status|tinyint(1) unsigned|是|无|--|状态|
+
+## ad_position 广告位表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| ID,自增主键 |
+| title |varchar(80) |否|无|--|广告位置名称|
+| name | varchar(50) |--| 广告位英文名 |
+| type |int(1) unsigned |否|无|--|广告位置展示方式 0为默认展示一张|
+| width |char(20) |否|无|--|广告位置宽度|
+| height |char(20) |否|无|--|广告位置高度|
+| margin|char(20) |否|无|--|外部边距|
+| padding|char(20) |否|无|--|内部边距|
+| pos |varchar(50) |否|无|--|位置标识|
+| style|tinyint(1) |否|无|--|广告样式|
+| theme|varchar(50) |否|无|--|适用主题|
+| create_time|bigint(10) unsigned | 否|无|--|创建时间|
+| update_time|bigint(10) unsigned | 否|无|--|更新时间|
+| status |tinyint(1) unsigned |否|无|--|状态（0：禁用，1：启用）|
+| delete_time|bigint(10) unsigned | 是|null|--|删除时间|
+
+
+## ad 广告表
+|字段|类型|允许为空|默认值|自动递增|注释|
+|:--|:--|:--|:--|:--|:--|
+| id | int(10) unsigned |否|无|是| ID,自增主键 |
+| title |varchar(80) |否|无|--|广告名称|
+| position |int(10) unsigned |否|无|--|广告位id|
+| data| text |否|无|--|广告内容|
+| url|varchar(250)|否|无|--|链接地址|
+| target| varchar(30)|否|无|--|打开位置 "_blank" 等|
+| click_num| int(10) unsigned|否|0|--|点击次数|
+| start_time|bigint(10) unsigned | 否|无|--|启用时间|
+| end_time|bigint(10) unsigned | 否|无|--|结束时间|
+| create_time|bigint(10) unsigned | 否|无|--|创建时间|
+| update_time|bigint(10) unsigned | 否|无|--|更新时间|
+| sort|int(10) unsigned|否|无|--|排序|
+| status|tinyint(1) unsigned|否|无|--|状态（0：禁用，1：正常）|
+| delete_time|bigint(10) unsigned | 是|null|--|删除时间|
