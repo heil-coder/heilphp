@@ -784,3 +784,29 @@ CREATE TABLE IF NOT EXISTS `heilphp_seo` (
   `status` tinyint(1) unsigned NULL COMMENT '状态',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COMMENT = '搜索引擎优化表';
+
+--
+-- 表的结构 `heilphp_ad_position`
+--
+
+DROP TABLE IF EXISTS `heilphp_ad_position`;
+CREATE TABLE IF NOT EXISTS `heilphp_ad_position` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id自增',
+  `title` varchar(80) DEFAULT NULL COMMENT '广告位名称',
+  `name` varchar(80) DEFAULT NULL COMMENT '广告位标识',
+  `type` tinyint(1) unsigned DEFAULT NULL COMMENT '广告位展示方式 0.单图 1.多图 2.文字链接 3.代码',
+  `width` char(20) DEFAULT NULL COMMENT '广告位置宽度',
+  `height` char(20) DEFAULT NULL COMMENT '广告位置高度',
+  `margin` char(20) DEFAULT NULL COMMENT '外部边距',
+  `padding` char(20) DEFAULT NULL COMMENT '内部边距',
+  `pos` char(20) DEFAULT NULL COMMENT '位置标识',
+  `style` tinyint(1) unsigned DEFAULT NUll COMMENT '广告样式',
+  `theme` varchar(50) DEFAULT NUll COMMENT '适用主题',
+  `create_time` bigint(10) unsigned DEFAULT NULL COMMENT '创建时间',
+  `update_time` bigint(10) unsigned DEFAULT NULL COMMENT '更新时间',
+  `status` tinyint(1) unsigned NOT NULl DEFAULT 1 COMMENT '状态（0：禁用，1：启用）',
+  `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COMMENT = '广告位表';
+
+
