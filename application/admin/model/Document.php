@@ -19,7 +19,6 @@ use Hook;
  */
 class Document extends Model{
 	use SoftDelete;
-	public $error;
 	protected $autoWriteTimestamp = true;
 
 	protected $auto = ['uid','status','attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];

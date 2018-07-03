@@ -285,6 +285,7 @@ INSERT INTO `heilphp_menu` VALUES ('126', '编辑', '124', '0', 'seo/edit', '0',
 INSERT INTO `heilphp_menu` VALUES ('127', '改变状态', '124', '0', 'seo/setstatus', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('128', '排序', '124', '0', 'seo/sort', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('129', '删除', '124', '0', 'seo/del', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('130', '广告位管理', '68', '10', 'ad_position/index', '0', '', '系统设置', '0','1');
 
 -- -----------------------------
 -- Table structure for `heilphp_addons`

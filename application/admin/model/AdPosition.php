@@ -10,13 +10,15 @@
 
 namespace app\admin\model;
 use think\Model;
+use think\model\concern\SoftDelete;
 
 /**
- * SEO模型
+ * 广告位模型
  * @author Jason <1878566968@qq.com>
  */
 
-class Seo extends Model {
+class AdPosition extends Model {
+	use SoftDelete;
 	protected $autoWriteTimestamp = true;
 
 	protected $insert = ['status'=>1];
@@ -30,7 +32,7 @@ class Seo extends Model {
 			return false;	
 		}
 
-		$validate = new \app\admin\validate\Seo;
+		$validate = new \app\admin\validate\AdPosition;
 		if(!$validate->check($data)){
 			$this->error = $validate->getError();
 			return false;
@@ -49,6 +51,6 @@ class Seo extends Model {
 		else{
 			return $res;
 		}
-        action_log('update_seo', 'seo', $data['id'], UID);
+        action_log('update_ad_position', 'ad_position', $data['id'], UID);
 	}
 }

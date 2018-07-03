@@ -367,7 +367,7 @@ class Admin extends Controller {
 	 * @modify Jason <1878566968@qq.com>
      */
     final public function getMenus($controller=''){
-		empty($controller) && $controller = Request::controller();
+		empty($controller) && $controller = parse_name(Request::controller());
         $menus  =   session('ADMIN_MENU_LIST.'.$controller);
 		//暂时解决 部分主菜单下子菜单不能读取问题
         if(empty($menus)){

@@ -12,11 +12,11 @@ namespace app\admin\controller;
 use think\Controller;
 
 /**
- * SEO控制器
+ * 广告位控制器
  * @author Jason<1878566968@qq.com>
  */
 
-class Seo extends Admin {
+class AdPosition extends Admin {
 
     /**
      * 列表
@@ -27,10 +27,10 @@ class Seo extends Admin {
 		$map  = [
 				['status','>', -1]
 			];
-        $list = db('Seo')->where($map)->order('sort asc,id asc')->select();
+        $list = db('AdPosition')->where($map)->order('id desc')->select();
 
         $this->assign('list', $list);
-        $this->assign('meta_title','SEO设置');
+        $this->assign('meta_title','广告位');
 		return view();
     }
 

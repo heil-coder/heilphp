@@ -1,0 +1,64 @@
+{extend name="public/base"/}
+
+{block name="body"}
+	<div class="main-title">
+		<h2>
+			{$info['id']?'编辑':'新增'}广告位
+		</h2>
+	</div>
+	<form action="{:Url()}" method="post" class="form-horizontal">
+		<div class="form-item">
+			<label class="item-label">广告位名称<span class="check-tips">（仅后台可见）</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">广告位标识<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="name" value="{$info.name|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">广告位展示方式<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="type" value="{$info.type|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">宽度<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="width" value="{$info.width|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">高度<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="height" value="{$info.height|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">外边距<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="margin" value="{$info.margin|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">内边距<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="padding" value="{$info.padding|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<input type="hidden" name="id" value="{$info.id|default=''}">
+			<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+		</div>
+	</form>
+{/block}
+{block name="script"}
+<script type="text/javascript" charset="utf-8">
+	//导航高亮
+	highlight_subnav('{:Url('index')}');
+</script>
+{/block}

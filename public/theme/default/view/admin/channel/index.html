@@ -55,7 +55,7 @@
 									{notempty name="list"}
 									{volist name="list" id="channel"}
 									<tr>
-										<td><input class="ids row-selected" type="checkbox" name="" id="" value="{$channel['id']}"> </td>
+										<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$channel['id']}"> </td>
 										<td>{$channel.id}</td>
 										<td><a href="{:Url('index?pid='.$channel['id'])}">{$channel.title}</a></td>
 										<td>{$channel.url}</td>

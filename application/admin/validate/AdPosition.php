@@ -10,7 +10,7 @@ namespace app\admin\validate;
 
 use think\Validate;
 
-class Seo extends Validate
+class AdPosition extends Validate
 {
     protected $rule = [
 		'title'  =>  [
@@ -18,27 +18,33 @@ class Seo extends Validate
 			,'chsDash'														//只能是汉字、字母、数字、_、-
 			,'length'				=> '2,30'								//长度不合法
 		]
-		,'controller'	=>	[
+		,'name'	=>	[
 			'alphaDash'
 		]
-		,'action'	=>	[
-			'alphaDash'
+		,'width'	=>	[
+			'require'
+			,'alphaNum'
 		]
-		,'seo_title'	=>	[
-			'require'														//不能为空
+		,'height'	=>	[
+			'require'
+			,'alphaNum'
 		]
+
+
     ];
 
     protected $message  =   [
-		'title.require'						=> '设置说明不能为空'
-		,'title.chsDash'					=> '设置说明只能是汉字、字母、数字、_、-'
-		,'title.length'						=> '设置说明长度需在2～30之间'
+		'title.require'						=> '广告位名称不能为空'
+		,'title.chsDash'					=> '广告位名称只能是汉字、字母、数字、_、-'
+		,'title.length'						=> '广告位名称长度需在2～30之间'
 
-		,'controller.alphaDash'				=> '控制器只能为字母、数字、_、-'
+		,'name.alphaDash'					=> '广告位标识只能是字母、数字、_、-'
 
-		,'action.alphaDash'					=> '方法只能为字母、数字、_、-'
+		,'width.require'					=> '请填写广告位宽度'
+		,'width.alphaNum'					=> '广告位宽度不合法'
 
-		,'seo_title.require'				=> 'SEO标题不能为空'
+		,'height.require'					=> '请填写广告位高度'
+		,'height.alphaNum'					=> '广告位高度不合法'
     ];
 
 }
