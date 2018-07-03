@@ -2,7 +2,7 @@
 
 {block name="body"}
 	<div class="main-title">
-		<h2>广告位管理</h2>
+		<h2>{$position['title']}-广告管理 </h2>
 	</div>
 
 	<div class="cf">
@@ -19,39 +19,20 @@
 					</th>
 					<th>ID</th>
 					<th>名称</th>
-					<th>标识</th>
-					<th>展示方式</th>
-					<th>宽度</th>
-                    <th>高度</th>
-                    <th>外边距</th>
-                    <th>内边距</th>
 					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				{notempty name="list"}
-				{volist name="list" id="position"}
+				{volist name="list" id="vo"}
 					<tr>
-						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$position['id']}"> </td>
-						<td>{$position.id}</td>
-						<td><a href="{:Url('ad/index?position='.$position['id'])}">{$position.title}</a></td>
-                        <td>{$position.name}</td>
-                        <td>
-							{switch name="position.type"}
-							{case 0}单图{/case}
-							{case 1}多图{/case}
-							{case 2}文字链接{/case}
-							{case 3}代码{/case}
-							{/switch}
-						</td>
-                        <td>{$position.width}</td>
-						<td><code>{$position.height}</code></td>
-						<td><code>{$position.margin}</code></td>
-						<td><code>{$position.style}</code></td>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$vo['id']}"> </td>
+						<td>{$vo.id}</td>
+						<td><a href="{:Url('vo/index?vo='.$vo['id'])}">{$vo.title}</a></td>
 						<td>
-							<a title="编辑" href="{:Url('edit?id='.$position['id'])}">编辑</a>
-							<a href="{:Url('setStatus?ids='.$position['id'].'&status='.abs(1-$position['status']))}" class="ajax-get">{$position.status|show_status_op}</a>
-							<a class="confirm ajax-get" title="删除" href="{:Url('del?id='.$position['id'])}">删除</a>
+							<a title="编辑" href="{:Url('edit?id='.$vo['id'])}">编辑</a>
+							<a href="{:Url('setStatus?ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="ajax-get">{$vo.status|show_status_op}</a>
+							<a class="confirm ajax-get" title="删除" href="{:Url('del?id='.$vo['id'])}">删除</a>
 						</td>
 					</tr>
 				{/volist}

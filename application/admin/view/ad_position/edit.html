@@ -19,12 +19,17 @@
 				<input type="text" class="text input-large" name="name" value="{$info.name|default=''}">
 			</div>
 		</div>
-		<div class="form-item">
-			<label class="item-label">广告位展示方式<span class="check-tips"></span></label>
-			<div class="controls">
-				<input type="text" class="text input-large" name="type" value="{$info.type|default=''}">
-			</div>
-		</div>
+        <div class="form-item">
+            <label class="item-label">广告位展示方式<span class="check-tips"></span></label>
+            <div class="controls">
+                <select name="type">
+					<option value="0" {if $info.type == 0}selected{/if}>单图</option>
+					<option value="1" {if $info.type == 1}selected{/if}>多图</option>
+					<option value="2" {if $info.type == 2}selected{/if}>文字链接</option>
+					<option value="3" {if $info.type == 3}selected{/if}>代码</option>
+                </select>
+            </div>
+        </div>
 		<div class="form-item">
 			<label class="item-label">宽度<span class="check-tips">(默认单位为"px")</span></label>
 			<div class="controls">

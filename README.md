@@ -628,13 +628,13 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | title |varchar(80) |否|无|--|广告名称|
 | position |int(10) unsigned |否|无|--|广告位id|
 | data| text |否|无|--|广告内容|
-| url|varchar(250)|否|无|--|链接地址|
-| target| varchar(30)|否|无|--|打开位置 "_blank" 等|
+| url|varchar(250)|是|null|--|链接地址|
+| target| varchar(30)|是|null|--|打开位置 "_blank" 等|
 | click_num| int(10) unsigned|否|0|--|点击次数|
-| start_time|bigint(10) unsigned | 否|无|--|启用时间|
+| start_time|bigint(10) unsigned | 是|null|--|开始时间|
 | end_time|bigint(10) unsigned | 否|无|--|结束时间|
-| create_time|bigint(10) unsigned | 否|无|--|创建时间|
-| update_time|bigint(10) unsigned | 否|无|--|更新时间|
+| create_time|bigint(10) unsigned |是|null|--|创建时间|
+| update_time|bigint(10) unsigned |是|null|--|更新时间|
 | sort|int(10) unsigned|否|无|--|排序|
 | status|tinyint(1) unsigned|否|无|--|状态（0：禁用，1：正常）|
 | delete_time|bigint(10) unsigned | 是|null|--|删除时间|
