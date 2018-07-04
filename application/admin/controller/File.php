@@ -69,7 +69,7 @@ class File extends Admin{
         $Picture = model('Picture');
         $pic_driver = Config('PICTURE_UPLOAD_DRIVER');
         $info = $Picture->upload(
-            $_FILES,
+			'download',
             Config('PICTURE_UPLOAD'),
             Config('PICTURE_UPLOAD_DRIVER'),
             Config("UPLOAD_{$pic_driver}_CONFIG")

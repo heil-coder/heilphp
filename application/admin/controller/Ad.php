@@ -58,7 +58,18 @@ class Ad extends Admin {
 			$this->assign('position',$position);
 			$this->assign('info',null);
 			$this->assign('meta_title','新增广告');
-			return view('edit');
+			switch($position['type']){
+				case 0:
+				case 1:
+					return view('edit_pic');
+					break;	
+				case 2:
+					return view('edit_text');
+					break;
+				case 3:
+					return view('edit_code');
+					break;
+			}
 		}
 	}
 
@@ -89,10 +100,22 @@ class Ad extends Admin {
 			if(empty($position)){
 				$this->error('广告位异常');
 			}
+			$this->assign('position',$position);
 
             $this->assign('info', $info);
             $this->assign('meta_title','编辑广告');
-			return view();
+			switch($position['type']){
+				case 0:
+				case 1:
+					return view('edit_pic');
+					break;	
+				case 2:
+					return view('edit_text');
+					break;
+				case 3:
+					return view('edit_code');
+					break;
+			}
 		}
     }
 
