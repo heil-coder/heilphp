@@ -57,7 +57,7 @@ class Ad extends Validate
 		switch($position['type']){
 			case 0:
 			case 1:
-				if(!is_int($value)) return false;
+				if(!is_numeric($value)) return false;
 				break;
 			case 2:
 				if(!is_string($value)) return false;

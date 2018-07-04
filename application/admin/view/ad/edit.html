@@ -26,6 +26,12 @@
 			</div>
 		</div>
 		<div class="form-item">
+			<label class="item-label">广告内容<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="data" value="{$info.data|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
 			<label class="item-label">开始时间<span class="check-tips"></span></label>
 			<div class="controls">
 				<input type="text" class="text input-large time" name="start_time" value="{$info.start_time|default=''}" placeholder="请选择日期">
@@ -52,21 +58,21 @@
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>>
 <script type="text/javascript" charset="utf-8">
-	//导航高亮
-	highlight_subnav('{:Url('index')}');
 $(function(){
-    $('.date').datetimepicker({
-        format: 'yyyy-mm-dd',
-        language:"zh-CN",
-        minView:2,
-        autoclose:true
-    });
-    $('.time').datetimepicker({
-        format: 'yyyy-mm-dd hh:ii',
-        language:"zh-CN",
-        minView:2,
-        autoclose:true
-    });
+	//导航高亮
+	highlight_subnav('{:Url('AdPosition/index')}');
+	$('.date').datetimepicker({
+		format: 'yyyy-mm-dd',
+		language:"zh-CN",
+		minView:2,
+		autoclose:true
+	});
+	$('.time').datetimepicker({
+		format: 'yyyy-mm-dd hh:ii',
+		language:"zh-CN",
+		minView:2,
+		autoclose:true
+	});
 })
 </script>
 {/block}

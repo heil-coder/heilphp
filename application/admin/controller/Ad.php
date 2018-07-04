@@ -27,7 +27,8 @@ class Ad extends Admin {
 		$this->assign('position',$position);
         /* 获取列表 */
 		$map  = [
-				['status','>', -1]
+				['position','=', $position['id']]
+				,['status','>', -1]
 			];
         $list = model('Ad')->where($map)->order('id desc')->select();
 
@@ -45,11 +46,16 @@ class Ad extends Admin {
 			$Ad = model('Ad');
 			$res = $Ad->edit();
 			if($res !== false){
-				$this->success('新增成功', Url('index'));
+				$this->success('新增成功', Url('index',['position'=>input('param.position')]));
 			} else {
 				$this->error($Ad->getError() ?: '新增失败');
 			}
 		} else {
+			$position = model('AdPosition')->where('id',input('param.position/d'))->find();
+			if(empty($position)){
+				$this->error('广告位异常');
+			}
+			$this->assign('position',$position);
 			$this->assign('info',null);
 			$this->assign('meta_title','新增广告');
 			return view('edit');
@@ -65,11 +71,13 @@ class Ad extends Admin {
 			$Ad = model('Ad');
 			$res = $Ad->edit();
 			if($res !== false){
-				$this->success('编辑成功', Url('index'));
+				$this->success('编辑成功', Url('index',['position'=>input('param.position')]));
 			} else {
 				$this->error($Ad->getError() ?: '编辑失败');
 			}
         } else {
+
+
             $info = array();
             /* 获取数据 */
             $info = model('Ad')->find($id);
@@ -77,6 +85,10 @@ class Ad extends Admin {
             if(false === $info){
                 $this->error('获取广告信息错误');
             }
+			$position = model('AdPosition')->where('id',$info['position'])->find();
+			if(empty($position)){
+				$this->error('广告位异常');
+			}
 
             $this->assign('info', $info);
             $this->assign('meta_title','编辑广告');
