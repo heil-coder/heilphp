@@ -44,14 +44,41 @@ class File extends Model{
      */
     public function upload($file,$setting, $driver = 'Local', $config = null){
         /* 上传文件 */
-        $setting['callback'] = array($this, 'isFile');
-		$setting['removeTrash'] = array($this, 'removeTrash');
+        //$setting['callback'] = array($this, 'isFile');
+		//$setting['removeTrash'] = array($this, 'removeTrash');
 
 		$file = Request()->file($file);	
-		if(empty($file)){
-			$this->error = '没有接收到上传文件';
-			return false;	
+
+		//单图上传
+		if(is_object($file)){
+			return $this->edit($file,$setting,$driver,$config);
 		}
+		//多图上传
+		elseif(is_array($file)){
+			//foreach($file as $key =>&$value){
+			//	$res = $this->edit($value,$setting,$driver,$config);
+			//	if($res === false){
+			//		unset($file[$key]);
+			//	}
+			//}
+			//TODO 多图上传待调试
+			//return $file;
+		}
+		//没有收到上传文件
+		else{
+			$this->error = '没有接收到上传文件';
+			return false;
+		}
+    }
+    /**
+     * 文件上传
+     * @param  string  $file 文件上传表单名 
+     * @param  array  $setting 文件上传配置
+     * @param  string $driver  上传驱动名称
+     * @param  array  $config  上传驱动配置
+     * @return array           文件上传成功后的信息
+     */
+    public function edit($file,$setting, $driver = 'Local', $config = null){
 		if(extension_loaded('php_fileinfo')){
 			$mime = $file->getMime();
 		}
@@ -78,7 +105,7 @@ class File extends Model{
 			$data['id'] = $this->id;
 			return $data;
 		}
-    }
+	}
 
     /**
      * 下载指定文件

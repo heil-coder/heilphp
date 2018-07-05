@@ -56,6 +56,7 @@ class Picture extends Model{
 		}
 		//没有收到上传文件
 		else{
+			$this->error = '没有接收到上传图片';
 			return false;
 		}
     }
