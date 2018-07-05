@@ -1,7 +1,7 @@
 {extend name="public/base"/}
 
 {block name="body"}
-	<script type="text/javascript" src="/static/uploadify/jquery.uploadify.min.js"></script>
+	<script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
 	<div class="main-title">
 		<h2>
 			{$info['id']?'编辑':'新增'}广告
@@ -43,7 +43,7 @@
 /* 初始化上传插件 */
 $("#upload_picture_data").uploadify({
 	"height"          : 30,
-	"swf"             : "/static/uploadify/uploadify.swf",
+	"swf"             : "__STATIC__/uploadify/uploadify.swf",
 	"fileObjName"     : "download",
 	"buttonText"      : "上传图片",
 	"uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
@@ -60,7 +60,7 @@ function uploadPicturedata(file, data){
 	var src = '';
 	if(data.code){
 		$("#cover_id_data").val(data.id);
-		src = data.url || '__ROOT__' + data.path
+		src = data.data.url || '__ROOT__' + data.data.path
 			$("#cover_id_data").parent().find('.upload-img-box').html(
 					'<div class="upload-pre-item"><img src="' + src + '"/></div>'
 					);

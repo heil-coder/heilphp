@@ -63,6 +63,7 @@ class File extends Admin{
      * @author huajie <banhuajie@163.com>
      */
     public function uploadPicture(){
+		$return  = ['code' => 1, 'msg' => '上传成功', 'data' => ''];
         //TODO: 用户登录检测
 
         /* 调用文件上传组件上传文件 */
@@ -75,19 +76,13 @@ class File extends Admin{
             Config("UPLOAD_{$pic_driver}_CONFIG")
         ); //TODO:上传到远程服务器
 
-        /* 记录图片信息 */
+        /* 记录附件信息 */
         if($info){
-            $return['status'] = 1;
-            $return = array_merge($info['download'], $return);
-			$this->success(
-				$info['download']['msg'] ?: '上传成功'
-				,''
-				,$info['download']['data'] ?: ''
-			);
+			$return['msg'] = '上传成功';
+			$return['data'] = $info;
         } else {
-            $return['status'] = 0;
-            $return['info']   = $Picture->getError();
-			$this->error($Picture->getError() ?: '上传失败');
+			$return['msg'] = $File->getError() ?: '上传失败';
         }
+		return json($return);
     }
 }

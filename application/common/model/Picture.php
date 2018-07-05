@@ -30,15 +30,44 @@ class Picture extends Model{
 
     /**
      * 文件上传
-     * @param  array  $files   要上传的文件列表（通常是$_FILES数组）
+     * @param  array  $file		要上传的文件表单名
      * @param  array  $setting 文件上传配置
      * @param  string $driver  上传驱动名称
      * @param  array  $config  上传驱动配置
      * @return array           文件上传成功后的信息
      */
-    public function upload($file, $setting, $driver = 'Local', $config = null){
+    public function upload($file = '', $setting, $driver = 'Local', $config = null){
 		$file = Request()->file($file);	
 
+		//单图上传
+		if(is_object($file)){
+			return $this->edit($file,$setting,$driver,$config);
+		}
+		//多图上传
+		elseif(is_array($file)){
+			//foreach($file as $key =>&$value){
+			//	$res = $this->edit($value,$setting,$driver,$config);
+			//	if($res === false){
+			//		unset($file[$key]);
+			//	}
+			//}
+			//TODO 多图上传待调试
+			//return $file;
+		}
+		//没有收到上传文件
+		else{
+			return false;
+		}
+    }
+    /**
+     * 文件上传
+     * @param  array  $file		要上传文件对象 ThinkPHP的file对象
+     * @param  array  $setting 文件上传配置
+     * @param  string $driver  上传驱动名称
+     * @param  array  $config  上传驱动配置
+     * @return array           文件上传成功后的信息
+     */
+	protected function edit(&$file,$setting,$driver = 'Local',$config = null){
 		$map = [];
 		$map[] = ['md5','=',$file->hash('md5')];
 		$map[] = ['sha1','=',$file->hash('sha1')];
@@ -62,7 +91,7 @@ class Picture extends Model{
 			$data['id'] = $this->id;
 			return $data;
 		}
-    }
+	}
 
     /**
      * 下载指定文件

@@ -28,7 +28,7 @@
 					<tr>
 						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$vo['id']}"> </td>
 						<td>{$vo.id}</td>
-						<td><a href="{:Url('vo/index?vo='.$vo['id'])}">{$vo.title}</a></td>
+						<td><a href="{:Url('edit?id='.$vo['id'])}">{$vo.title}</a></td>
 						<td>
 							<a title="编辑" href="{:Url('edit?id='.$vo['id'])}">编辑</a>
 							<a href="{:Url('setStatus?ids='.$vo['id'].'&status='.abs(1-$vo['status']))}" class="ajax-get">{$vo.status|show_status_op}</a>
