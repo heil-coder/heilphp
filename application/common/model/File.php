@@ -49,11 +49,11 @@ class File extends Model{
 
 		$file = Request()->file($file);	
 
-		//单图上传
+		//单文件上传
 		if(is_object($file)){
 			return $this->edit($file,$setting,$driver,$config);
 		}
-		//多图上传
+		//多文件上传
 		elseif(is_array($file)){
 			//foreach($file as $key =>&$value){
 			//	$res = $this->edit($value,$setting,$driver,$config);
@@ -61,7 +61,7 @@ class File extends Model{
 			//		unset($file[$key]);
 			//	}
 			//}
-			//TODO 多图上传待调试
+			//TODO 多文件上传待调试
 			//return $file;
 		}
 		//没有收到上传文件
