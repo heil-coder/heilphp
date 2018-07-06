@@ -12,7 +12,7 @@
             <div class="nav-collapse collapse">
                 <ul class="nav">
 					{taglib name="\app\index\taglib\Heil,\app\index\taglib\Article" /}
-					{Heil:nav name="nav"}
+					{Heil:nav id="nav"}
 						{eq name="nav.pid" value="0"}
                         <li>
 							<a href="{$nav.url|get_nav_url}" target="{eq name='nav.target' value='1'}_blank<else/>_self{/eq}">{$nav.title}</a>

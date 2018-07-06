@@ -10,6 +10,7 @@
 
 namespace app\common\widget;
 use think\Controller;
+use think\Container;
 
 /**
  * SEO设置widget
@@ -17,7 +18,30 @@ use think\Controller;
  */
 
 class Seo extends Controller{
-	
+	/**
+     * 构造方法
+     * @access public
+     */
+    public function __construct()
+    {
+        $this->request = Container::get('request');
+        $this->app     = Container::get('app');
+		config('template.view_base','');
+        $this->view    = Container::get('view')->init(
+            $this->app['config']->pull('template')
+        );
+
+        // 控制器初始化
+        $this->initialize();
+
+        // 前置操作方法
+        foreach ((array) $this->beforeActionList as $method => $options) {
+            is_numeric($method) ?
+            $this->beforeAction($options) :
+            $this->beforeAction($method, $options);
+        }
+    }
+
 	/* 获取当前页面SEO信息 */
 	public function detail(){
 		$module = strtolower(Request()->module());
@@ -78,7 +102,7 @@ class Seo extends Controller{
 		$seo['seo_description'] = $this->display($seo['seo_description']);
 
 		$this->assign('seo',$seo);
-		return $this->fetch('common@seo/detail');
+		return $this->fetch('common@seo/detail',[],['view_base'=>env('root_path').'public/theme/']);
 	}
 	
 }

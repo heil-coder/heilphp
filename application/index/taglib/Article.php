@@ -35,7 +35,6 @@ class Article extends TagLib{
     );
 
     public function taglist($tag, $content){
-        $name   = $tag['name'];
         $cate   = $tag['category'];
         $child  = empty($tag['child']) ? 'false' : $tag['child'];
         $row    = empty($tag['row'])   ? '10' : $tag['row'];
@@ -48,7 +47,7 @@ class Article extends TagLib{
         $parse .= '$__CATE__, \'level DESC,id DESC\', 1,';
         $parse .= $field . ',[' . $page .','.$row.']);';
         $parse .= ' ?>';
-        $parse .= '{volist name="__LIST__" id="'. $name .'"}';
+        $parse .= '{volist name="__LIST__" id="'. $tag['id'].'"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;

@@ -41,7 +41,7 @@ class Heil extends TagLib{
         if($tree){
             $parse .= '$__NAV__ = list_to_tree($__NAV__, "id", "pid", "_");';
         }
-        $parse .= '?>{volist name="__NAV__" id="'. $tag['name'] .'"}';
+        $parse .= '?>{volist name="__NAV__" id="'. $tag['id'] .'"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;
