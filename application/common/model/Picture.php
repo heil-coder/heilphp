@@ -45,14 +45,12 @@ class Picture extends Model{
 		}
 		//多图上传
 		elseif(is_array($file)){
-			//foreach($file as $key =>&$value){
-			//	$res = $this->edit($value,$setting,$driver,$config);
-			//	if($res === false){
-			//		unset($file[$key]);
-			//	}
-			//}
+			foreach($file as $key =>$value){
+				$res = $this->edit($value,$setting,$driver,$config);
+				$return[$key] = $res;
+			}
 			//TODO 多图上传待调试
-			//return $file;
+			return $return;
 		}
 		//没有收到上传文件
 		else{
@@ -68,7 +66,7 @@ class Picture extends Model{
      * @param  array  $config  上传驱动配置
      * @return array           文件上传成功后的信息
      */
-	protected function edit(&$file,$setting,$driver = 'Local',$config = null){
+	protected function edit($file,$setting,$driver = 'Local',$config = null){
 		$map = [];
 		$map[] = ['md5','=',$file->hash('md5')];
 		$map[] = ['sha1','=',$file->hash('sha1')];

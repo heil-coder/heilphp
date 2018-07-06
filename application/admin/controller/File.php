@@ -70,7 +70,7 @@ class File extends Admin{
         $Picture = model('Picture');
         $pic_driver = Config('PICTURE_UPLOAD_DRIVER');
         $info = $Picture->upload(
-			'download',
+			'',
             Config('PICTURE_UPLOAD'),
             Config('PICTURE_UPLOAD_DRIVER'),
             Config("UPLOAD_{$pic_driver}_CONFIG")
@@ -81,7 +81,7 @@ class File extends Admin{
 			$return['msg'] = '上传成功';
 			$return['data'] = $info;
         } else {
-			$return['msg'] = $File->getError() ?: '上传失败';
+			$return['msg'] = $Picture->getError() ?: '上传失败';
         }
 		return json($return);
     }

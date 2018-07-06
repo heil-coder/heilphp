@@ -22,6 +22,16 @@ class Ad extends Model {
 	protected $autoWriteTimestamp = true;
 
 	protected $insert = ['status'=>1];
+	protected function setStartTimeAttr($value){
+		if($value == ''){
+			return null;
+		}	
+	}
+	protected function setEndTimeAttr($value){
+		if($value == ''){
+			return null;
+		}	
+	}
 
 	/**
 	 * 编辑

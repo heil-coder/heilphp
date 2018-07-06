@@ -1,7 +1,6 @@
 {extend name="public/base"/}
 
 {block name="body"}
-	<script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
 	<div class="main-title">
 		<h2>
 			{$info['id']?'编辑':'新增'}广告
@@ -27,54 +26,13 @@
 			</div>
 		</div>
 		<div class="form-item">
-			<label class="item-label">广告图片<span class="check-tips">[宽：{$position['width']}，高：{$position['height']}]</span></label>
-
+			<label class="item-label">广告内容<span class="check-tips"></span></label>
 			<div class="controls">
-				<input type="file" id="upload_picture_data">
-				<input type="hidden" name="data" id="cover_id_data" value="{$info['data']}"/>
-				<div class="upload-img-box">
-					{notempty name="info['data']"}
-					<div class="upload-pre-item"><img src="{$info['data']|get_cover='path'}"/></div>
-					{/notempty}
-				</div>
+				<label class="textarea input-large">
+					<textarea name="data">{$info.data|default=''}</textarea>
+				</label>
 			</div>
-			<script type="text/javascript">
-//上传图片
-/* 初始化上传插件 */
-$("#upload_picture_data").uploadify({
-	"height"          : 30,
-	"swf"             : "__STATIC__/uploadify/uploadify.swf",
-	"fileObjName"     : "data",
-	"buttonText"      : "上传图片",
-	"uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
-	"width"           : 120,
-	'removeTimeout'	  : 1,
-	'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
-	"onUploadSuccess" : uploadPicturedata,
-	'onFallback' : function() {
-		alert('未检测到兼容版本的Flash.');
-	}
-});
-function uploadPicturedata(file, data){
-	var data = $.parseJSON(data);
-	var src = '';
-	if(data.code && data.data.data){
-		$("#cover_id_data").val(data.data.data.id);
-		src = data.data.data.url || '__ROOT__' + data.data.data.path
-			$("#cover_id_data").parent().find('.upload-img-box').html(
-					'<div class="upload-pre-item"><img src="' + src + '"/></div>'
-					);
-	} else {
-		updateAlert(data.msg);
-		setTimeout(function(){
-			$('#top-alert').find('button').click();
-			$(that).removeClass('disabled').prop('disabled',false);
-		},1500);
-	}
-}
-			</script>
 		</div>
-
 		<div class="form-item">
 			<label class="item-label">开始时间<span class="check-tips"></span></label>
 			<div class="controls">

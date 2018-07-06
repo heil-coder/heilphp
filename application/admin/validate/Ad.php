@@ -29,8 +29,8 @@ class Ad extends Validate
     ];
 
     protected $message  =   [
-		'title.chsDash'						=> '广告位名称只能是汉字、字母、数字、_、-'
-		,'title.length'						=> '广告位名称长度需在2～30之间'
+		'title.chsDash'						=> '广告说明只能是汉字、字母、数字、_、-'
+		,'title.length'						=> '广告说明长度需在2～30之间'
 
 		,'position.require'					=> '广告位数据异常'
 		,'position.num'						=> '广告位数据异常'
