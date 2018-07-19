@@ -9,23 +9,10 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-namespace think\config\driver;
-
-class Json
-{
-    protected $config;
-
-    public function __construct($config)
-    {
-        if (is_file($config)) {
-            $config = file_get_contents($config);
-        }
-
-        $this->config = $config;
-    }
-
-    public function parse()
-    {
-        return json_decode($this->config, true);
-    }
-}
+// +----------------------------------------------------------------------
+// | 中间件配置
+// +----------------------------------------------------------------------
+return [
+    // 默认中间件命名空间
+    'default_namespace' => 'app\\http\\middleware\\',
+];

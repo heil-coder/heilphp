@@ -22,8 +22,6 @@ return [
     'app_debug'              => false,
     // 应用Trace
     'app_trace'              => false,
-    // 应用模式状态
-    'app_status'             => '',
     // 是否支持多模块
     'app_multi_module'       => true,
     // 入口自动绑定模块
@@ -39,7 +37,7 @@ return [
     // 默认JSONP处理方法
     'var_jsonp_handler'      => 'callback',
     // 默认时区
-    'default_timezone'       => 'PRC',
+    'default_timezone'       => 'Asia/Shanghai',
     // 是否开启多语言
     'lang_switch_on'         => false,
     // 默认全局过滤方法 用逗号分隔多个
@@ -88,6 +86,8 @@ return [
     'pathinfo_depr'          => '/',
     // HTTPS代理标识
     'https_agent_name'       => '',
+    // IP代理获取标识
+    'http_agent_ip'          => 'X-REAL-IP',
     // URL伪静态后缀
     'url_html_suffix'        => 'html',
     // URL普通方式参数 用于自动生成
@@ -98,6 +98,8 @@ return [
     'url_lazy_route'         => false,
     // 是否强制使用路由
     'url_route_must'         => false,
+    // 合并路由规则
+    'route_rule_merge'       => false,
     // 路由是否完全匹配
     'route_complete_match'   => false,
     // 使用注解路由
@@ -120,6 +122,12 @@ return [
     'request_cache_expire'   => null,
     // 全局请求缓存排除规则
     'request_cache_except'   => [],
+    // 是否开启路由缓存
+    'route_check_cache'      => false,
+    // 路由缓存的Key自定义设置（闭包），默认为当前URL和请求类型的md5
+    'route_check_cache_key'  => '',
+    // 路由缓存类型及参数
+    'route_cache_option'     => [],
 
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
