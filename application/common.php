@@ -952,44 +952,54 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 	$theme = config(strtoupper('DEFAULT_THEME_'.$module.'_'.$eqp));
 	$theme = $theme ?: 'default';
 	$view_base = config('template.view_base');
+	$app = app();
 	switch($eqp){
 		//手机
 		case 'phone':
 			//设定皮肤目录为视图根目录
 			config('template.view_base',$view_base.$theme.'/view_phone/');
+			$app->view->init(config('template.'));
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
 				config('template.view_base',$view_base.$theme.'/view/');
+				$app->view->init(config('template.'));
 			}
 			//不是默认皮肤 && 皮肤模板文件不存在
 			if($theme != 'default' && !view_exists($template)){
 				//设定默认皮肤目录为视图根目录
 				config('template.view_base',$view_base.'default/view_phone/');
+				$app->view->init(config('template.'));
 			}
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
 				config('template.view_base',$view_base.'default/view/');
+				$app->view->init(config('template.'));
 			}
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
 				//取消视图根目录设置
 				config('template.view_base','');
+				$app->view->init(config('template.'));
 			}
 			break;
 		//pc
 		default:
 			//设定皮肤目录为视图根目录
 			config('template.view_base',$view_base.$theme.'/view/');
+			$app->view->init(config('template.'));
 			//不是默认皮肤 && 皮肤模板文件不存在
 			if($theme != 'default' && !view_exists($template)){
 				//设定默认皮肤目录为视图根目录
 				config('template.view_base',$view_base.'default/view/');
+				$app->view->init(config('template.'));
 			}
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
 				//取消视图根目录设置
 				config('template.view_base','');
+				$app->view->init(config('template.'));
 			}
+
 			break;
 	}
 	return think\Response::create($template, 'view', $code)->assign($vars)->filter($filter);

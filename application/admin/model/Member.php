@@ -69,11 +69,10 @@ class Member extends Model {
         /* 更新登录信息 */
         $data = array(
             'uid'             => $user['uid'],
-            'login'           => array('exp', '`login`+1'),
             'last_login_time' => app()->getBeginTime(),
             'last_login_ip'   => get_client_ip(1),
         );
-        $this->getByUid($user['uid'])->save($data);
+        $this->where('uid',$user['uid'])->data($data)->inc('login')->update();
 
         /* 记录登录SESSION和COOKIES */
         $auth = array(
