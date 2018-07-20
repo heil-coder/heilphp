@@ -27,7 +27,7 @@ class AdPosition extends Admin {
 		$map  = [
 				['status','>', -1]
 			];
-        $list = model('AdPosition')->where($map)->order('id desc')->select();
+        $list = model('AdPosition')->where($map)->order('sort asc,id asc')->select();
 
         $this->assign('list', $list);
         $this->assign('meta_title','广告位');
@@ -81,25 +81,63 @@ class AdPosition extends Admin {
 			return view();
 		}
     }
-
     /**
-     * 删除
-	 * @author Jason<1878566968@qq.com>
+     * 状态修改
+     * @author Jason <1878566968@qq.com>
      */
-    public function del(){
-        $id = array_unique(Input('id/a',[]));
-
-        if ( empty($id) ) {
+    public function changeStatus($method=null){
+        $ids = array_unique(input('param.ids/a',[]));
+        $ids = is_array($ids) ? implode(',',$ids) : $ids;
+        if ( empty($ids) ) {
             $this->error('请选择要操作的数据!');
         }
+		$map = [];
+        $map[] =   ['id','in',$ids];
+        switch ( strtolower($method) ){
+            case 'forbid':
+                $this->forbid('AdPosition', $map );
+                break;
+            case 'resume':
+                $this->resume('AdPosition', $map );
+                break;
+            case 'delete':
+                $this->delete('AdPosition', $map );
+                break;
+            default:
+                $this->error('参数非法');
+        }
+    }
+    /**
+     * 排序
+	 * @author Jason<1878566968@qq.com>
+     */
+    public function sort(){
+        if(Request()->isGet()){
+            $ids = input('param.ids');
 
-        $map = [['id','in',$id]];
-        if(model('AdPosition')->where($map)->find()->delete()){
-            //记录行为
-            action_log('update_ap_position', 'ad_position', $id, UID);
-            $this->success('删除成功');
-        } else {
-            $this->error('删除失败！');
+            //获取排序的数据
+            $map = [['status','>',-1]];
+            if(!empty($ids)){
+                $map['id'] = ['id','in',$ids];
+            }
+            $list = db('AdPosition')->where($map)->field('id,title')->order('sort asc,id asc')->select();
+
+            $this->assign('list', $list);
+            $this->assign('meta_title','广告位排序');
+			return view();
+        }elseif (Request()->isPost()){
+            $ids = Input('post.ids');
+            $ids = explode(',', $ids);
+            foreach ($ids as $key=>$value){
+                $res = db('AdPosition')->where('id',$value)->setField('sort', $key+1);
+            }
+            if($res !== false){
+                $this->success('排序成功！');
+            }else{
+                $this->error('排序失败！');
+            }
+        }else{
+            $this->error('非法请求！');
         }
     }
 }
