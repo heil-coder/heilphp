@@ -279,20 +279,31 @@ INSERT INTO `heilphp_menu` VALUES ('120', '排序', '75', '0', 'Menu/sort', '1',
 INSERT INTO `heilphp_menu` VALUES ('121', '排序', '76', '0', 'Channel/sort', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('122', '数据列表', '58', '0', 'think/lists', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('123', '审核列表', '3', '0', 'Article/examine', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('124', 'SEO设置', '68', '10', 'seo/index', '0', '', '系统设置', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('125', '新增', '124', '0', 'seo/add', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('126', '编辑', '124', '0', 'seo/edit', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('127', '改变状态', '124', '0', 'seo/setstatus', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('128', '排序', '124', '0', 'seo/sort', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('129', '删除', '124', '0', 'seo/del', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('130', '广告位', '68', '0', 'ad_position/index', '0', '', '广告管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('131', '新增', '130', '0', 'ad_position/add', '0', '', '广告管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('132', '编辑', '130', '0', 'ad_position/edit', '0', '', '广告管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('133', '删除', '130', '0', 'ad_position/del', '0', '', '广告管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('134', '广告', '68', '0', 'ad/index', '1', '', '广告管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('135', '新增', '134', '0', 'ad/add', '0', '', '广告管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('136', '编辑', '134', '0', 'ad/edit', '0', '', '广告管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('137', '删除', '134', '0', 'ad/del', '0', '', '广告管理', '0','1');
+
+INSERT INTO `heilphp_menu` VALUES ('10000', '站点', '0', '7', 'about/index', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10001', 'SEO设置', '10000', '0', 'seo/index', '0', '', '通用设置', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10002', '新增', '10001', '0', 'seo/add', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10003', '编辑', '10001', '0', 'seo/edit', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10004', '启用', '10001', '0', 'seo/setstatus?method=resume', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10005', '改变状态', '10001', '0', 'seo/setstatus', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10006', '排序', '10001', '0', 'seo/sort', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10007', '删除', '10001', '0', 'seo/del', '0', '', '', '0','1');
+
+INSERT INTO `heilphp_menu` VALUES ('10101', '广告位', '10000', '0', 'ad_position/index', '0', '', '通用设置', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10102', '新增', '10101', '0', 'ad_position/add', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10103', '编辑', '10101', '0', 'ad_position/edit', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10104', '启用', '10101', '0', 'ad_position/changeStatus?method=resume', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10105', '禁用', '10101', '0', 'ad_position/changeStatus?method=forbid', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10106', '删除', '10101', '0', 'ad_position/changeStatus?method=delete', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10107', '排序', '10101', '0', 'ad_position/sort', '1', '', '', '0','1');
+
+INSERT INTO `heilphp_menu` VALUES ('10201', '广告', '10000', '0', 'ad/index', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10202', '新增', '10201', '0', 'ad/add', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10203', '编辑', '10201', '0', 'ad/edit', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10204', '启用', '10201', '0', 'ad/changeStatus?method=resume', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10205', '禁用', '10201', '0', 'ad/changeStatus?method=forbid', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10206', '删除', '10201', '0', 'ad/changeStatus?method=delete', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10207', '排序', '10201', '0', 'ad/sort', '1', '', '', '0','1');
 
 -- -----------------------------
 -- Table structure for `heilphp_addons`
@@ -373,11 +384,11 @@ CREATE TABLE `heilphp_action` (
 -- -----------------------------
 -- Records of `heilphp_action`
 -- -----------------------------
-INSERT INTO `heilphp_action` VALUES ('1', 'user_login', '用户登录', '积分+10，每天一次', 'table:member|field:score|condition:id={$self} AND status>-1|rule:score+10|cycle:24|max:1;', '[user|get_nickname]在[time|time_format]登录了后台', '1', '1', '1387181220',null);
-INSERT INTO `heilphp_action` VALUES ('2', 'add_article', '发布文章', '积分+5，每天上限5次', 'table:member|field:score|condition:id={$self}|rule:score+5|cycle:24|max:5', '', '2', '0', '1380173180',null);
-INSERT INTO `heilphp_action` VALUES ('3', 'review', '评论', '评论积分+1，无限制', 'table:member|field:score|condition:id={$self}|rule:score+1', '', '2', '1', '1383285646',null);
-INSERT INTO `heilphp_action` VALUES ('4', 'add_document', '发表文档', '积分+10，每天上限5次', 'table:member|field:score|condition:id={$self}|rule:score+10|cycle:24|max:5', '[user|get_nickname]在[time|time_format]发表了一篇文章。\r\n表[model]，记录编号[record]。', '2', '0', '1386139726',null);
-INSERT INTO `heilphp_action` VALUES ('5', 'add_document_topic', '发表讨论', '积分+5，每天上限10次', 'table:member|field:score|condition:id={$self}|rule:score+5|cycle:24|max:10', '', '2', '0', '1383285551',null);
+INSERT INTO `heilphp_action` VALUES ('1', 'user_login', '用户登录', '积分+10，每天一次', 'table:member|field:score|condition:uid={$self} AND status>-1|rule:score+10|cycle:24|max:1;', '[user|get_nickname]在[time|time_format]登录了后台', '1', '1', '1387181220',null);
+INSERT INTO `heilphp_action` VALUES ('2', 'add_article', '发布文章', '积分+5，每天上限5次', 'table:member|field:score|condition:uid={$self}|rule:score+5|cycle:24|max:5', '', '2', '0', '1380173180',null);
+INSERT INTO `heilphp_action` VALUES ('3', 'review', '评论', '评论积分+1，无限制', 'table:member|field:score|condition:uid={$self}|rule:score+1', '', '2', '1', '1383285646',null);
+INSERT INTO `heilphp_action` VALUES ('4', 'add_document', '发表文档', '积分+10，每天上限5次', 'table:member|field:score|condition:uid={$self}|rule:score+10|cycle:24|max:5', '[user|get_nickname]在[time|time_format]发表了一篇文章。\r\n表[model]，记录编号[record]。', '2', '0', '1386139726',null);
+INSERT INTO `heilphp_action` VALUES ('5', 'add_document_topic', '发表讨论', '积分+5，每天上限10次', 'table:member|field:score|condition:uid={$self}|rule:score+5|cycle:24|max:10', '', '2', '0', '1383285551',null);
 INSERT INTO `heilphp_action` VALUES ('6', 'update_config', '更新配置', '新增或修改或删除配置', '', '', '1', '1', '1383294988',null);
 INSERT INTO `heilphp_action` VALUES ('7', 'update_model', '更新模型', '新增或修改模型', '', '', '1', '1', '1383295057',null);
 INSERT INTO `heilphp_action` VALUES ('8', 'update_attribute', '更新属性', '新增或更新或删除属性', '', '', '1', '1', '1383295963',null);
@@ -813,6 +824,7 @@ CREATE TABLE IF NOT EXISTS `heilphp_ad_position` (
   `create_time` bigint(10) unsigned DEFAULT NULL COMMENT '创建时间',
   `update_time` bigint(10) unsigned DEFAULT NULL COMMENT '更新时间',
   `status` tinyint(1) unsigned NOT NULl DEFAULT 1 COMMENT '状态（0：禁用，1：启用）',
+  `sort` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COMMENT = '广告位表';
@@ -836,6 +848,7 @@ CREATE TABLE IF NOT EXISTS `heilphp_ad` (
   `create_time` bigint(10) unsigned DEFAULT NULL COMMENT '创建时间',
   `update_time` bigint(10) unsigned DEFAULT NULL COMMENT '更新时间',
   `status` tinyint(1) unsigned NOT NULl DEFAULT 1 COMMENT '状态（0：禁用，1：启用）',
+  `sort` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COMMENT = '广告位表';

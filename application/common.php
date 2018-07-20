@@ -822,7 +822,7 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
         //执行数据库操作
         $Model = db(ucfirst($rule['table']));
         $field = $rule['field'];
-        $res = $Model->where($rule['condition'])->setField($field, array('exp', $rule['rule']));
+        $res = $Model->where($rule['condition'])->exp($field,$rule['rule'])->update();
 
         if(!$res){
             $return = false;
@@ -953,6 +953,7 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 	$theme = $theme ?: 'default';
 	$view_base = config('template.view_base');
 	$app = app();
+	
 	switch($eqp){
 		//手机
 		case 'phone':
