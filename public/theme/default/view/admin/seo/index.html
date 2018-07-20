@@ -32,7 +32,9 @@
 							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
 							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
 							<a href="{:Url('add')}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
-							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" url="{:Url('del')}" target-form="ids"><i class="fa fa-remove"></i>删除</button>
+							<button class="btn btn-sm btn-success ajax-post" url="{:Url('changeStatus?method=resume')}" target-form="ids">启 用</button>
+							<button class="btn btn-sm btn-warning ajax-post" url="{:Url('changeStatus?method=forbid')}" target-form="ids">禁 用</button>
+							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" url="{:Url('changeStatus',['method'=>'delete'])}" target-form="ids"><i class="fa fa-remove"></i>删除</button>
 							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort','','')}"><i class="fa fa-sort"></i>排序</button>
 						</div>
 					</div>
@@ -57,21 +59,25 @@
 								</thead>
 								<tbody>
 									{notempty name="list"}
-									{volist name="list" id="seo"}
+									{volist name="list" id="vo"}
 									<tr>
-										<td><input class="ids row-selected" type="checkbox" name="" id="" value="{$seo['id']}"> </td>
-										<td>{$seo.id}</td>
-										<td><a href="{:Url('edit?id='.$seo['id'])}">{$seo.title}</a></td>
-										<td>{$seo.module}</td>
-										<td>{$seo.controller}</td>
-										<td>{$seo.action}</td>
-										<td><code>{$seo.seo_title}</code></td>
-										<td><code>{$seo.seo_keywords}</code></td>
-										<td><code>{$seo.seo_description}</code></td>
+										<td><input class="ids row-selected" type="checkbox" name="ids[]" value="{$vo['id']}"> </td>
+										<td>{$vo.id}</td>
+										<td><a href="{:Url('edit?id='.$vo['id'])}">{$vo.title}</a></td>
+										<td>{$vo.module}</td>
+										<td>{$vo.controller}</td>
+										<td>{$vo.action}</td>
+										<td><code>{$vo.seo_title}</code></td>
+										<td><code>{$vo.seo_keywords}</code></td>
+										<td><code>{$vo.seo_description}</code></td>
 										<td>
-											<a title="编辑" href="{:Url('edit?id='.$seo['id'])}">编辑</a>
-											<a href="{:Url('setStatus?ids='.$seo['id'].'&status='.abs(1-$seo['status']))}" class="ajax-get">{$seo.status|show_status_op}</a>
-											<a class="confirm ajax-get" title="删除" href="{:Url('del?id='.$seo['id'])}">删除</a>
+											<a title="编辑" href="{:Url('edit?id='.$vo['id'])}">编辑</a>
+											{eq name="vo.status" value="1"}
+											<a href="{:Url('changeStatus?method=forbid&ids='.$vo['id'])}" class="ajax-get">禁用</a>
+											{else/}
+											<a href="{:Url('changeStatus?method=resume&ids='.$vo['id'])}" class="ajax-get">启用</a>
+											{/eq}
+											<a class="confirm ajax-get" title="删除" href="{:Url('changeStatus',['method'=>'delete','ids'=>$vo['id']])}">删除</a>
 										</td>
 									</tr>
 									{/volist}

@@ -83,23 +83,29 @@ class Seo extends Admin {
     }
 
     /**
-     * 删除
-	 * @author Jason<1878566968@qq.com>
+     * 状态修改
+     * @author Jason <1878566968@qq.com>
      */
-    public function del(){
-        $id = array_unique(Input('id/a',[]));
-
-        if ( empty($id) ) {
+    public function changeStatus($method=null){
+        $ids = array_unique(input('param.ids/a',[]));
+        $ids = is_array($ids) ? implode(',',$ids) : $ids;
+        if ( empty($ids) ) {
             $this->error('请选择要操作的数据!');
         }
-
-        $map = [['id','in',$id]];
-        if(db('Seo')->where($map)->delete()){
-            //记录行为
-            action_log('update_seo', 'seo', $id, UID);
-            $this->success('删除成功');
-        } else {
-            $this->error('删除失败！');
+		$map = [];
+        $map[] =   ['id','in',$ids];
+        switch ( strtolower($method) ){
+            case 'forbid':
+                $this->forbid('Seo', $map );
+                break;
+            case 'resume':
+                $this->resume('Seo', $map );
+                break;
+            case 'delete':
+                $this->delete('Seo', $map );
+                break;
+            default:
+                $this->error('参数非法');
         }
     }
 

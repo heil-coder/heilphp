@@ -292,7 +292,22 @@ class Admin extends Controller {
 	 * @modify Jason <1878566968@qq.com>
      */
     protected function delete ( $model , $where = [] , $msg = array( 'success'=>'删除成功！', 'error'=>'删除失败！')) {
-        $data['delete_time']         =   app()->getBeginTime();
+		if(is_string($model)){
+			$model = model($model);
+		}
+		$fields = $model->getTableFields();
+        if(!in_array('delete_time',$fields)){
+			$msg   = array_merge( array( 'success'=>'操作成功！', 'error'=>'操作失败！', 'url'=>'' ,'ajax'=>Request::isAjax()) , (array)$msg );
+			if( ($a = $model->where($where)->delete()) !==false ) {
+				$this->success($msg['success'],$msg['url'],$msg['ajax']);
+			}else{
+				$this->error($msg['error'],$msg['url'],$msg['ajax']);
+			}
+			exit();
+        }
+		else{
+			$data['delete_time']         =   app()->getBeginTime();
+		}
         $this->editRow(   $model , $data, $where, $msg);
     }
     /**
