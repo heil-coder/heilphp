@@ -965,16 +965,28 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 				config('template.view_base',$view_base.$theme.'/view/');
 				$app->view->init(config('template.'));
 			}
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__',$theme);
+				break;
+			}
 			//不是默认皮肤 && 皮肤模板文件不存在
 			if($theme != 'default' && !view_exists($template)){
 				//设定默认皮肤目录为视图根目录
 				config('template.view_base',$view_base.'default/view_phone/');
 				$app->view->init(config('template.'));
 			}
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__','default');
+				break;
+			}
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
 				config('template.view_base',$view_base.'default/view/');
 				$app->view->init(config('template.'));
+			}
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__','default');
+				break;
 			}
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
@@ -994,13 +1006,22 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 				config('template.view_base',$view_base.'default/view/');
 				$app->view->init(config('template.'));
 			}
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__',$theme);
+				$app->view->init(config('template.'));
+				break;
+			}
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
 				//取消视图根目录设置
 				config('template.view_base','');
 				$app->view->init(config('template.'));
 			}
-
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__','default');
+				$app->view->init(config('template.'));
+				break;
+			}
 			break;
 	}
 	return think\Response::create($template, 'view', $code)->assign($vars)->filter($filter);
