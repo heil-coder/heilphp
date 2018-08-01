@@ -17,7 +17,7 @@ define('IS_WRITE',true);		//检查是否sae模式
 function check_env(){
     $items = array(
         'os'      => array('操作系统', '不限制', '类Unix', PHP_OS, 'success'),
-        'php'     => array('PHP版本', '5.5', '5.5+', PHP_VERSION, 'success'),
+        'php'     => array('PHP版本', '5.6', '5.6+', PHP_VERSION, 'success'),
         'upload'  => array('附件上传', '不限制', '2M+', '未知', 'success'),
         'gd'      => array('GD库', '2.0', '2.0+', '未知', 'success'),
         'disk'    => array('磁盘空间', '5M', '不限制', '未知', 'success'),
