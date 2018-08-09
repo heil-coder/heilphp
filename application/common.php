@@ -982,6 +982,7 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 			}
 			else{
 				config('template.tpl_replace_string.__TEMPLATE__','default');
+				$app->view->init(config('template.'));
 				break;
 			}
 			//如果皮肤模板文件不存在
