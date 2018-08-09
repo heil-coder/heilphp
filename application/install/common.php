@@ -176,7 +176,7 @@ function register_administrator($db, $prefix, $admin, $salt){
 
 
     $sql = "INSERT INTO `[PREFIX]member` VALUES ".
-           "('1','[NICK]', '0', '0000-00-00', '', '0', '1', '[TIME]','[IP]', '[TIME]', '[IP]','[TIME]', '1',null);";
+           "('1','[NICK]', '0', '1000-01-01', '', '0', '1', '[TIME]','[IP]', '[TIME]', '[IP]','[TIME]', '1',null);";
     $sql = str_replace(
         array('[PREFIX]','[NICK]', '[TIME]','[IP]'),
         array($prefix,$admin['username'], App::getBeginTime(),get_client_ip(1)),
