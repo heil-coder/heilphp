@@ -963,16 +963,19 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 			//如果皮肤模板文件不存在
 			if(!view_exists($template)){
 				config('template.view_base',$view_base.$theme.'/view/');
+				config('template.tpl_replace_string.__TEMPLATE__','default');
 				$app->view->init(config('template.'));
 			}
 			else{
 				config('template.tpl_replace_string.__TEMPLATE__',$theme);
+				$app->view->init(config('template.'));
 				break;
 			}
 			//不是默认皮肤 && 皮肤模板文件不存在
 			if($theme != 'default' && !view_exists($template)){
 				//设定默认皮肤目录为视图根目录
 				config('template.view_base',$view_base.'default/view_phone/');
+				config('template.tpl_replace_string.__TEMPLATE__','default');
 				$app->view->init(config('template.'));
 			}
 			//如果皮肤模板文件不存在
