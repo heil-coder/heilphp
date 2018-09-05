@@ -362,6 +362,7 @@ INSERT INTO `heilphp_hooks` VALUES ('8', 'adminArticleEdit', '后台内容编辑
 INSERT INTO `heilphp_hooks` VALUES ('13', 'adminIndex', '首页小格子个性化显示', '1', '1382596073', 'SiteStat,SystemInfo,DevTeam', '1');
 INSERT INTO `heilphp_hooks` VALUES ('14', 'topicComment', '评论提交方式扩展钩子。', '1', '1380163518', 'Editor', '1');
 INSERT INTO `heilphp_hooks` VALUES ('16', 'app_begin', '应用开始', '2', '1384481614', '', '1');
+INSERT INTO `heilphp_hooks` VALUES ('17', 'flieUploader', '文件上传工具初始化钩子', '1', '1384481614','Uploader', '1');
 
 -- -----------------------------
 -- Table structure for `heilphp_action`
