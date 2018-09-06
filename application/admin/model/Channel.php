@@ -26,11 +26,37 @@ use think\Model;
 
 class Channel extends Model {
 	protected $autoWriteTimestamp = true;
-    //protected $_validate = array(
-    //    array('title', 'require', '标题不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
-    //    array('url', 'require', 'URL不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
-    //);
 
 	protected $insert = ['status'=>1];
 
+	/**
+	 * 编辑配置
+	 */
+	public function edit(){
+        $data = Request()->only('id,pid,title,url,sort,create_time,update_time,status,target');
+		if(empty($data)){
+			return false;	
+		}
+
+		$validate = new \app\admin\validate\Channel;
+		if(!$validate->check($data)){
+			$this->error = $validate->getError();
+			return false;
+		}
+
+		if(empty($data['id'])){
+			$res = $this->save($data);
+			$data['id'] = $this->id;
+		}
+		else{
+			$res = $this->get($data['id'])->save($data);
+		}
+		if($res === false){
+			return false;	
+		}
+		else{
+			return $res;
+		}
+        action_log('update_channel', 'channel', $data['id'], UID);
+	}
 }

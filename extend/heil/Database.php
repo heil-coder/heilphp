@@ -154,8 +154,18 @@ class Database{
             //备份数据记录
             $result = $db->query("SELECT * FROM `{$table}` LIMIT {$start}, 1000");
             foreach ($result as $row) {
-                $row = array_map('addslashes', $row);
-                $sql = "INSERT INTO `{$table}` VALUES ('" . str_replace(array("\r","\n"),array('\r','\n'),implode("', '", $row)) . "');\n";
+				$tmpSql = "";
+				foreach($row as &$field){
+					if(!is_null($field)){
+						$field = addslashes($field);
+						$tmpSql = (empty($tmpSql) ? $tmpSql : ($tmpSql . ",")) . "'" . $field . "'";
+					}
+					else{
+						$tmpSql = (empty($tmpSql) ? $tmpSql : ($tmpSql . ",")) . "null";
+					}
+				}
+				unset($field);
+                $sql = "INSERT INTO `{$table}` VALUES (" . str_replace(array("\r","\n"),array('\r','\n'),$tmpSql) . ");\n";
                 if(false === $this->write($sql)){
                     return false;
                 }

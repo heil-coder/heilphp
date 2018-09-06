@@ -1,0 +1,103 @@
+{extend name="public/base" /}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					<h1>{if condition="$Request.action eq 'addaction'"}新增{else/}编辑{/if}行为</h1>
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('user/index')}">用户</a></li>
+					<li class="breadcrumb-item active">行为</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+				<!-- 表单 -->
+				<form id="form" action="{:Url('saveAction')}" method="post" class="form-horizontal">
+					<div class="form-item cf">
+						<label class="item-label">行为标识<span class="check-tips">（输入行为标识 英文字母）</span></label>
+						<div class="controls">
+							<input type="text" class="text input-large" name="name" value="{$data.name}">
+						</div>
+					</div>
+					<div class="form-item cf">
+						<label class="item-label">行为名称<span class="check-tips">（输入行为名称）</span></label>
+						<div class="controls">
+							<input type="text" class="text input-large" name="title" value="{$data.title}">
+						</div>
+					</div>
+					<div class="form-item cf">
+						<label class="item-label">行为类型<span class="check-tips">（选择行为类型）</span></label>
+						<div class="controls">
+							<select name="type">
+								{volist name=":get_action_type(null,true)" id="vo"}
+								<option value="{$key}">{$vo}</option>
+								{/volist}
+							</select>
+						</div>
+					</div>
+					<div class="form-item cf">
+						<label class="item-label">行为描述<span class="check-tips">（输入行为描述）</span></label>
+						<div class="controls">
+							<label class="textarea input-large"><textarea name="remark">{$data.remark}</textarea></label>
+						</div>
+					</div>
+					<div class="form-item cf">
+						<label class="item-label">行为规则<span class="check-tips">（输入行为规则，不写则只记录日志,支持[变量]。目前变量有：{literal}{$self}{/literal}）</span></label>
+						<div class="controls">
+							<label class="textarea input-large"><textarea name="rule">{$data.rule}</textarea></label>
+						</div>
+					</div>
+					<div class="form-item cf">
+						<label class="item-label">日志规则<span class="check-tips">（记录日志备注时按此规则来生成，支持[变量|函数]。目前变量有：user,time,model,record,data）</span></label>
+						<div class="controls">
+							<label class="textarea input-large"><textarea name="log">{$data.log}</textarea></label>
+						</div>
+					</div>
+
+					<div class="form-item">
+						<input type="hidden" name="id" value="{$data.id}"/>
+						<button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+						<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+Think.setValue('type',{$type|default=1});
+//导航高亮
+highlight_subnav('{:Url('User/action')}');
+</script>
+{/block}

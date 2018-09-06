@@ -198,13 +198,13 @@
 {/block}
 
 {block name="script"}
-	<script type="text/javascript" src="/static/uploadify/jquery.uploadify.min.js"></script>
+	<script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
 	<script type="text/javascript">
 //上传图片
 /* 初始化上传插件 */
 $("#upload_picture").uploadify({
 	"height"          : 30,
-	"swf"             : "/static/uploadify/uploadify.swf",
+	"swf"             : "__STATIC__/uploadify/uploadify.swf",
 	"fileObjName"     : "download",
 	"buttonText"      : "上传图片",
 	"uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
@@ -253,6 +253,6 @@ function uploadPicture(file, data){
 			}).filter(":checked").change();
 		});
 		//导航高亮
-		highlight_subnav('{:Url('Category/index')}');
+		highlight_subnav('{:Url('category/index')}');
 	</script>
 {/block}

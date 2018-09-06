@@ -16,6 +16,10 @@
 return [
     // 模板引擎类型 支持 php think 支持扩展
     'type'         => 'Think',
+    // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写 3 保持操作方法
+    'auto_rule'    => 1,
+    //视图根目录 
+    'view_base'    => Env::get('root_path').'public/theme/',
     // 模板路径
     'view_path'    => '',
     // 模板后缀
@@ -32,9 +36,11 @@ return [
     'taglib_end'   => '}',
 	//模板替换字符串
 	'tpl_replace_string'  =>  [
-		'__STATIC__'=>'/static'
-		,'__JS__' => '/static/js'
-		,'__CSS__' => '/static/js'
-		,'__IMAGES__' => '/static/images'
+		'__ROOT__'			=>	''
+		,'__STATIC__'		=>'/static'
+		,'__JS__'			=> '/static/js'
+		,'__CSS__'			=> '/static/js'
+		,'__IMAGES__'		=> '/static/images'
+		,'__THEME__'		=> '/theme'
 	]
 ];

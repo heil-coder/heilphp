@@ -2,7 +2,9 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{$meta_title}|HeilPHP管理平台</title>
+	{block name="seo"}
+	{include file="public/seo" /}
+	{/block}
     <link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">
 	<link rel="stylesheet" type="text/css" href="/{$Request.module}/css/base.css" media="all">
     <link rel="stylesheet" type="text/css" href="/{$Request.module}/css/common.css" media="all">
@@ -121,7 +123,7 @@
         }
     })();
     </script>
-    <script type="text/javascript" src="/static/js/think.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/think.js"></script>
     <script type="text/javascript">
         +function(){
             var $window = $(window), $subnav = $("#subnav"), url;

@@ -69,7 +69,7 @@ function addons_url($url, $param = array()){
     );
     $params = array_merge($params, $param); //添加额外参数
 
-    return Url('Addons/execute', $params);
+    return Url('index/addons/execute', $params);
 }
 /**
  * 时间戳格式化
@@ -383,6 +383,24 @@ function check_category($id){
     }
 }
 /**
+ * 检测分类是否绑定了指定模型
+ * @param  array $info 模型ID和分类ID数组
+ * @return boolean     true-绑定了模型，false-未绑定模型
+ */
+function check_category_model($info){
+    $cate   =   get_category($info['category_id']);
+    $array  =   explode(',', $info['pid'] ? $cate['model_sub'] : $cate['model']);
+    return in_array($info['model_id'], $array);
+}
+/* 根据ID获取分类标识 */
+function get_category_name($id){
+    return get_category($id, 'name');
+}
+/* 根据ID获取分类名称 */
+function get_category_title($id){
+    return get_category($id, 'title');
+}
+/**
  * 获取分类信息并缓存分类
  * @param  integer $id    分类ID
  * @param  string  $field 要获取的字段名
@@ -432,6 +450,29 @@ function get_table_name($model_id = null){
     }
     $name .= $info['name'];
     return $name;
+}
+/**
+ * 根据条件字段获取指定表的数据
+ * @param mixed $value 条件，可用常量或者数组
+ * @param string $condition 条件字段
+ * @param string $field 需要返回的字段，不传则返回整个数据
+ * @param string $table 需要查询的表
+ * @author huajie <banhuajie@163.com>
+ */
+function get_table_field($value = null, $condition = 'id', $field = null, $table = null){
+    if(empty($value) || empty($table)){
+        return false;
+    }
+
+    //拼接参数
+    $map[$condition] = $value;
+    $info = db(ucfirst($table))->where($map);
+    if(empty($field)){
+        $info = $info->field(true)->find();
+    }else{
+        $info = $info->value($field);
+    }
+    return $info;
 }
 /**
  * 获取属性信息并缓存
@@ -513,6 +554,34 @@ function get_model_attribute($model_id, $group = true,$fields=true){
     return $attr;
 }
 /**
+ * 获取数据的所有子孙数据的id值
+ * @author 朱亚杰 <xcoolcc@gmail.com>
+ * @modify Jason <1878566968@qq.com>
+ */
+
+function get_stemma($pids, &$model, $field='id'){
+    $collection = array();
+
+    //非空判断
+    if(empty($pids)){
+        return $collection;
+    }
+
+    if( is_array($pids) ){
+        $pids = trim(implode(',',$pids),',');
+    }
+    $result     = $model->field($field)->where('pid','IN',(string)$pids)->select()->toArray();
+    $child_ids  = array_column ((array)$result,'id');
+
+    while( !empty($child_ids) ){
+        $collection = array_merge($collection,$result);
+        $result     = $model->field($field)->where('pid','IN',$child_ids)->select()->toArray();
+        $child_ids  = array_column((array)$result,'id');
+    }
+    return $collection;
+}
+
+/**
  * 系统非常规MD5加密方法
  * @param  string $str 要加密的字符串
  * @return string
@@ -581,7 +650,7 @@ function get_username($uid = 0){
     if(isset($list[$key])){ //已缓存，直接使用
         $name = $list[$key];
     } else { //调用接口获取用户信息
-        $User = model('Member');
+        $User = controller('user/UserApi','api');
         $info = $User->info($uid);
         if($info && isset($info[1])){
             $name = $list[$key] = $info[1];
@@ -753,7 +822,7 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
         //执行数据库操作
         $Model = db(ucfirst($rule['table']));
         $field = $rule['field'];
-        $res = $Model->where($rule['condition'])->setField($field, array('exp', $rule['rule']));
+        $res = $Model->where($rule['condition'])->exp($field,$rule['rule'])->update();
 
         if(!$res){
             $return = false;
@@ -857,4 +926,137 @@ function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','h
     $mail->Subject =$data['title']; //邮件主题
     $mail->Body = $data['content']; //邮件内容
     return($mail->Send());
+}
+/**
+ * 渲染模板输出
+ * @param string    $template 模板文件
+ * @param array     $vars 模板变量
+ * @param integer   $code 状态码
+ * @param callable  $filter 内容过滤
+ * @return \think\response\View
+ */
+function view($template = '', $vars = [], $code = 200, $filter = null){
+	$module = Request()->module();
+	//如果不是安装模块
+	if($module != 'install'){
+		/* 读取数据库中的配置 */
+		$config =   cache('DB_CONFIG_DATA');
+		if(!$config){
+			$config =   api('Config/getListing');
+			cache('DB_CONFIG_DATA',$config);
+		}
+		config($config,'app'); //添加配置
+	}
+
+	$eqp = get_eqp();
+	$theme = config(strtoupper('DEFAULT_THEME_'.$module.'_'.$eqp));
+	$theme = $theme ?: 'default';
+	$view_base = config('template.view_base');
+	$app = app();
+	
+	switch($eqp){
+		//手机
+		case 'phone':
+			//设定皮肤目录为视图根目录
+			config('template.view_base',$view_base.$theme.'/view_phone/');
+			$app->view->init(config('template.'));
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				config('template.view_base',$view_base.$theme.'/view/');
+				config('template.tpl_replace_string.__TEMPLATE__','default');
+				$app->view->init(config('template.'));
+			}
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__',$theme);
+				$app->view->init(config('template.'));
+				break;
+			}
+			//不是默认皮肤 && 皮肤模板文件不存在
+			if($theme != 'default' && !view_exists($template)){
+				//设定默认皮肤目录为视图根目录
+				config('template.view_base',$view_base.'default/view_phone/');
+				config('template.tpl_replace_string.__TEMPLATE__','default');
+				$app->view->init(config('template.'));
+			}
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				config('template.view_base',$view_base.'default/view/');
+				$app->view->init(config('template.'));
+			}
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__','default');
+				$app->view->init(config('template.'));
+				break;
+			}
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				//取消视图根目录设置
+				config('template.view_base','');
+				$app->view->init(config('template.'));
+			}
+			break;
+		//pc
+		default:
+			//设定皮肤目录为视图根目录
+			config('template.view_base',$view_base.$theme.'/view/');
+			$app->view->init(config('template.'));
+			//不是默认皮肤 && 皮肤模板文件不存在
+			if($theme != 'default' && !view_exists($template)){
+				//设定默认皮肤目录为视图根目录
+				config('template.view_base',$view_base.'default/view/');
+				$app->view->init(config('template.'));
+			}
+			//如果皮肤模板文件不存在
+			if(!view_exists($template)){
+				//取消视图根目录设置
+				config('template.view_base','');
+				$app->view->init(config('template.'));
+			}
+			else{
+				config('template.tpl_replace_string.__TEMPLATE__','default');
+				$app->view->init(config('template.'));
+				break;
+			}
+			break;
+	}
+	return think\Response::create($template, 'view', $code)->assign($vars)->filter($filter);
+}
+/**
+ * view_exists
+ * 检测是否存在模板文件
+ * @param string $template 模板文件
+ */
+function view_exists($template = '',$code = 200){
+	return think\Response::create($template, 'view', $code)->exists($template);
+}
+
+
+/**
+ * get_eqp
+ * 获取设备类型
+ * add by Jason 2016-05-04 
+ */
+function get_eqp(){
+	$ua = strtolower($_SERVER['HTTP_USER_AGENT']);
+	$uachar = "/(nokia|sony|ericsson|mot|samsung|sgh|lg|philips|panasonic|alcatel|lenovo|cldc|midp|mobile|android)/i";
+	if ((preg_match($uachar, $ua))) {
+		$eqp = 'phone';
+	}
+	else{
+		$eqp = 'pc';
+	}
+	return $eqp;
+}
+
+/**
+ * time_version
+ * 用于生成time_version识别码，以便于统一更新用户缓存文件
+ */
+function time_version(){
+	$version = cache('time_version');
+	if(empty($version)){
+		$version = app()->getBeginTime();
+		cache('time_version',$version);
+	}
+	return $version;
 }

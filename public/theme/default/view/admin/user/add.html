@@ -1,0 +1,82 @@
+{extend name="public/base" /}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					<h1>新增用户</h1>
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('user/index')}">用户</a></li>
+					<li class="breadcrumb-item active">新增用户</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+				<form action="{:Url()}" method="post" class="form-horizontal">
+					<div class="form-item">
+						<label class="item-label">用户名<span class="check-tips">（用户名会作为默认的昵称）</span></label>
+						<div class="controls">
+							<input type="text" class="text input-large" name="username" value="">
+						</div>
+					</div>
+					<div class="form-item">
+						<label class="item-label">密码<span class="check-tips">（用户密码不能少于6位）</span></label>
+						<div class="controls">
+							<input type="password" class="text input-large" name="password" value="">
+						</div>
+					</div>
+					<div class="form-item">
+						<label class="item-label">确认密码</label>
+						<div class="controls">
+							<input type="password" class="text input-large" name="repassword" value="">
+						</div>
+					</div>
+					<div class="form-item">
+						<label class="item-label">邮箱<span class="check-tips">（用户邮箱，用于找回密码等安全操作）</span></label>
+						<div class="controls">
+							<input type="text" class="text input-large" name="email" value="">
+						</div>
+					</div>
+					<div class="form-item">
+						<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+						<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+highlight_subnav('{:Url('index')}');
+</script>
+{/block}

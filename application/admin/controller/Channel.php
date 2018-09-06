@@ -32,11 +32,11 @@ class Channel extends Admin {
 	 * @modify Jason<1878566968@qq.com>
      */
     public function index(){
-        $pid = input('get.pid', 0);
+        $pid = input('param.pid/d');
         /* 获取频道列表 */
 		$map  = [
 				['status','>', -1]
-				,['pid','=',$pid]
+				,['pid','=',$pid ?: 0]
 			];
         $list = db('Channel')->where($map)->order('sort asc,id asc')->select();
 
@@ -53,25 +53,18 @@ class Channel extends Admin {
      */
     public function add(){
         if(Request()->isPost()){
-            $Channel = model('Channel');
-            $data = Request()->only('id,pid,title,url,sort,create_time,update_time,status,target');
-            if($data){
-                $id = $Channel->save($data);
-                if($id){
-                    $this->success('新增成功', Url('index'));
-                    //记录行为
-                    action_log('update_channel', 'channel', $id, UID);
-                } else {
-                    $this->error('新增失败');
-                }
-            } else {
-                $this->error($Channel->error);
-            }
+			$Channel = model('Channel');
+			$res = $Channel->edit();
+			if($res !== false){
+				$this->success('新增成功', Url('index'));
+			} else {
+				$this->error($Channel->getError() ?: '新增失败');
+			}
         } else {
-            $pid = input('get.pid', 0);
+            $pid = input('param.pid/d');
             //获取父导航
             if(!empty($pid)){
-                $parent = db('Channel')->where(array('id',$pid))->field('title')->find();
+                $parent = db('Channel')->where('id',$pid)->field('title')->find();
                 $this->assign('parent', $parent);
             }
 
@@ -89,33 +82,26 @@ class Channel extends Admin {
      */
     public function edit($id = 0){
         if(Request()->isPost()){
-            $Channel = model('Channel');
-            $data = Request()->only('id,pid,title,url,sort,create_time,update_time,status,target');
-            if($data){
-                if($Channel->get($data['id'])->save($data)){
-                    //记录行为
-                    action_log('update_channel', 'channel', $data['id'], UID);
-                    $this->success('编辑成功', Url('index'));
-                } else {
-                    $this->error('编辑失败');
-                }
-
-            } else {
-                $this->error($Channel->error);
-            }
+			$Channel = model('Channel');
+			$res = $Channel->edit();
+			if($res !== false){
+				$this->success('新增成功', Url('index'));
+			} else {
+				$this->error($Channel->getError() ?: '新增失败');
+			}
         } else {
             $info = array();
             /* 获取数据 */
             $info = db('Channel')->find($id);
 
             if(false === $info){
-                $this->error('获取配置信息错误');
+                $this->error('获取导航信息错误');
             }
 
-            $pid = input('get.pid', 0);
+            $pid = input('parent.pid/');
             //获取父导航
             if(!empty($pid)){
-            	$parent = db('Channel')->where(array('id',$pid))->field('title')->find();
+            	$parent = db('Channel')->where('id',$pid)->field('title')->find();
             	$this->assign('parent', $parent);
             }
 
@@ -132,7 +118,7 @@ class Channel extends Admin {
 	 * @modify Jason<1878566968@qq.com>
      */
     public function del(){
-        $id = array_unique(Input('id/a',0));
+        $id = array_unique(Input('id/a',[]));
 
         if ( empty($id) ) {
             $this->error('请选择要操作的数据!');

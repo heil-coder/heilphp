@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="form-item">
-            <label class="item-label">链接<span class="check-tips">（U函数解析的URL或者外链）</span></label>
+            <label class="item-label">链接<span class="check-tips">（Url函数解析的URL或者外链）</span></label>
             <div class="controls">
                 <input type="text" class="text input-large" name="url" value="{$info.url|default=''}">
             </div>
@@ -28,7 +28,7 @@
             <div class="controls">
                 <select name="pid">
 					{volist name="Menus" id="menu"}
-					<option value="{$menu.id}" {if $Request.param.pid == $menu.id || $info.pid == $menu.id}selected{/if}>{$menu.title_show}</option>
+					<option value="{$menu.id}" {if $Request.param.pid == $menu.id || $info.pid == $menu.id}selected{/if}>{$menu.title_show|raw}</option>
 					{/volist}
                 </select>
             </div>
@@ -73,6 +73,6 @@
         //Think.setValue("hide", {$info.hide|default = 0});
         //Think.setValue("is_dev", {$info.is_dev|default = 0});
         //导航高亮
-        //highlight_subnav('{:Url('index')}');
+        highlight_subnav('{:Url('index')}');
     </script>
 {/block}

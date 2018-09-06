@@ -1,0 +1,15 @@
+{extend name="public/base" /}
+
+{block name="content-content"}
+	<!-- Main content -->
+	<section class="content">
+		<div class="container-fluid">
+
+		   {php}
+		   Hook::listen('adminIndex');
+		   {/php}
+
+		</div><!-- /.container-fluid -->
+	</section>
+	<!-- /.content -->
+{/block}

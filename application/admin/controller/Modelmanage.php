@@ -7,11 +7,20 @@
 // | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: huajie <banhuajie@163.com>
+// +----------------------------------------------------------------------
+
 namespace app\admin\controller;
 use Request;
 
 /**
  * 模型管理控制器
+ * @author huajie <banhuajie@163.com>
  * @modify Jason	<1878566968@qq.com>
  */
 class Modelmanage extends Admin {
@@ -97,7 +106,7 @@ class Modelmanage extends Admin {
         $res = model('Modelmanage')->edit();
 
         if(!$res){
-            $this->error(model('Modelmanage')->getError());
+            $this->error(model('Modelmanage')->getError() ?: '更新失败');
         }else{
             $this->success($res['id']?'更新成功':'新增成功', Cookie('__forward__'));
         }

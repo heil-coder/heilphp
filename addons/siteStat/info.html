@@ -1,3 +1,4 @@
+{if !config('template.view_base')}
 <div class="container-span top-columns cf">
 	<dl class="show-num-mod">
 		<dt><i class="count-icon user-count-icon"></i></dt>
@@ -35,3 +36,82 @@
 		</dd>
 	</dl>
 </div>
+{else \}
+<div class="row">
+	<div class="col-lg-2 col-md-4 col-sm-6 col-6">
+		<!-- small box -->
+		<div class="small-box bg-info">
+			<div class="inner">
+				<h3>{$info.user}</h3>
+
+				<p>用户数</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-user-plus"></i>
+			</div>
+			<a href="{:Url('user/index')}" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- ./col -->
+	<div class="col-lg-2 col-md-4 col-sm-6 col-6">
+		<!-- small box -->
+		<div class="small-box bg-success">
+			<div class="inner">
+				<h3>{$info.action}</h3>
+
+				<p>用户行为</p>
+			</div>
+			<div class="icon">
+				<i class="fal fa-commenting"></i>
+			</div>
+			<a href="{:Url('action/log')}" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- ./col -->
+	<div class="col-lg-2 col-md-4 col-sm-6 col-6">
+		<!-- small box -->
+		<div class="small-box bg-warning">
+			<div class="inner">
+				<h3>{$info.document}</h3>
+
+				<p>文档数</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-file-text"></i>
+			</div>
+			<a href="{:Url('article/index')}" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- ./col -->
+	<div class="col-lg-2 col-md-4 col-sm-6 col-6">
+		<!-- small box -->
+		<div class="small-box bg-danger">
+			<div class="inner">
+				<h3>{$info.model}</h3>
+
+				<p>文档模型</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-file-code-o"></i>
+			</div>
+			<a href="{:Url('modelmanage/index')}" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- ./col -->
+	<div class="col-lg-2 col-md-4 col-sm-6 col-6">
+		<!-- small box -->
+		<div class="small-box bg-primary">
+			<div class="inner">
+				<h3>{$info.category}</h3>
+
+				<p>分类数</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-list"></i>
+			</div>
+			<a href="{:Url('category/index')}" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- ./col -->
+</div>
+{/if}

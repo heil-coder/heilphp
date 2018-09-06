@@ -211,12 +211,12 @@ class UcenterMember extends Model{
 	public function info($uid, $is_username = false){
 		$map = array();
 		if($is_username){ //通过用户名获取
-			$map['username'] = $uid;
+			$map[] = ['username','=',$uid];
 		} else {
-			$map['id'] = $uid;
+			$map[] = ['id','=',$uid];
 		}
 
-		$user = $this->where($map)->field('id,username,email,mobile,status')->find();
+		$user = $this->where($map)->field('id,username,email,mobile,status')->find()->toArray();
 		if(is_array($user) && $user['status'] = 1){
 			return array($user['id'], $user['username'], $user['email'], $user['mobile']);
 		} else {
