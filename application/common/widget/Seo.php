@@ -26,10 +26,14 @@ class Seo extends Controller{
     {
         $this->request = Container::get('request');
         $this->app     = Container::get('app');
-		config('template.view_base','');
+		$this->view_base = config('template.view_base');
+		//模板配置view_base临时空置
+		$config = config('template.view_base','');
         $this->view    = Container::get('view')->init(
             $this->app['config']->pull('template')
         );
+		//恢复模板配置view_base
+		config('template.view_base',$this->view_base);
 
         // 控制器初始化
         $this->initialize();
