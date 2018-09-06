@@ -25,9 +25,10 @@ class Uploader extends Addon{
 
 	/**
 	 * 上传工具挂载的钩子
-	 * @param array('name'=>'表单name','value'=>'表单对应的值')
+	 * @param $param array('name'=>'表单name','value'=>'表单对应的值')
 	 */
-	public function flieUploader($data){
+	public function flieUploader($param){
+		$this->assign('param', $param);
 		$this->display('uploader');
 	}
 }
