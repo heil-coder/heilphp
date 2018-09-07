@@ -44,6 +44,9 @@
 						<label class="item-label">模块<span class="check-tips">（匹配的模块标识）</span></label>
 						<div class="controls">
 							<input type="text" class="text input-large" name="module" value="{$info.module|default=''}">
+							{php}
+							Hook::listen('fileUploader', ['name'=>'module','value'=>$info['id']]);
+							{/php}
 						</div>
 					</div>
 					<div class="form-item">
