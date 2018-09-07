@@ -1,12 +1,20 @@
-    <div id="fileView_{$param.name}" style="width:100px;display:inline-block;float:left;">
-    <{if $param.value}>
-        <div id="" class="file-item thumbnail">
-        <img width="100" src="<{get_cover('$param.value')}>"><a href="javascript:;">
+<link rel="stylesheet" href="__STATIC__/webuploader/webuploader.css" />
+<script charset="utf-8" src="__STATIC__/webuploader/webuploader.min.js"></script>
+<div  style="width:100px; height:100px; margin:0 5px;display:block; float:left;" id="uploader_{$param["name"]}">
+	<div class="btns">
+		<div id="fileup_{$param["name"]}">选择图片</div>
+		<input  type="hidden" name="{$param["name"]}" value="{$param.value}" />
+	</div>
+</div>
+<div id="fileView_{$param.name}" style="width:100px;display:inline-block;float:left;">
+	{if $param.value}
+	<div id="" class="file-item thumbnail">
+		<img width="100" src="<{get_cover('$param.value')}>"><a href="javascript:;">
 			<i class="fa fa-close"></i>删除</a>
-        </div>
-    <{/if}>
-<script>
-	var list{$param["name"]}> =$("div#fileView_{$param["name"]}");
+	</div>
+	{/if}
+	<script>
+		var list{$param["name"]} =$("div#fileView_{$param["name"]}");
 var uploader_{$param.name} = WebUploader.create({
 	//自动上传
 	auto:true,
@@ -68,6 +76,7 @@ uploader_{$param.name}.on("uploadSuccess",function(file,data){
 })
 //删除当前图片
 $("#fileView_{$param.name}").on("click","a",function(){
+
 	$("#uploader_{$param.name}").css("display","block");
 	if($(this).parent().attr("id")){
 		uploader_{$param.name}.removeFile($(this).parent().attr("id"));
@@ -78,29 +87,30 @@ $("#fileView_{$param.name}").on("click","a",function(){
 //文件上传出错事件
 uploader_{$param.name}.on("error",function(errCode){
 	errArr = new Array();
-	errArr["Q_EXCEED_NUM_LIMIT"] = "<{L("Q_EXCEED_NUM_LIMIT")}>";
-	errArr["Q_EXCEED_SIZE_LIMIT"] = "<{L("Q_EXCEED_SIZE_LIMIT")}>";
-	errArr["Q_TYPE_DENIED"] = "<{L("Q_TYPE_DENIED")}>";
-	errArr["F_EXCEED_SIZE"] = "<{Tf(L("F_EXCEED_SIZE"),true)}>";
+	//errArr["Q_EXCEED_NUM_LIMIT"] = "<{L("Q_EXCEED_NUM_LIMIT")}>";
+	//errArr["Q_EXCEED_SIZE_LIMIT"] = "<{L("Q_EXCEED_SIZE_LIMIT")}>";
+	//errArr["Q_TYPE_DENIED"] = "<{L("Q_TYPE_DENIED")}>";
+	//errArr["F_EXCEED_SIZE"] = "<{Tf(L("F_EXCEED_SIZE"),true)}>";
 
-	alert("<{L("UPLOAD_ERROR")}>："+errArr[errCode]);
+	//alert("上传错误："+errArr[errCode]);
+	alert("上传错误");
 	//文件上传错误提示函数
 	//fileUpError(errCode);
 })
 
-	<{*裁剪上传弹窗处理*}>
-	$(".cropper_{$param.name}").on("click",function(){
-		layui.define(['layer'], function(){
-			var layer = layui.layer;
-			//弹窗
-			layer.open({
-				type: 2,
-				title:'<{L("CROPPER_MODEL")}>',
-				content: "<{U("admin/cropper",["tid"=>$field["tid"],"fid"=>$field["id"]])}>",
-				area: ['88%', '88%']
-			});       
+	{/*裁剪上传弹窗处理*/}
+	//$(".cropper_{$param.name}").on("click",function(){
+	//	layui.define(['layer'], function(){
+	//		var layer = layui.layer;
+	//		//弹窗
+	//		layer.open({
+	//			type: 2,
+	//			title:'裁剪模式',
+	//			content: "<{U("admin/cropper",["tid"=>$field["tid"],"fid"=>$field["id"]])}>",
+	//			area: ['88%', '88%']
+	//		});       
 
-		});  
-	})
+	//	});  
+	//})
 
-</script>
+	</script>
