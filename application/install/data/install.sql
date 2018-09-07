@@ -266,7 +266,8 @@ INSERT INTO `heilphp_menu` VALUES ('98', '编辑', '75', '0', 'Menu/edit', '0', 
 INSERT INTO `heilphp_menu` VALUES ('106', '行为日志', '16', '0', 'Action/log', '0', '', '行为管理', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('108', '修改密码', '16', '0', 'User/editPassword', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('109', '修改昵称', '16', '0', 'User/editNickname', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('110', '查看行为日志', '106', '0', 'action/edit', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('110', '查看行为日志', '106', '0', 'action/detail', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('111', '删除行为日志', '106', '0', 'action/remove', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('112', '新增数据', '58', '0', 'think/add', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('113', '编辑数据', '58', '0', 'think/edit', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('114', '导入', '75', '0', 'Menu/import', '0', '', '', '0','1');
