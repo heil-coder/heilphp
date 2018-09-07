@@ -62,7 +62,7 @@
 										<td>{$vo.nickname}</td>
 										<td>{$vo.score}</td>
 										<td>{$vo.login}</td>
-										<td><span>{$vo.last_login_time|time_format}</span></td>
+										<td><span>{notEmpty name="vo.last_login_time"}{$vo.last_login_time|time_format}{else /}——{/notEmpty}</span></td>
 										<td><span>{:long2ip($vo['last_login_ip'])}</span></td>
 										<td>{$vo.status_text}</td>
 										<td>{eq name="vo.status" value="1"}
