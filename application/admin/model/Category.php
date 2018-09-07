@@ -70,9 +70,9 @@ class Category extends Model{
         /* 获取分类信息 */
         $map = array();
         if(is_numeric($id)){ //通过ID查询
-            $map['id'] = $id;
+            $map[] = ['id','=',$id];
         } else { //通过标识查询
-            $map['name'] = $id;
+            $map[] = ['name','=',$id];
         }
         return $this->field($field)->where($map)->find();
     }
