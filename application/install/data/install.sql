@@ -191,9 +191,9 @@ INSERT INTO `heilphp_menu` VALUES ('20', '新增用户行为', '19', '0', 'User/
 INSERT INTO `heilphp_menu` VALUES ('21', '编辑用户行为', '19', '0', 'User/editaction', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('22', '保存用户行为', '19', '0', 'User/saveAction', '0', '\"用户->用户行为\"保存编辑和新增的用户行为', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('23', '变更行为状态', '19', '0', 'User/setStatus', '0', '\"用户->用户行为\"中的启用,禁用和删除权限', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('24', '禁用会员', '19', '0', 'User/changeStatus?method=forbidUser', '0', '\"用户->用户信息\"中的禁用', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('25', '启用会员', '19', '0', 'User/changeStatus?method=resumeUser', '0', '\"用户->用户信息\"中的启用', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('26', '删除会员', '19', '0', 'User/changeStatus?method=deleteUser', '0', '\"用户->用户信息\"中的删除', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('24', '禁用会员', '17', '0', 'User/changeStatus?method=forbidUser', '0', '\"用户->用户信息\"中的禁用', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('25', '启用会员', '17', '0', 'User/changeStatus?method=resumeUser', '0', '\"用户->用户信息\"中的启用', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('26', '删除会员', '17', '0', 'User/changeStatus?method=deleteUser', '0', '\"用户->用户信息\"中的删除', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('27', '权限管理', '16', '0', 'Authmanage/index', '0', '', '用户管理', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('28', '删除', '27', '0', 'Authmanage/changeStatus?method=deleteGroup', '0', '删除用户组', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('29', '禁用', '27', '0', 'Authmanage/changeStatus?method=forbidGroup', '0', '禁用用户组', '', '0','1');
@@ -266,7 +266,8 @@ INSERT INTO `heilphp_menu` VALUES ('98', '编辑', '75', '0', 'Menu/edit', '0', 
 INSERT INTO `heilphp_menu` VALUES ('106', '行为日志', '16', '0', 'Action/log', '0', '', '行为管理', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('108', '修改密码', '16', '0', 'User/editPassword', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('109', '修改昵称', '16', '0', 'User/editNickname', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('110', '查看行为日志', '106', '0', 'action/edit', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('110', '查看行为日志', '106', '0', 'action/detail', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('111', '删除行为日志', '106', '0', 'action/remove', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('112', '新增数据', '58', '0', 'think/add', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('113', '编辑数据', '58', '0', 'think/edit', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('114', '导入', '75', '0', 'Menu/import', '0', '', '', '0','1');
@@ -330,6 +331,7 @@ INSERT INTO `heilphp_addons` VALUES ('15', 'EditorForAdmin', '后台编辑器', 
 INSERT INTO `heilphp_addons` VALUES ('2', 'SiteStat', '站点统计信息', '统计站点的基础信息', '1', '{\"title\":\"\\u7cfb\\u7edf\\u4fe1\\u606f\",\"width\":\"1\",\"display\":\"1\",\"status\":\"0\"}', 'thinkphp', '0.1', '1379512015', '0');
 INSERT INTO `heilphp_addons` VALUES ('3', 'DevTeam', '开发团队信息', '开发团队成员信息', '1', '{\"title\":\"OneThink\\u5f00\\u53d1\\u56e2\\u961f\",\"width\":\"2\",\"display\":\"1\"}', 'thinkphp', '0.1', '1379512022', '0');
 INSERT INTO `heilphp_addons` VALUES ('4', 'SystemInfo', '系统环境信息', '用于显示一些服务器的信息', '1', '{\"title\":\"\\u7cfb\\u7edf\\u4fe1\\u606f\",\"width\":\"2\",\"display\":\"1\"}', 'thinkphp', '0.1', '1379512036', '0');
+INSERT INTO `heilphp_addons` VALUES ('16', 'Uploader', '文件上传工具', '用于文件上传', '1', '{\"title\":\"\\u7cfb\\u7edf\\u4fe1\\u606f\",\"width\":\"2\",\"display\":\"1\"}', 'thinkphp', '0.1', '1536277835', '0');
 
 
 -- -----------------------------
@@ -362,7 +364,7 @@ INSERT INTO `heilphp_hooks` VALUES ('8', 'adminArticleEdit', '后台内容编辑
 INSERT INTO `heilphp_hooks` VALUES ('13', 'adminIndex', '首页小格子个性化显示', '1', '1382596073', 'SiteStat,SystemInfo,DevTeam', '1');
 INSERT INTO `heilphp_hooks` VALUES ('14', 'topicComment', '评论提交方式扩展钩子。', '1', '1380163518', 'Editor', '1');
 INSERT INTO `heilphp_hooks` VALUES ('16', 'app_begin', '应用开始', '2', '1384481614', '', '1');
-INSERT INTO `heilphp_hooks` VALUES ('17', 'flieUploader', '文件上传工具初始化钩子', '1', '1384481614','Uploader', '1');
+INSERT INTO `heilphp_hooks` VALUES ('17', 'fileUploader', '文件上传工具初始化钩子', '1', '1384481614','Uploader', '1');
 
 -- -----------------------------
 -- Table structure for `heilphp_action`
