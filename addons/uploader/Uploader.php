@@ -25,7 +25,7 @@ class Uploader extends Addon{
 
 	/**
 	 * 上传工具挂载的钩子
-	 * @param $param array('name'=>'表单name','value'=>'表单对应的值')
+	 * @param $param array('name'=>'表单name','value'=>'表单对应的值','width'=>'图片宽度')
 	 */
 	public function fileUploader($param){
 		$this->assign('param', $param);

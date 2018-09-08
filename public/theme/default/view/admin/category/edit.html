@@ -123,12 +123,8 @@
 								</div>
 								<div class="controls">
 									<label class="item-label">分类图标</label>
-									<input type="file" id="upload_picture">
-									<input type="hidden" name="icon" id="icon" value="{$info['icon']|default=''}"/>
-									<div class="upload-img-box">
-										{notempty name="info['icon']"}
-										<div class="upload-pre-item"><img src="{$info.icon|get_cover='path'}"/></div>
-										{/notempty}
+									<div class="controls">
+										{php}Hook::listen('fileUploader',['name'=>'icon','value'=>$info['icon']]){/php}
 									</div>
 								</div>
 
@@ -238,41 +234,7 @@
 {block name='script'}
 <script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
-<script type="text/javascript">
-//上传图片
-/* 初始化上传插件 */
-$("#upload_picture").uploadify({
-	"height"          : 30,
-	"swf"             : "__STATIC__/uploadify/uploadify.swf",
-	"fileObjName"     : "download",
-	"buttonText"      : "上传图片",
-	"uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
-	"width"           : 120,
-	'removeTimeout'	  : 1,
-	'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
-	"onUploadSuccess" : uploadPicture,
-	'onFallback' : function() {
-		alert('未检测到兼容版本的Flash.');
-	}
-});
-function uploadPicture(file, data){
-	var data = $.parseJSON(data);
-	var src = '';
-	if(data.code){
-		$("#icon").val(data.id);
-		src = data.url || '__ROOT__' + data.path;
-		$("#icon").parent().find('.upload-img-box').html(
-				'<div class="upload-pre-item"><img src="' + src + '"/></div>'
-				);
-	} else {
-		updateAlert(data.msg);
-		setTimeout(function(){
-			$('#top-alert').find('button').click();
-			$(that).removeClass('disabled').prop('disabled',false);
-		},1500);
-	}
-}
-</script>
+
 <script type="text/javascript">
 {present name="info.id"}
 Think.setValue("allow_publish", {$info.allow_publish|default=1});

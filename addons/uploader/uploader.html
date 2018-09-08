@@ -6,10 +6,10 @@
 		<input  type="hidden" name="{$param["name"]}" value="{$param.value}" />
 	</div>
 </div>
-<div id="fileView_{$param.name}" style="width:100px;display:inline-block;float:left;">
+<div id="fileView_{$param.name}" style="width:{$param['width']|default='100'}px;display:inline-block;float:left;">
 	{if $param.value}
 	<div id="" class="file-item thumbnail">
-		<img width="100" src="<{get_cover('$param.value')}>"><a href="javascript:;">
+		<img width="{$param['width']|default='100'}" src="{:get_cover($param.value)}"><a href="javascript:;">
 			<i class="fa fa-close"></i>删除</a>
 	</div>
 	{/if}
@@ -47,7 +47,7 @@ uploader_{$param.name}.on("filesQueued",function(file){
 uploader_{$param.name}.on("fileQueued",function(file){
 	var li{$param.name} = $(
 		"<div id='" + file.id + "' class='file-item thumbnail'>" +
-		"<img><a href='javascript:;'><i class='fa fa-close'></i>删除&nbsp;&nbsp;&nbsp;<i class='percentage'></i></a>"+
+		"<img width='" + "{$param['width']|default='100'}" + "'><a href='javascript:;'><i class='fa fa-close'></i>删除&nbsp;&nbsp;&nbsp;<i class='percentage'></i></a>"+
 		"</div>"
 	),
 		img{$param.name} = li{$param.name}.find("img");
@@ -72,7 +72,7 @@ uploader_{$param.name}.on("uploadProgress",function(file,percentage){
 })
 //文件加入队列函数
 uploader_{$param.name}.on("uploadSuccess",function(file,data){
-	$("input[name='{$param.name}']").val(data.id);
+	$("input[name='{$param.name}']").val(data.data.{$param.name}.id);
 })
 //删除当前图片
 $("#fileView_{$param.name}").on("click","a",function(){
@@ -87,10 +87,10 @@ $("#fileView_{$param.name}").on("click","a",function(){
 //文件上传出错事件
 uploader_{$param.name}.on("error",function(errCode){
 	errArr = new Array();
-	//errArr["Q_EXCEED_NUM_LIMIT"] = "<{L("Q_EXCEED_NUM_LIMIT")}>";
-	//errArr["Q_EXCEED_SIZE_LIMIT"] = "<{L("Q_EXCEED_SIZE_LIMIT")}>";
-	//errArr["Q_TYPE_DENIED"] = "<{L("Q_TYPE_DENIED")}>";
-	//errArr["F_EXCEED_SIZE"] = "<{Tf(L("F_EXCEED_SIZE"),true)}>";
+	errArr["Q_EXCEED_NUM_LIMIT"] = "上传文件的总数量超出限制";
+	errArr["Q_EXCEED_SIZE_LIMIT"] = "上传文件的总大小超出限制";
+	errArr["Q_TYPE_DENIED"] = "选择的文件类型不符合要求";
+	errArr["F_EXCEED_SIZE"] = "上传文件的大小超出限制";
 
 	//alert("上传错误："+errArr[errCode]);
 	alert("上传错误");
@@ -98,19 +98,19 @@ uploader_{$param.name}.on("error",function(errCode){
 	//fileUpError(errCode);
 })
 
-	{/*裁剪上传弹窗处理*/}
-	//$(".cropper_{$param.name}").on("click",function(){
-	//	layui.define(['layer'], function(){
-	//		var layer = layui.layer;
-	//		//弹窗
-	//		layer.open({
-	//			type: 2,
-	//			title:'裁剪模式',
-	//			content: "<{U("admin/cropper",["tid"=>$field["tid"],"fid"=>$field["id"]])}>",
-	//			area: ['88%', '88%']
-	//		});       
+{/*裁剪上传弹窗处理*/}
+//$(".cropper_{$param.name}").on("click",function(){
+//	layui.define(['layer'], function(){
+//		var layer = layui.layer;
+//		//弹窗
+//		layer.open({
+//			type: 2,
+//			title:'裁剪模式',
+//			content: "<{U("admin/cropper",["tid"=>$field["tid"],"fid"=>$field["id"]])}>",
+//			area: ['88%', '88%']
+//		});       
 
-	//	});  
-	//})
+//	});  
+//})
 
 	</script>
