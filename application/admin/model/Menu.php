@@ -38,18 +38,18 @@ class Menu extends Model {
 		}
 
 		if(empty($data['id'])){
-			$res = $this->save($data);
+			$res = $this->allowField(true)->save($data);
 			$data['id'] = $this->id;
 		}
 		else{
-			$res = $this->get($data['id'])->save($data);
+			$res = $this->allowField(true)->save($data,['id'=>$data['id']]);
 		}
 		if($res === false){
 			return false;	
 		}
 		else{
+			action_log('update_menu', '菜单', $data['id'], UID);
 			return $res;
 		}
-        action_log('update_menu', 'Menu', $data['id'], UID);
 	}
 }

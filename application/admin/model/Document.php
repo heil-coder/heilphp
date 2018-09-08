@@ -169,7 +169,7 @@ class Document extends Model{
             }
 			$data['id'] = $this->id;
         } else { //更新数据
-            $status = $this->find($data['id'])->save($data); //更新基础内容
+            $status = $this->save($data,['id'=>$data['id']]); //更新基础内容
             if(false === $status){
                 $this->error = '更新基础内容出错！';
                 return false;

@@ -69,10 +69,10 @@ class Authmanage extends Admin{
 		$data['type'] =  $mAuthGroup::TYPE_ADMIN;
         if ( $data ) {
 			if(empty($data['id'])){
-				$result = $mAuthGroup->save($data);
+				$result = $mAuthGroup->allowField(true)->save($data);
 			}
 			else{
-				$result = $mAuthGroup->get($data['id'])->save($data);
+				$result = $mAuthGroup->allowField(true)->save($data,['id'=>$data['id']]);
 			}
             if($result === false){
                 $this->error('操作失败'.$mAuthGroup->getError());

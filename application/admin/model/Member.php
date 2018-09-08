@@ -45,7 +45,7 @@ class Member extends Model {
         }
 
         //记录行为
-        action_log('user_login', 'member', $uid, $uid);
+        action_log('user_login', '用户', $uid, $uid);
 
         /* 登录用户 */
         $this->autoLogin($user);
@@ -57,8 +57,7 @@ class Member extends Model {
      * @return void
      */
     public function logout(){
-        session('user_auth', null);
-        session('user_auth_sign', null);
+        session(null);
     }
 
     /**
