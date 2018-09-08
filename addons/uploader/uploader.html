@@ -72,7 +72,7 @@ uploader_{$param.name}.on("uploadProgress",function(file,percentage){
 })
 //文件加入队列函数
 uploader_{$param.name}.on("uploadSuccess",function(file,data){
-	$("input[name='{$param.name}']").val(data.id);
+	$("input[name='{$param.name}']").val(data.data.{$param.name}.id);
 })
 //删除当前图片
 $("#fileView_{$param.name}").on("click","a",function(){
