@@ -927,15 +927,14 @@ function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','h
     $mail->Body = $data['content']; //邮件内容
     return($mail->Send());
 }
+
 /**
- * 渲染模板输出
+ * view_base
  * @param string    $template 模板文件
- * @param array     $vars 模板变量
- * @param integer   $code 状态码
- * @param callable  $filter 内容过滤
- * @return \think\response\View
+ * 检测并设置可用视图目录
+ * @author Jason <1878566968@qq.com>
  */
-function view($template = '', $vars = [], $code = 200, $filter = null){
+function view_base($template = ''){
 	$module = Request()->module();
 	//如果不是安装模块
 	if($module != 'install'){
@@ -951,7 +950,8 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 	$eqp = get_eqp();
 	$theme = config(strtoupper('DEFAULT_THEME_'.$module.'_'.$eqp));
 	$theme = $theme ?: 'default';
-	$view_base = config('template.view_base');
+	defined('VIEW_BASE') || define('VIEW_BASE',config('template.view_base'));
+	$view_base = VIEW_BASE;
 	$app = app();
 	
 	switch($eqp){
@@ -1019,7 +1019,7 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 			}
 			break;
 	}
-	return think\Response::create($template, 'view', $code)->assign($vars)->filter($filter);
+	return $app;
 }
 /**
  * view_exists
@@ -1029,7 +1029,30 @@ function view($template = '', $vars = [], $code = 200, $filter = null){
 function view_exists($template = '',$code = 200){
 	return think\Response::create($template, 'view', $code)->exists($template);
 }
-
+/**
+ * 渲染模板输出
+ * @param string    $template 模板文件
+ * @param array     $vars 模板变量
+ * @param integer   $code 状态码
+ * @param callable  $filter 内容过滤
+ * @return \think\response\View
+ */
+function view($template = '', $vars = [], $code = 200, $filter = null){
+	view_base($template);
+	return think\Response::create($template, 'view', $code)->assign($vars)->filter($filter);
+}
+/**
+ * 渲染模板输出
+ * @param string    $template 模板文件
+ * @param array     $vars 模板变量
+ * @param integer   $code 状态码
+ * @param callable  $filter 内容过滤
+ * @return \think\response\View
+ */
+function fetch($template = '', $vars = [], $code = 200, $filter = null){
+	$app = view_base($template);
+	return $app->view->fetch($template);
+}
 
 /**
  * get_eqp
