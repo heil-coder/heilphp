@@ -837,7 +837,7 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
  * @param string  $mode    check模式 字符串 
  * @return boolean
  */
-function check_rule($rule, 1 , $mode='string'){
+function check_rule($rule, $type=1 , $mode='string'){
 	//如果是超级管理员
 	if(is_administrator()){
 		return true;
