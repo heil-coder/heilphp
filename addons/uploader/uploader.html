@@ -13,8 +13,9 @@
 			<i class="fa fa-close"></i>删除</a>
 	</div>
 	{/if}
-	<script>
-		var list{$param["name"]} =$("div#fileView_{$param["name"]}");
+</div>
+<script>
+	var list{$param["name"]} =$("div#fileView_{$param["name"]}");
 var uploader_{$param.name} = WebUploader.create({
 	//自动上传
 	auto:true,
@@ -113,4 +114,4 @@ uploader_{$param.name}.on("error",function(errCode){
 //	});  
 //})
 
-	</script>
+</script>
