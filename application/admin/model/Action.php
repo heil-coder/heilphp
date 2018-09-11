@@ -25,13 +25,13 @@ class Action extends Model {
 
         /* 添加或新增行为 */
         if(empty($data['id'])){ //新增数据
-            $id = $this->save($data); //添加行为
+            $id = $this->allowField(true)->save($data); //添加行为
             if(!$id){
                 $this->error = '新增行为出错！';
                 return false;
             }
         } else { //更新数据
-            $status = $this->get($data['id'])->save($data); //更新基础内容
+            $status = $this>allowField(true)->save($data,['id'=>$data['id']]); //更新基础内容
             if(false === $status){
                 $this->error = '更新行为出错！';
                 return false;

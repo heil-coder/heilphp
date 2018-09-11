@@ -104,7 +104,7 @@ CREATE TABLE `heilphp_auth_group` (
   `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '组类型',
   `title` char(30) NOT NULL DEFAULT '' COMMENT '用户组中文名称',
   `description` varchar(80) NOT NULL DEFAULT '' COMMENT '描述信息',
-  `rules` varchar(500) NOT NULL DEFAULT '' COMMENT '用户组拥有的规则id，多个规则 , 隔开',
+  `rules` text  COMMENT '用户组拥有的规则id，多个规则 , 隔开',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户组状态 0:禁用 1:可用',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`)
@@ -291,12 +291,12 @@ INSERT INTO `heilphp_menu` VALUES ('10006', '删除', '10001', '0', 'seo/changeS
 INSERT INTO `heilphp_menu` VALUES ('10007', '排序', '10001', '0', 'seo/sort', '0', '', '', '0','1');
 
 INSERT INTO `heilphp_menu` VALUES ('10101', '广告位', '10000', '0', 'ad_position/index', '0', '', '通用设置', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('10102', '新增', '10101', '0', 'ad_position/add', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('10103', '编辑', '10101', '0', 'ad_position/edit', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('10104', '启用', '10101', '0', 'ad_position/changeStatus?method=resume', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('10105', '禁用', '10101', '0', 'ad_position/changeStatus?method=forbid', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('10106', '删除', '10101', '0', 'ad_position/changeStatus?method=delete', '1', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('10107', '排序', '10101', '0', 'ad_position/sort', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10102', '新增', '10101', '0', 'adPosition/add', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10103', '编辑', '10101', '0', 'adPosition/edit', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10104', '启用', '10101', '0', 'adPosition/changeStatus?method=resume', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10105', '禁用', '10101', '0', 'adPosition/changeStatus?method=forbid', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10106', '删除', '10101', '0', 'adPosition/changeStatus?method=delete', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10107', '排序', '10101', '0', 'adPosition/sort', '1', '', '', '0','1');
 
 INSERT INTO `heilphp_menu` VALUES ('10201', '广告', '10000', '0', 'ad/index', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10202', '新增', '10201', '0', 'ad/add', '0', '', '', '0','1');

@@ -43,14 +43,14 @@ class AdPosition extends Model {
 			$data['id'] = $this->id;
 		}
 		else{
-			$res = $this->get($data['id'])->allowField(true)->save($data);
+			$res = $this->allowField(true)->save($data,['id'=>$data['id']]);
 		}
 		if($res === false){
 			return false;	
 		}
 		else{
+			action_log('update_ad_position', '广告位', $data['id'], UID);
 			return $res;
 		}
-        action_log('update_ad_position', 'ad_position', $data['id'], UID);
 	}
 }

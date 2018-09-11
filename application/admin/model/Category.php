@@ -155,18 +155,22 @@ class Category extends Model{
 		}
         /* 添加或更新数据 */
         if(empty($data['id'])){
-            $res = $this->save($data);
+            $res = $this->allowField(true)->save($data);
 			$data['id'] = $this->id;
         }else{
-			$res = $this->get($data['id'])->save($data);
+			$res = $this->allowField(true)->save($data,['id'=>$data['id']]);
         }
 
         //更新分类缓存
         cache('sys_category_list', null);
 
         //记录行为
-        action_log('update_category', 'category', $data['id'], UID);
-
-        return $res;
+		if($res === false){
+			return false;	
+		}
+		else{
+			action_log('update_category', '分类', $data['id'], UID);
+			return $res;
+		}
     }
 }

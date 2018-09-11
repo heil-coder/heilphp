@@ -49,14 +49,14 @@ class Channel extends Model {
 			$data['id'] = $this->id;
 		}
 		else{
-			$res = $this->get($data['id'])->save($data);
+			$res = $this->allowField(true)->save($data,['id'=>$data['id']]);
 		}
 		if($res === false){
 			return false;	
 		}
 		else{
+			action_log('update_channel', '频道', $data['id'], UID);
 			return $res;
 		}
-        action_log('update_channel', 'channel', $data['id'], UID);
 	}
 }
