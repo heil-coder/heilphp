@@ -104,7 +104,7 @@ CREATE TABLE `heilphp_auth_group` (
   `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '组类型',
   `title` char(30) NOT NULL DEFAULT '' COMMENT '用户组中文名称',
   `description` varchar(80) NOT NULL DEFAULT '' COMMENT '描述信息',
-  `rules` varchar(500) NOT NULL DEFAULT '' COMMENT '用户组拥有的规则id，多个规则 , 隔开',
+  `rules` text  COMMENT '用户组拥有的规则id，多个规则 , 隔开',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户组状态 0:禁用 1:可用',
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`)
