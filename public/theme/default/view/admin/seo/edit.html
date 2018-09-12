@@ -38,12 +38,16 @@
 						<label class="item-label">设置说明<span class="check-tips">（SEO设置的说明，仅后台可见）</span></label>
 						<div class="controls">
 							<input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
+							{php}Hook::listen('getCoordinate',['name'=>'test','type'=>'baiduMap']);{/php}
+							{php}Hook::listen('fileUploader',['name'=>'test']);{/php}
 						</div>
 					</div>
 					<div class="form-item">
 						<label class="item-label">模块<span class="check-tips">（匹配的模块标识）</span></label>
 						<div class="controls">
 							<input type="text" class="text input-large" name="module" value="{$info.module|default=''}">
+							{php}Hook::listen('getCoordinate',['name'=>'test2','type'=>'baiduMap']);{/php}
+							{php}Hook::listen('fileUploader',['name'=>'test2']);{/php}
 						</div>
 					</div>
 					<div class="form-item">

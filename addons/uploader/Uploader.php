@@ -28,6 +28,15 @@ class Uploader extends Addon{
 	 * @param $param array('name'=>'表单name','value'=>'表单对应的值','width'=>'图片宽度')
 	 */
 	public function fileUploader($param){
+		//静态变量记录插件调用次数
+		static $times = null;
+		if(!$times){
+			$times = 1;
+		}
+		else{
+			$times++;
+		}
+		$this->assign('times',$times);
 		$this->assign('param', $param);
 		$this->display('uploader');
 	}

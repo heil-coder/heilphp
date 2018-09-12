@@ -1,3 +1,7 @@
+{/*插件此一次调用时引用css、js资源文件*/}
+{lt name="times" value="2"}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=rkG5tCxVrbXh9qRp92ZI4Yny1zUX8WC4"></script>
+{/lt}
 <input type="text" class="text input-large" name="{$param['name']}" value="{$param['value']|default=''}"  id="{$param['name']}>" />
 <a class="coordinate_{$param["name"]}" href="javascript:;" title="点击获取目标位置坐标"><i class="fa fa-map"></i></a>
 
@@ -12,7 +16,6 @@
 {/case}
 {/switch}
 <script>
-	console.log(MapHtml);
 	$(function(){
 		layui.define(['layer'], function(){
 		})
