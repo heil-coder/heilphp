@@ -327,12 +327,13 @@ CREATE TABLE `heilphp_addons` (
 -- -----------------------------
 -- Records of `heilphp_addons`
 -- -----------------------------
-INSERT INTO `heilphp_addons` VALUES ('15', 'EditorForAdmin', '后台编辑器', '用于增强整站长文本的输入和显示', '1', '{\"editor_type\":\"2\",\"editor_wysiwyg\":\"1\",\"editor_height\":\"500px\",\"editor_resize_type\":\"1\"}', 'thinkphp', '0.1', '1383126253', '0');
 INSERT INTO `heilphp_addons` VALUES ('2', 'SiteStat', '站点统计信息', '统计站点的基础信息', '1', '{\"title\":\"\\u7cfb\\u7edf\\u4fe1\\u606f\",\"width\":\"1\",\"display\":\"1\",\"status\":\"0\"}', 'thinkphp', '0.1', '1379512015', '0');
 INSERT INTO `heilphp_addons` VALUES ('3', 'DevTeam', '开发团队信息', '开发团队成员信息', '1', '{\"title\":\"OneThink\\u5f00\\u53d1\\u56e2\\u961f\",\"width\":\"2\",\"display\":\"1\"}', 'thinkphp', '0.1', '1379512022', '0');
 INSERT INTO `heilphp_addons` VALUES ('4', 'SystemInfo', '系统环境信息', '用于显示一些服务器的信息', '1', '{\"title\":\"\\u7cfb\\u7edf\\u4fe1\\u606f\",\"width\":\"2\",\"display\":\"1\"}', 'thinkphp', '0.1', '1379512036', '0');
-INSERT INTO `heilphp_addons` VALUES ('16', 'Uploader', '文件上传工具', '用于文件上传', '1', '{\"title\":\"\\u7cfb\\u7edf\\u4fe1\\u606f\",\"width\":\"2\",\"display\":\"1\"}', 'thinkphp', '0.1', '1536277835', '0');
+INSERT INTO `heilphp_addons` VALUES ('15', 'EditorForAdmin', '后台编辑器', '用于增强整站长文本的输入和显示', '1', '{\"editor_type\":\"2\",\"editor_wysiwyg\":\"1\",\"editor_height\":\"500px\",\"editor_resize_type\":\"1\"}', 'thinkphp', '0.1', '1383126253', '0');
+INSERT INTO `heilphp_addons` VALUES ('16', 'Uploader', '文件上传工具', '用于文件上传', '1', '', 'HeilPHP', '0.1', '1536277835', '0');
 
+INSERT INTO `heilphp_addons` VALUES ('17', 'MapBuilder', '地图构建器', '用于构建第三方地图', '1', '', 'HeilPHP', '0.1', '1536752372', '0');
 
 -- -----------------------------
 -- Table structure for `heilphp_hooks`
@@ -365,6 +366,7 @@ INSERT INTO `heilphp_hooks` VALUES ('13', 'adminIndex', '首页小格子个性�
 INSERT INTO `heilphp_hooks` VALUES ('14', 'topicComment', '评论提交方式扩展钩子。', '1', '1380163518', 'Editor', '1');
 INSERT INTO `heilphp_hooks` VALUES ('16', 'app_begin', '应用开始', '2', '1384481614', '', '1');
 INSERT INTO `heilphp_hooks` VALUES ('17', 'fileUploader', '文件上传工具初始化钩子', '1', '1384481614','Uploader', '1');
+INSERT INTO `heilphp_hooks` VALUES ('18', 'getCoordinate', '获取地理位置坐标钩子', '1', '1536752443','MapBuilder', '1');
 
 -- -----------------------------
 -- Table structure for `heilphp_action`
