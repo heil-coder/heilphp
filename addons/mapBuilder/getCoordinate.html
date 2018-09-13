@@ -1,6 +1,6 @@
 {/*插件此一次调用时引用css、js资源文件*/}
 {lt name="times" value="2"}
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=rkG5tCxVrbXh9qRp92ZI4Yny1zUX8WC4"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=rkG5tCxVrbXh9qRp92ZI4Yny1zUX8WC4"></script>
 {/lt}
 <input type="text" class="text input-large" name="{$param['name']}" value="{$param['value']|default=''}"  id="{$param['name']}>" />
 <a class="coordinate_{$param["name"]}" href="javascript:;" title="点击获取目标位置坐标"><i class="fa fa-map"></i></a>
@@ -10,9 +10,19 @@
 {case qqMap}
 {/case}
 {case baiduMap}
-	<script>
-		var MapHtml = '';
-	</script>
+<script>
+	function test_{$param['name']}(){
+		// 百度地图API功能
+		var map_{$param['name']} = new BMap.Map("map_{$param['name']}");            
+		map_{$param['name']}.centerAndZoom("三亚",12);           
+		map_{$param['name']}.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
+		map_{$param['name']}.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+		//var local = new BMap.LocalSearch(map_{$param['name']}, {
+		//	renderOptions:{map_{$param['name']}: map_{$param['name']}}
+		//});
+
+	}
+</script>
 {/case}
 {/switch}
 <script>
@@ -20,16 +30,20 @@
 		layui.define(['layer'], function(){
 		})
 		$(".coordinate_{$param["name"]}").on("click",function(){
-			console.log('test');
 			layui.use(['layer'], function(){
 				var layer = layui.layer;
 				//弹窗
 				layer.open({
 					type: 1,
 					title:'获取地理位置坐标',
-					content: MapHtml,
+					content: '<div id="map_{$param.name}" style="width:100%;min-height:600px;">' +
+					'地图加载中，若加载失败请检查配置文件中BAIDU_MAP_KEY是否正确配置'+
+					'</div>',
 					area: ['88%', '88%'],
-					offset:'auto'
+					offset:'auto',
+					success:function(){
+						test_{$param['name']}();
+					}
 				});       
 			});  
 		})
