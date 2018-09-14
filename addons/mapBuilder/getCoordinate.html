@@ -76,8 +76,8 @@
 				</div>
 				<div class="form">
 					<div class="item">
-						<input type="text" name="search" placeholder="请输入地址" />
-						<a href="javascript:;">
+						<input type="text" name="search_{$param['name']}" placeholder="请输入地址" />
+						<a href="javascript:;" class="search_{$param['name']}">
 							搜索地址
 						</a>   
 					</div>
@@ -102,15 +102,25 @@
 	var mapContainer_{$param['name']} = '<div id="map_{$param.name}" style="width:100%;height:100%;">' +
 	'地图加载中，若加载失败请检查配置文件中BAIDU_MAP_KEY是否正确配置'+
 	'</div>';
+var map_{$param['name']};var local_{$param['name']};
 function mapBuilder_{$param['name']}(){
 	// 百度地图API功能
-	var map_{$param['name']} = new BMap.Map("map_{$param['name']}");            
+	map_{$param['name']} = new BMap.Map("map_{$param['name']}");            
 	map_{$param['name']}.centerAndZoom("三亚",12);           
 	map_{$param['name']}.enableScrollWheelZoom();   //启用滚轮放大缩小，默认禁用
 	map_{$param['name']}.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
-	//var local = new BMap.LocalSearch(map_{$param['name']}, {
-	//	renderOptions:{map_{$param['name']}: map_{$param['name']}}
-	//});
+	local_{$param['name']} = new BMap.LocalSearch(
+		map_{$param['name']}
+		,{renderOptions:{map_{$param['name']}: map_{$param['name']}}}
+	);
+	//搜索
+	$(document).on('click','.layer-container a.search_{$param["name"]}',function(){
+		local_{$param['name']}.search($(this).parent().find('input').val());
+		console.log($(this).parent().find('input').val());
+		console.log(local_{$param['name']});
+	})
+
+
 	//单击获取点击的经纬度
 	map_{$param['name']}.addEventListener("click",function(e){
 			map_{$param['name']}.clearOverlays();
@@ -136,6 +146,7 @@ function mapBuilder_{$param['name']}(){
 			});
 		}
 	})
+
 
 }
 </script>
