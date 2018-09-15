@@ -111,7 +111,7 @@ function mapBuilder_{$param['name']}(){
 	map_{$param['name']}.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
 	local_{$param['name']} = new BMap.LocalSearch(
 		map_{$param['name']}
-		,{renderOptions:{map_{$param['name']}: map_{$param['name']}}}
+		,{renderOptions:{map: map_{$param['name']}}}
 	);
 	//搜索
 	$(document).on('click','.layer-container a.search_{$param["name"]}',function(){
