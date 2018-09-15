@@ -1,117 +1,122 @@
+{/*插件此一次调用时引用css、js资源文件*/}
+{lt name="times" value="2"}
 <link rel="stylesheet" href="__STATIC__/webuploader/webuploader.css" />
 <script charset="utf-8" src="__STATIC__/webuploader/webuploader.min.js"></script>
+{/lt}
 <div  style="width:100px; height:100px; margin:0 5px;display:block; float:left;" id="uploader_{$param["name"]}">
 	<div class="btns">
 		<div id="fileup_{$param["name"]}">选择图片</div>
-		<input  type="hidden" name="{$param["name"]}" value="{$param.value}" />
+		<input  type="hidden" name="{$param["name"]}" value="{$param.value|default=''}" />
 	</div>
 </div>
 <div id="fileView_{$param.name}" style="width:{$param['width']|default='100'}px;display:inline-block;float:left;">
-	{if $param.value}
+	{notEmpty name="param.value"}
 	<div id="" class="file-item thumbnail">
 		<img width="{$param['width']|default='100'}" src="{:get_cover($param.value)}"><a href="javascript:;">
 			<i class="fa fa-close"></i>删除</a>
 	</div>
-	{/if}
+	{/notEmpty}
 </div>
 <script>
-	var list{$param["name"]} =$("div#fileView_{$param["name"]}");
-var uploader_{$param.name} = WebUploader.create({
-	//自动上传
-	auto:true,
-	// swf文件路径
-	swf:"__STATIC__/webuploader/Uploader.swf",
-	// 文件接收服务端。
-	server: "{:Url('file/uploadPicture',['session_id'=>session_id()])}",
-	// 选择文件的按钮。可选。
-	// 内部根据当前运行是创建，可能是input元素，也可能是flash.
-	pick: "#fileup_{$param.name}",
-	//设置文件上传域的name
-	fileVal:"{$param.name}",
-	// 配置压缩的图片的选项。如果此选项为false, 则图片在上传前不进行压缩
-	compress: false,
-	//验证文件总数量, 超出则不允许加入队列
-	fileNumLimit:1,
-	//验证单个文件大小是否超出限制, 超出则不允许加入队列
-	fileSingleSizeLimit:"{config('FILE_UPLOAD_MAX_SIZE')|default:(1024*1024*2)}",
-	// 只允许选择图片文件。
-	accept: {
-		title: "Images",
-		extensions: "gif,jpg,jpeg,bmp,png",
-		mimeTypes: "image/gif,image/jpg,image/jpeg,image/bmp,image/png"
-	}
-});
-//多文件加入队列函数
-uploader_{$param.name}.on("filesQueued",function(file){
-})
-//文件加入队列函数
-uploader_{$param.name}.on("fileQueued",function(file){
-	var li{$param.name} = $(
-		"<div id='" + file.id + "' class='file-item thumbnail'>" +
-		"<img width='" + "{$param['width']|default='100'}" + "'><a href='javascript:;'><i class='fa fa-close'></i>删除&nbsp;&nbsp;&nbsp;<i class='percentage'></i></a>"+
-		"</div>"
-	),
-		img{$param.name} = li{$param.name}.find("img");
-	// $list为容器jQuery实例
-	$("#uploader_{$param.name}").css("display","none");
-	list{$param.name}.html(li{$param.name});
-	// 创建缩略图
-	// 如果为非图片文件，可以不用调用此方法。
-	// thumbnailWidth x thumbnailHeight 为 100 x 100
-	uploader_{$param.name}.makeThumb( file, function( error, src ) {
-		if ( error ) {
-			img{$param.name}.replaceWith("<span>不能预览</span>");
-			return;
-		}
-		img{$param.name}.attr( "src", src );
-	},1,1 );
+	$(function(){
+		var list{$param["name"]} =$("div#fileView_{$param["name"]}");
+		var uploader_{$param.name} = WebUploader.create({
+			//自动上传
+			auto:true,
+			// swf文件路径
+			swf:"__STATIC__/webuploader/Uploader.swf",
+			// 文件接收服务端。
+			server: "{:Url('file/uploadPicture',['session_id'=>session_id()])}",
+			// 选择文件的按钮。可选。
+			// 内部根据当前运行是创建，可能是input元素，也可能是flash.
+			pick: "#fileup_{$param.name}",
+			//设置文件上传域的name
+			fileVal:"{$param.name}",
+			// 配置压缩的图片的选项。如果此选项为false, 则图片在上传前不进行压缩
+			compress: false,
+			//验证文件总数量, 超出则不允许加入队列
+			fileNumLimit:1,
+			//验证单个文件大小是否超出限制, 超出则不允许加入队列
+			fileSingleSizeLimit:"{config('FILE_UPLOAD_MAX_SIZE')|default:(1024*1024*2)}",
+			// 只允许选择图片文件。
+			accept: {
+				title: "Images",
+				extensions: "gif,jpg,jpeg,bmp,png",
+				mimeTypes: "image/gif,image/jpg,image/jpeg,image/bmp,image/png"
+			}
+		});
+		//多文件加入队列函数
+		uploader_{$param.name}.on("filesQueued",function(file){
+		})
+		//文件加入队列函数
+		uploader_{$param.name}.on("fileQueued",function(file){
+			var li{$param.name} = $(
+				"<div id='" + file.id + "' class='file-item thumbnail'>" +
+				"<img width='" + "{$param['width']|default='100'}" + "'><a href='javascript:;'><i class='fa fa-close'></i>删除&nbsp;&nbsp;&nbsp;<i class='percentage'></i></a>"+
+				"</div>"
+			),
+				img{$param.name} = li{$param.name}.find("img");
+			// $list为容器jQuery实例
+			$("#uploader_{$param.name}").css("display","none");
+			list{$param.name}.html(li{$param.name});
+			// 创建缩略图
+			// 如果为非图片文件，可以不用调用此方法。
+			// thumbnailWidth x thumbnailHeight 为 100 x 100
+			uploader_{$param.name}.makeThumb( file, function( error, src ) {
+				if ( error ) {
+					img{$param.name}.replaceWith("<span>不能预览</span>");
+					return;
+				}
+				img{$param.name}.attr( "src", src );
+			},1,1 );
 
-})
-//上传进度
-uploader_{$param.name}.on("uploadProgress",function(file,percentage){
-	$("#fileView_{$param.name}").find("a i.percentage").html((percentage*100).toFixed(0)+"%");
-})
-//文件加入队列函数
-uploader_{$param.name}.on("uploadSuccess",function(file,data){
-	$("input[name='{$param.name}']").val(data.data.{$param.name}.id);
-})
-//删除当前图片
-$("#fileView_{$param.name}").on("click","a",function(){
+		})
+		//上传进度
+		uploader_{$param.name}.on("uploadProgress",function(file,percentage){
+			$("#fileView_{$param.name}").find("a i.percentage").html((percentage*100).toFixed(0)+"%");
+		})
+		//文件加入队列函数
+		uploader_{$param.name}.on("uploadSuccess",function(file,data){
+			$("input[name='{$param.name}']").val(data.data.{$param.name}.id);
+		})
+		//删除当前图片
+		$("#fileView_{$param.name}").on("click","a",function(){
 
-	$("#uploader_{$param.name}").css("display","block");
-	if($(this).parent().attr("id")){
-		uploader_{$param.name}.removeFile($(this).parent().attr("id"));
-	}
-	$("#fileView_{$param.name}").html("");
-	$("input[name='{$param.name}']").val("");
-});
-//文件上传出错事件
-uploader_{$param.name}.on("error",function(errCode){
-	errArr = new Array();
-	errArr["Q_EXCEED_NUM_LIMIT"] = "上传文件的总数量超出限制";
-	errArr["Q_EXCEED_SIZE_LIMIT"] = "上传文件的总大小超出限制";
-	errArr["Q_TYPE_DENIED"] = "选择的文件类型不符合要求";
-	errArr["F_EXCEED_SIZE"] = "上传文件的大小超出限制";
+			$("#uploader_{$param.name}").css("display","block");
+			if($(this).parent().attr("id")){
+				uploader_{$param.name}.removeFile($(this).parent().attr("id"));
+			}
+			$("#fileView_{$param.name}").html("");
+			$("input[name='{$param.name}']").val("");
+		});
+		//文件上传出错事件
+		uploader_{$param.name}.on("error",function(errCode){
+			errArr = new Array();
+			errArr["Q_EXCEED_NUM_LIMIT"] = "上传文件的总数量超出限制";
+			errArr["Q_EXCEED_SIZE_LIMIT"] = "上传文件的总大小超出限制";
+			errArr["Q_TYPE_DENIED"] = "选择的文件类型不符合要求";
+			errArr["F_EXCEED_SIZE"] = "上传文件的大小超出限制";
 
-	//alert("上传错误："+errArr[errCode]);
-	alert("上传错误");
-	//文件上传错误提示函数
-	//fileUpError(errCode);
-})
+			//alert("上传错误："+errArr[errCode]);
+			alert("上传错误");
+			//文件上传错误提示函数
+			//fileUpError(errCode);
+		})
 
-{/*裁剪上传弹窗处理*/}
-//$(".cropper_{$param.name}").on("click",function(){
-//	layui.define(['layer'], function(){
-//		var layer = layui.layer;
-//		//弹窗
-//		layer.open({
-//			type: 2,
-//			title:'裁剪模式',
-//			content: "<{U("admin/cropper",["tid"=>$field["tid"],"fid"=>$field["id"]])}>",
-//			area: ['88%', '88%']
-//		});       
+		{/*裁剪上传弹窗处理*/}
+		//$(".cropper_{$param.name}").on("click",function(){
+		//	layui.define(['layer'], function(){
+		//		var layer = layui.layer;
+		//		//弹窗
+		//		layer.open({
+		//			type: 2,
+		//			title:'裁剪模式',
+		//			content: "<{U("admin/cropper",["tid"=>$field["tid"],"fid"=>$field["id"]])}>",
+		//			area: ['88%', '88%']
+		//		});       
 
-//	});  
-//})
+		//	});  
+		//})
 
+	})
 </script>
