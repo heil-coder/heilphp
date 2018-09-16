@@ -42,7 +42,7 @@ class MapBuilder extends Addon{
 			$times['default'] = !empty($times['default']) ? ($times['default'] + 1) : 1;
 			break;
 		}
-		$times['style'] = !empty($times['style']) ? ($times['style'] + 1) : 1;
+		$times['total'] = !empty($times['total']) ? ($times['total'] + 1) : 1;
 
 		$this->assign('times',$times);
 		$this->assign('param', $param);

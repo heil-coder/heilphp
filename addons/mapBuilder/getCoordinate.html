@@ -1,15 +1,21 @@
 {/*插件此一次调用时引用css、js资源文件*/}
+{switch $param['type']}
+{case baiduMap}
 {present name="times['baiduMap']"}
 {lt name="times['baiduMap']" value="2"}
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=rkG5tCxVrbXh9qRp92ZI4Yny1zUX8WC4"></script>
 {/lt}
 {/present}
+{/case}
+{case qqMap}
 {present name="times['qqMap']"}
 {lt name="times['qqMap']" value="2"}
 <script type="text/javascript" charset="utf-8" src="https://map.qq.com/api/js?v=2.exp"></script>
 {/lt}
 {/present}
-{lt name="times['style']" value="2"}
+{/case}
+{/switch}
+{lt name="times['total']" value="2"}
 <style>
 .layer-container{
 	position:relative;
