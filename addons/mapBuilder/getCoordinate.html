@@ -177,7 +177,8 @@ function mapBuilder_{$param['name']}(){
 		markers = [];
 		//调用Poi检索类
 		searchService = new qq.maps.SearchService({
-			complete : function(results){
+			location:'三亚'
+			,complete : function(results){
 				var pois = results.detail.pois;
 				if(typeof(pois) == 'undefined'){
 					layer.msg('未搜索到相关地点');
