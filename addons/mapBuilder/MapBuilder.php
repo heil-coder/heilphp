@@ -29,13 +29,21 @@ class MapBuilder extends Addon{
 	 */
 	public function getCoordinate($param){
 		//静态变量记录插件调用次数
-		static $times = null;
-		if(!$times){
-			$times = 1;
+		static $times = [];
+		switch($param['type']){
+		case 'baiduMap':
+			$times['baiduMap'] = !empty($times['baiduMap']) ? ($times['baiduMap'] + 1) : 1;
+			break;
+
+		case 'qqMap':
+			$times['qqMap'] = !empty($times['qqMap']) ? ($times['qqMap'] + 1) : 1;
+			break;
+		default:
+			$times['default'] = !empty($times['default']) ? ($times['default'] + 1) : 1;
+			break;
 		}
-		else{
-			$times++;
-		}
+		$times['total'] = !empty($times['total']) ? ($times['total'] + 1) : 1;
+
 		$this->assign('times',$times);
 		$this->assign('param', $param);
 		$this->display('getCoordinate');
