@@ -177,19 +177,26 @@ function mapBuilder_{$param['name']}(){
 		markers = [];
 		//调用Poi检索类
 		searchService = new qq.maps.SearchService({
-			complete : function(results){
+			location:'三亚'
+			,complete : function(results){
 				var pois = results.detail.pois;
-				for(var i = 0,l = pois.length;i < l; i++){
-					var poi = pois[i];
-					latlngBounds_{$param['name']}.extend(poi.latLng);  
-					var marker = new qq.maps.Marker({
-						map:map_{$param['name']},
-						position: poi.latLng
-					});
+				if(typeof(pois) == 'undefined'){
+					layer.msg('未搜索到相关地点');
+					return false;
+				}
+				else{
+					for(var i = 0,l = pois.length;i < l; i++){
+						var poi = pois[i];
+						latlngBounds_{$param['name']}.extend(poi.latLng);  
+						var marker = new qq.maps.Marker({
+							map:map_{$param['name']},
+							position: poi.latLng
+						});
 
-					marker.setTitle(i+1);
+						marker.setTitle(i+1);
 
-					markers.push(marker);
+						markers.push(marker);
+					}
 				}
 				map_{$param['name']}.fitBounds(latlngBounds_{$param['name']});
 			}
