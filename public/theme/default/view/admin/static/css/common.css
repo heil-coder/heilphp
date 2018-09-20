@@ -85,3 +85,12 @@
 .page .rows {
 	border-right: 1px solid #CCCCCC;
 }
+#top-alert{
+	z-index:1;
+	position:fixed;
+	min-width:300px;
+}
+#top-alert .close{
+	color:#ffffff;
+	opacity:1;
+}
