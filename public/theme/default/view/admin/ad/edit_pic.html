@@ -1,0 +1,117 @@
+{extend name="public/base" /}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					{$info['id']?'编辑':'新增'}广告
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('adPosition/index')}">广告位</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('ad/index')}">广告位</a></li>
+					<li class="breadcrumb-item active">编辑</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<form action="{:Url()}" method="post" class="form-horizontal">
+					<div class="form-item">
+						<label class="item-label">广告说明<span class="check-tips">合理的广告说明有利于SEO</span></label>
+						<div class="controls">
+							<input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
+						</div>
+					</div>
+					<div class="form-item">
+						<label class="item-label">Url<span class="check-tips">http开头的链接</span></label>
+						<div class="controls">
+							<input type="text" class="text input-large" name="url" value="{$info.url|default=''}">
+						</div>
+					</div>
+					<div class="form-item">
+						<label class="item-label">打开位置<span class="check-tips">"_blank" 等</span></label>
+						<div class="controls">
+							<input type="text" class="text input-large" name="target" value="{$info.target|default=''}">
+						</div>
+					</div>
+					<div class="form-item">
+						<label class="item-label">广告图片<span class="check-tips">[宽：{$position['width']}，高：{$position['height']}]</span></label>
+
+						<div class="controls">
+							{php}Hook::listen('fileUploader',['name'=>'data','value'=>$info['data'],'width'=>'100']){/php}
+						</div>
+					</div>
+
+					<div class="form-item">
+						<label class="item-label">开始时间<span class="check-tips"></span></label>
+						<div class="controls">
+							<input type="text" class="text input-large time" name="start_time" value="{$info.start_time|default=''}" placeholder="请选择日期">
+						</div>
+					</div>
+					<div class="form-item">
+						<label class="item-label">结束时间<span class="check-tips"></span></label>
+						<div class="controls">
+							<input type="text" class="text input-large time" name="end_time" value="{$info.end_time|default=''}" placeholder="请选择日期">
+						</div>
+					</div>
+					<div class="form-item">
+						<input type="hidden" name="position" value="{$info.position|default=input('param.position')}">
+						<input type="hidden" name="id" value="{$info.id|default=''}">
+						<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+						<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+{php}if(Config('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';{/php}
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+	$(function(){
+		//导航高亮
+		highlight_subnav('{:Url('AdPosition/index')}');
+		$('.date').datetimepicker({
+			format: 'yyyy-mm-dd',
+			language:"zh-CN",
+			minView:2,
+			autoclose:true
+		});
+		$('.time').datetimepicker({
+			format: 'yyyy-mm-dd hh:ii',
+			language:"zh-CN",
+			minView:2,
+			autoclose:true
+		});
+	})
+</script>
+{/block}
