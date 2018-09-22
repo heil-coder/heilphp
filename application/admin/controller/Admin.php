@@ -193,7 +193,7 @@ class Admin extends Controller {
         $Db->setOption('field',[]);
         $Db->setOption('where',[]);
 
-		$page = $Db->paginate($listRows,$total);
+		$page = $Db->paginate($listRows);
         $p = $page->render(); 
         $this->assign('_page', $p? $p: '');
 
