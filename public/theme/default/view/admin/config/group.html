@@ -1,28 +1,33 @@
 {extend name="public/base" /}
-{block name="style"}
-<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
-{/block}
 
 {block name="content-header"}
 <!-- Content Header (Page header) -->
 <div class="content-header">
 	<div class="container-fluid">
-		<div class="row mb-2">
-			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">
-					网站设置
-				</h1>
-			</div><!-- /.col -->
-			<div class="col-sm-6">
-				<ol class="breadcrumb float-sm-right">
-					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
-					<li class="breadcrumb-item active">网站设置</li>
-				</ol>
-			</div><!-- /.col -->
-		</div><!-- /.row -->
+		<div class="card card-content-nav">
+			<div class="card-header pb-1 pt-1">
+				<div class="row">
+					<div class="col-sm-12">
+						<ol class="breadcrumb float-sm-left">
+							<li>您当前的位置：</li>
+							<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+							<li class="breadcrumb-item active">网站设置</li>
+						</ol>
+					</div><!-- /.col -->
+				</div><!-- /.row -->
+			</div><!-- /.card-header -->
+		</div><!-- /.card -->
+		<div class="card card-content-nav">
+			<div class="card-header pb-1 pt-1">
+				<div class="row mb-1 mt-1">
+					<div class="col-sm-6 p-0">
+						<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;返回</button></a>
+					</div>
+				</div><!-- /.row -->
+			</div><!-- /.card-header -->
+		</div><!-- /.card -->
 	</div><!-- /.container-fluid -->
-</div>
-<!-- /.content-header -->
+</div><!-- /.content-header -->
 {/block}
 
 {block name="content-content"}
@@ -31,69 +36,72 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-lg-12">
-
-
-				<div class="tab-wrap">
-					<ul class="tab-nav nav">
-						{volist name="Think.config.CONFIG_GROUP_LIST" id="group"}
-
-						<li {eq name="id" value="$key"}class="current"{/eq}><a href="{:Url('?id='.$key)}">{$group}配置</a></li>
-
-						{/volist}
-					</ul>
-					<div class="tab-content">
-						<form action="{:Url('save')}" method="post" class="form-horizontal">
+				<form action="{:Url('save')}" method="post" class="form-horizontal">
+				<div class="card">
+					<div class="card-header d-flex p-0">
+						<ul class="nav nav-pills p-2" style="margin-left:1.25rem;">
+							{volist name="Think.config.CONFIG_GROUP_LIST" id="group"}
+							<li class="nav-item"><a class="nav-link {eq name="id" value="$key"}active{/eq}" href="{:Url('?id='.$key)}">{$group}配置</a></li>
+							{/volist}
+						</ul>
+					</div><!-- /.card-header -->
+					<div class="card-body">
+						<div class="tab-content col-lg-8 col-md-12">
+							{present name="list"}
 							{volist name="list" id="config"}
 							<div class="form-item">
-								<label class="item-label">{$config.title}<span class="check-tips">（{$config.remark}）</span> </label>
-								<div class="controls">
+								<div class="form-group">
+									<label>{$config.title}</label>
 									{switch name="config.type"}
 									{case value="0"}
-									<input type="text" class="text input-small" name="config[{$config.name}]" value="{$config.value}">
+									<input type="text" class="form-control form-control-sm" name="config[{$config.name}]" value="{$shopList[$config.name]|default=$config.value}">
 									{/case}
 									{case value="1"}
-									<input type="text" class="text input-large" name="config[{$config.name}]" value="{$config.value}">
+									<input type="text" class="form-control form-control-sm" name="config[{$config.name}]" value="{$shopList[$config.name]|default=$config.value}">
 									{/case}
 									{case value="2"}
-									<label class="textarea input-large">
-										<textarea name="config[{$config.name}]">{$config.value}</textarea>
-									</label>
+									<textarea class="form-control form-control-sm" rows="3" name="config[{$config.name}]">{$shopList[$config.name]|default=$config.value}</textarea>
 									{/case}
 									{case value="3"}
-									<label class="textarea input-large">
-										<textarea name="config[{$config.name}]">{$config.value}</textarea>
-									</label>
+									<textarea class="form-control form-control-sm" rows="3" name="config[{$config.name}]">{$shopList[$config.name]|default=$config.value}</textarea>
 									{/case}
 									{case value="4"}
-									<select name="config[{$config.name}]">
+									<select class="form-control form-control-sm" name="config[{$config.name}]">
 										{volist name=":parse_config_attr($config['extra'])" id="vo"}
-										<option value="{$key}" {eq name="config.value" value="$key"}selected{/eq}>{$vo}</option>
+										<option value="{$key}" 
+												{notpresent name="shopList[$config['name']]"}
+															{eq name="config.value" value="$key"}selected{/eq}
+																					{else /}
+																					{eq name="shopList[$config['name']]" value="$key"}selected{/eq}
+																														 {/notpresent}>
+										{$vo}
+										</option>
 										{/volist}
 									</select>
 									{/case}
 									{/switch}
-
+									<p class="tips">{$config.remark}</p>
 								</div>
 							</div>
 							{/volist}
-							<div class="form-item">
-								<label class="item-label"></label>
-								<div class="controls">
-									{empty name="list"}<button type="submit" disabled class="btn submit-btn disabled" target-form="form-horizontal">确 定</button>
-									{else/}<button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">确 定</button>
-									{/empty}
-
-									<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-
-
-
-			</div>
-		</div>
+							{else /}
+							暂无相关配置项目
+							{/present}
+						</div><!-- /.tab-content -->
+					</div><!-- /.card-body -->
+					<div class="card-footer">
+						<div class="col-md-12">
+							<input type="hidden" name="id" value="{:input('param.id/d',1)}" />
+							{notPresent name="list"}<button type="submit" disabled class="btn submit-btn disabled" target-form="form-horizontal">确 定</button>
+							{else/}<button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+							{/notPresent}
+							<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+						</div>
+					</div><!-- /.card-footer -->
+				</div><!-- /.card -->
+				</form>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
 	</div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->
@@ -105,7 +113,7 @@
 {block name='script'}
 <script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" charset="utf-8">
-//导航高亮
-highlight_subnav('{:Url('Config/group')}');
+	//导航高亮
+	highlight_subnav('{:Url('Config/group')}');
 </script>
 {/block}
