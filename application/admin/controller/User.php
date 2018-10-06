@@ -33,7 +33,7 @@ class User extends Admin{
         }
 
         $list   = $this->getListing('Member', $map);
-        int_to_string($list);
+        //int_to_string($list);
         $this->assign('_list', $list);
         $this->meta_title = '用户信息';
         $this->assign('meta_title', $this->meta_title);

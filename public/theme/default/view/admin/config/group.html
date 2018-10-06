@@ -93,9 +93,9 @@
 						<div class="col-md-12">
 							<input type="hidden" name="id" value="{:input('param.id/d',1)}" />
 							{notPresent name="list"}<button type="submit" disabled class="btn submit-btn disabled" target-form="form-horizontal">确 定</button>
-							{else/}<button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+							{else/}<button type="submit" class="btn btn-sm btn-danger submit-btn ajax-post" target-form="form-horizontal">确 定</button>
 							{/notPresent}
-							<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+							<button class="btn btn-sm btn-info btn-return" onclick="javascript:history.go(-1);return false;">返 回</button>
 						</div>
 					</div><!-- /.card-footer -->
 				</div><!-- /.card -->

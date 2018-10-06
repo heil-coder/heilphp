@@ -1,26 +1,32 @@
 {extend name="public/base" /}
-{block name="style"}
-<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
-{/block}
 
 {block name="content-header"}
 <!-- Content Header (Page header) -->
 <div class="content-header">
 	<div class="container-fluid">
-		<div class="row mb-2">
-			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">
-					<h1>新增用户</h1>
-				</h1>
-			</div><!-- /.col -->
-			<div class="col-sm-6">
-				<ol class="breadcrumb float-sm-right">
-					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
-					<li class="breadcrumb-item"><a href="{:Url('user/index')}">用户</a></li>
-					<li class="breadcrumb-item active">新增用户</li>
-				</ol>
-			</div><!-- /.col -->
-		</div><!-- /.row -->
+		<div class="card card-content-nav">
+			<div class="card-header pb-1 pt-1">
+				<div class="row">
+					<div class="col-sm-12">
+						<ol class="breadcrumb float-sm-left">
+							<li>您当前的位置：</li>
+							<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+							<li class="breadcrumb-item"><a href="{:Url('user/index')}">用户</a></li>
+							<li class="breadcrumb-item active">新增用户</li>
+						</ol>
+					</div><!-- /.col -->
+				</div><!-- /.row -->
+			</div><!-- /.card-header -->
+		</div><!-- /.card -->
+		<div class="card card-content-nav">
+			<div class="card-header pb-1 pt-1">
+				<div class="row mb-1 mt-1">
+					<div class="col-sm-6 p-0">
+						<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;返回</button></a>
+					</div>
+				</div><!-- /.row -->
+			</div><!-- /.card-header -->
+		</div><!-- /.card -->
 	</div><!-- /.container-fluid -->
 </div>
 <!-- /.content-header -->
@@ -32,40 +38,41 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-lg-12">
-
 				<form action="{:Url()}" method="post" class="form-horizontal">
-					<div class="form-item">
-						<label class="item-label">用户名<span class="check-tips">（用户名会作为默认的昵称）</span></label>
-						<div class="controls">
-							<input type="text" class="text input-large" name="username" value="">
-						</div>
-					</div>
-					<div class="form-item">
-						<label class="item-label">密码<span class="check-tips">（用户密码不能少于6位）</span></label>
-						<div class="controls">
-							<input type="password" class="text input-large" name="password" value="">
-						</div>
-					</div>
-					<div class="form-item">
-						<label class="item-label">确认密码</label>
-						<div class="controls">
-							<input type="password" class="text input-large" name="repassword" value="">
-						</div>
-					</div>
-					<div class="form-item">
-						<label class="item-label">邮箱<span class="check-tips">（用户邮箱，用于找回密码等安全操作）</span></label>
-						<div class="controls">
-							<input type="text" class="text input-large" name="email" value="">
-						</div>
-					</div>
-					<div class="form-item">
-						<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
-						<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
-					</div>
+					<div class="card">
+						<div class="card-body">
+							<div class="form-group">
+								<label>用户名</label>
+								<input type="text" class="form-control form-control-sm" name="username" value="" placeholder="请设置用户名">
+								<p class="tips">用户名会作为默认的昵称</p>
+							</div><!-- /.form-group -->
+							<div class="form-group">
+								<label>密码</label>
+								<input type="password" class="form-control form-control-sm" name="password" value="" placeholder="请设置用户密码">
+								<span class="tips">用户密码不能少于6位</p>
+							</div><!-- /.form-group -->
+							<div class="form-group">
+								<label>确认密码</label>
+								<input type="password" class="form-control form-control-sm" name="repassword" value="" placeholder="请再次输入用户密码">
+								<span class="tips">用户密码不能少于6位</p>
+							</div>
+							<div class="form-group">
+								<label>邮箱</label>
+								<input type="text" class="form-control form-control-sm" name="email" value="">
+								<p class="tips">用户邮箱，用于找回密码等安全操作</p>
+							</div>
+						</div><!-- /.card-body -->
+						<div class="card-footer">
+							<div class="col-md-12">
+								<input type="hidden" name="id" value="{:input('param.id/d',1)}" />
+								<button type="submit" class="btn btn-sm btn-danger submit-btn ajax-post" id="submit" target-form="form-horizontal">确 定</button>
+								<button class="btn btn-sm btn-info btn-return" onclick="javascript:history.go(-1);return false;">返 回</button>
+							</div>
+						</div><!-- /.card-footer -->
+					</div><!-- /.card -->
 				</form>
-
-			</div>
-		</div>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
 	</div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->
@@ -77,6 +84,6 @@
 {block name='script'}
 <script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" charset="utf-8">
-highlight_subnav('{:Url('index')}');
+	highlight_subnav('{:Url('index')}');
 </script>
 {/block}

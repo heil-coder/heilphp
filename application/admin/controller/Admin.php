@@ -175,37 +175,13 @@ class Admin extends Controller {
 		}
 		$options      =   array_merge( $Db->getOptions(), $options );
 
-		if(!$isSoftDelete || ($isSoftDelete && $hasSoftDeleteCondition)){
-			$total = $Db->where($options['where'])->count();
-		}
-		else{
-			$total = $Db->where($options['where'])->useSoftDelete('delete_time')->count();
-		}
-
-        $this->assign('_total',$total);
-
-        if( isset($REQUEST['r']) ){
-            $listRows = (int)$REQUEST['r'];
-        }else{
-            $listRows = Config::get('LIST_ROWS') > 0 ? Config::get('LIST_ROWS') : 10;
-        }
-
-        $Db->setOption('field',[]);
-        $Db->setOption('where',[]);
-
-		$page = $Db->paginate($listRows,$total);
-        $p = $page->render(); 
-        $this->assign('_page', $p? $p: '');
-
-        $Db->setOption('where',[]);
-
-        $limit = ($page->currentPage()-1) * $page->listRows() .','.$page->listRows();
+        $listRows = Config('LIST_ROWS') > 0 ? Config('LIST_ROWS') : 10;
 		!empty($tmpOptions['where']) && $Db = $Db->setOption('where',$tmpOptions['where']);
 		if(!$isSoftDelete || ($isSoftDelete && $hasSoftDeleteCondition)){
-			$listing = $Db->where($options['where'])->field($field)->order($options['order'])->limit($limit)->select();
+			$listing = $Db->where($options['where'])->field($field)->order($options['order'])->paginate($listRows);
 		}
 		else{
-			$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->limit($limit)->select();
+			$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->paginate($listRows);
 		}
 		return $listing;
     }
