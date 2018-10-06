@@ -29,7 +29,7 @@
 	  {block name="style"}
 	  {/block}
 	</head>
-	<body class="hold-transition sidebar-mini">
+	<body class="hold-transition sidebar-mini {if $Request.module == 'admin' && $Request.controller == 'Index' && $Request.action == 'index'}sidebar-collapse{/if}">
 		<div class="wrapper">
 
 			{block name="navbar"}	
