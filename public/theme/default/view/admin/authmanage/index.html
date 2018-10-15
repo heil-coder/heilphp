@@ -47,7 +47,6 @@
 										<th class="">描述</th>
 
 										<th class="">授权</th>
-										<th class="">状态</th>
 										<th class="">操作</th>
 									</tr>
 								</thead>
@@ -64,7 +63,6 @@
 											<a href="{:Url('authmanage/category?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >分类授权</a>
 											<a href="{:Url('authmanage/user?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >成员授权</a>
 										</td>
-										<td>{$vo.status_text}</td>
 										<td>{eq name="vo.status" value="1"}
 											<a href="{:Url('authmanage/changeStatus?method=forbidGroup&id='.$vo['id'])}" class="ajax-get">禁用</a>
 											{else/}

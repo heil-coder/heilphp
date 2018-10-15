@@ -24,7 +24,6 @@ class Authmanage extends Admin{
      */
     public function index(){
         $list = $this->getListing('auth_group',array('module'=>'admin'),'id asc');
-        int_to_string($list);
 		$this->assign('_list',$list);
 
         $this->assign('meta_title', '权限管理');
