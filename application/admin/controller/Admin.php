@@ -183,6 +183,7 @@ class Admin extends Controller {
 		else{
 			$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->paginate($listRows);
 		}
+		$this->assign('_page', $listing->render());
 		return $listing;
     }
     /**
