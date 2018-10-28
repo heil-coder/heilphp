@@ -154,6 +154,7 @@
             top_alert.find('.alert-content').text(text);
 			if (top_alert.hasClass('block')) {
 			} else {
+				top_alert.css('width',top_alert.parent().width());
 				top_alert.addClass('block').slideDown(200);
 				// content.animate({paddingTop:'+=55'},200);
 			}

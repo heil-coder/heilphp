@@ -1,0 +1,107 @@
+{extend name="public/base" /}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					{$info['id']?'编辑':'新增'}广告位
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('adPosition/index')}">广告位</a></li>
+					<li class="breadcrumb-item active">编辑</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+	<form action="{:Url()}" method="post" class="form-horizontal">
+		<div class="form-item">
+			<label class="item-label">广告位名称<span class="check-tips">（仅后台可见）</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">广告位标识<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="name" value="{$info.name|default=''}">
+			</div>
+		</div>
+        <div class="form-item">
+            <label class="item-label">广告位展示方式<span class="check-tips"></span></label>
+            <div class="controls">
+                <select name="type">
+					<option value="0" {if $info.type == 0}selected{/if}>单图</option>
+					<option value="1" {if $info.type == 1}selected{/if}>多图</option>
+					<option value="2" {if $info.type == 2}selected{/if}>文字链接</option>
+					<option value="3" {if $info.type == 3}selected{/if}>代码</option>
+                </select>
+            </div>
+        </div>
+		<div class="form-item">
+			<label class="item-label">宽度<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="width" value="{$info.width|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">高度<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="height" value="{$info.height|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">外边距<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="margin" value="{$info.margin|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">内边距<span class="check-tips">(默认单位为"px")</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="padding" value="{$info.padding|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<input type="hidden" name="id" value="{$info.id|default=''}">
+			<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+		</div>
+	</form>
+
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+//导航高亮
+highlight_subnav('{:Url('adPosition/index')}');
+</script>
+{/block}
