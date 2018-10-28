@@ -25,7 +25,7 @@ class Uploader extends Addon{
 
 	/**
 	 * 上传工具挂载的钩子
-	 * @param $param array('name'=>'表单name','value'=>'表单对应的值','width'=>'图片宽度')
+	 * @param $param array('name'=>'表单name','value'=>'表单对应的值','width'=>'图片宽度','multiple':'开启多选 后的图片数量限制',multipleField:'value')
 	 */
 	public function fileUploader($param){
 		//静态变量记录插件调用次数

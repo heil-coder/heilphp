@@ -9,17 +9,33 @@
 		<input  type="hidden" name="{$param["name"]}" value="{$param.value|default=''}" />
 	</div>
 </div>
-<div id="fileView_{$param.name}" style="width:{$param['width']|default='100'}px;display:inline-block;float:left;">
+<div id="fileView_{$param.name}" class="fileView" style="width:{$param['width']|default='100'}px;display:inline-block;float:left;">
 	{notEmpty name="param.value"}
-	<div id="" class="file-item thumbnail">
-		<img width="{$param['width']|default='100'}" src="{:get_cover($param.value)}"><a href="javascript:;">
-			<i class="fa fa-close"></i>删除</a>
+	{if !is_array($param.value)}
+	<div class="file-item load thumbnail">
+		<img width="{$param['width']|default='100'}" src="{:get_cover($param.value)}">
+		<a href="javascript:;">
+			<i class="fa fa-close"></i>
+			删除
+		</a>
 	</div>
+	{else /}
+	{volist name="param.value" id="vo"}
+	<div class="file-item load thumbnail">
+		<img width="{$param['width']|default='100'}" src="{:get_cover($vo[$param.multipleField ?: 'value'])}">
+		<a href="javascript:;">
+			<i class="fa fa-close"></i>
+			删除
+		</a>
+	</div>
+	{/volist}
+	{/if}
 	{/notEmpty}
 </div>
 <script>
 	$(function(){
 		var list{$param["name"]} =$("div#fileView_{$param["name"]}");
+		var multiple_{$param['name']} = {$param.multiple ?: false};
 		var uploader_{$param.name} = WebUploader.create({
 			//自动上传
 			auto:true,
@@ -35,7 +51,7 @@
 			// 配置压缩的图片的选项。如果此选项为false, 则图片在上传前不进行压缩
 			compress: false,
 			//验证文件总数量, 超出则不允许加入队列
-			fileNumLimit:1,
+			fileNumLimit:{$param['multiple'] ?: 1},
 			//验证单个文件大小是否超出限制, 超出则不允许加入队列
 			fileSingleSizeLimit:"{config('FILE_UPLOAD_MAX_SIZE')|default:(1024*1024*2)}",
 			// 只允许选择图片文件。
@@ -45,11 +61,17 @@
 				mimeTypes: "image/gif,image/jpg,image/jpeg,image/bmp,image/png"
 			}
 		});
-		//多文件加入队列函数
-		uploader_{$param.name}.on("filesQueued",function(file){
+
+
+		//当文件被加入队列之前触发
+		uploader_{$param.name}.on("beforeFileQueued",function(file){
+			if(multiple_{$param.name} && $("#fileView_{$param.name}").find('.file-item').length >= multiple_{$param.name})
+				return false;
+			return true;
 		})
 		//文件加入队列函数
 		uploader_{$param.name}.on("fileQueued",function(file){
+			console.log(file);
 			var li{$param.name} = $(
 				"<div id='" + file.id + "' class='file-item thumbnail'>" +
 				"<img width='" + "{$param['width']|default='100'}" + "'><a href='javascript:;'><i class='fa fa-close'></i>删除&nbsp;&nbsp;&nbsp;<i class='percentage'></i></a>"+
@@ -57,8 +79,7 @@
 			),
 				img{$param.name} = li{$param.name}.find("img");
 			// $list为容器jQuery实例
-			$("#uploader_{$param.name}").css("display","none");
-			list{$param.name}.html(li{$param.name});
+			list{$param.name}.append(li{$param.name});
 			// 创建缩略图
 			// 如果为非图片文件，可以不用调用此方法。
 			// thumbnailWidth x thumbnailHeight 为 100 x 100
@@ -69,25 +90,29 @@
 				}
 				img{$param.name}.attr( "src", src );
 			},1,1 );
+			if(multiple_{$param.name} && $("#fileView_{$param.name}").find('.file-item').length >= multiple_{$param.name})
+				$("#uploader_{$param.name}").css("display","none");
 
 		})
 		//上传进度
 		uploader_{$param.name}.on("uploadProgress",function(file,percentage){
 			$("#fileView_{$param.name}").find("a i.percentage").html((percentage*100).toFixed(0)+"%");
 		})
-		//文件加入队列函数
+		//文件上传成功回调函数
 		uploader_{$param.name}.on("uploadSuccess",function(file,data){
 			$("input[name='{$param.name}']").val(data.data.{$param.name}.id);
 		})
 		//删除当前图片
 		$("#fileView_{$param.name}").on("click","a",function(){
-
 			$("#uploader_{$param.name}").css("display","block");
 			if($(this).parent().attr("id")){
-				uploader_{$param.name}.removeFile($(this).parent().attr("id"));
+				uploader_{$param.name}.removeFile($(this).parent().attr("id"),true);
 			}
-			$("#fileView_{$param.name}").html("");
+			//$("#fileView_{$param.name}").html("");
+			$(this).parent().remove();
 			$("input[name='{$param.name}']").val("");
+			uploader_{$param.name}.option( 'fileNumLimit',multiple_{$param['name']} - $("#fileView_{$param.name}").find('.file-item.load').length);
+
 		});
 		//文件上传出错事件
 		uploader_{$param.name}.on("error",function(errCode){
@@ -97,8 +122,7 @@
 			errArr["Q_TYPE_DENIED"] = "选择的文件类型不符合要求";
 			errArr["F_EXCEED_SIZE"] = "上传文件的大小超出限制";
 
-			//alert("上传错误："+errArr[errCode]);
-			alert("上传错误");
+			alert("上传错误："+errArr[errCode]);
 			//文件上传错误提示函数
 			//fileUpError(errCode);
 		})

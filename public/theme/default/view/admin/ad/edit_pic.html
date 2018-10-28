@@ -56,7 +56,7 @@
 						<label class="item-label">广告图片<span class="check-tips">[宽：{$position['width']}，高：{$position['height']}]</span></label>
 
 						<div class="controls">
-							{php}Hook::listen('fileUploader',['name'=>'data','value'=>$info['data'],'width'=>'100']){/php}
+							{php}Hook::listen('fileUploader',['name'=>'data','value'=>$info['data'],'width'=>'100','multiple'=>5]){/php}
 						</div>
 					</div>
 
