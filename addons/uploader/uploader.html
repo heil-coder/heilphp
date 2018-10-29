@@ -9,10 +9,10 @@
 		<input  type="hidden" name="{$param["name"]}" value="{$param.value|default=''}" />
 	</div>
 </div>
-<div id="fileView_{$param.name}" class="fileView" style="width:{$param['width']|default='100'}px;display:inline-block;float:left;">
+<div id="fileView_{$param.name}" class="fileView" style="width:{$param['width']|default='100'}px;display:flex;flex-direction:row;justify-content:flex-start;float:left;">
 	{notEmpty name="param.value"}
 	{if !is_array($param.value)}
-	<div class="file-item load thumbnail">
+	<div class="file-item load thumbnail" style="margin-right:20px;">
 		<img width="{$param['width']|default='100'}" src="{:get_cover($param.value)}">
 		<a href="javascript:;">
 			<i class="fa fa-close"></i>
@@ -73,7 +73,7 @@
 		uploader_{$param.name}.on("fileQueued",function(file){
 			console.log(file);
 			var li{$param.name} = $(
-				"<div id='" + file.id + "' class='file-item thumbnail'>" +
+				"<div id='" + file.id + "' class='file-item thumbnail' style='margin-right:20px;'>" +
 				"<img width='" + "{$param['width']|default='100'}" + "'><a href='javascript:;'><i class='fa fa-close'></i>删除&nbsp;&nbsp;&nbsp;<i class='percentage'></i></a>"+
 				"</div>"
 			),
@@ -96,7 +96,7 @@
 		})
 		//上传进度
 		uploader_{$param.name}.on("uploadProgress",function(file,percentage){
-			$("#fileView_{$param.name}").find("a i.percentage").html((percentage*100).toFixed(0)+"%");
+			$("#fileView_{$param.name}").find(".file-item#" + file.id + " a i.percentage").html((percentage*100).toFixed(0)+"%");
 		})
 		//文件上传成功回调函数
 		uploader_{$param.name}.on("uploadSuccess",function(file,data){
