@@ -8,6 +8,7 @@ class ComposerStaticInitd28cf80f8169c4160df3d3be994a1305
 {
     public static $files = array (
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
+        '0ccdf99b8f62f02c52cba55802e0c2e7' => __DIR__ . '/..' . '/zircote/swagger-php/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -21,9 +22,18 @@ class ComposerStaticInitd28cf80f8169c4160df3d3be994a1305
         array (
             'app\\' => 4,
         ),
+        'S' => 
+        array (
+            'Symfony\\Component\\Finder\\' => 25,
+            'Swagger\\' => 8,
+        ),
         'P' => 
         array (
             'PHPMailer\\PHPMailer\\' => 20,
+        ),
+        'D' => 
+        array (
+            'Doctrine\\Common\\Annotations\\' => 28,
         ),
     );
 
@@ -44,9 +54,31 @@ class ComposerStaticInitd28cf80f8169c4160df3d3be994a1305
         array (
             0 => __DIR__ . '/../..' . '/application',
         ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+        'Swagger\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zircote/swagger-php/src',
+        ),
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
+        'Doctrine\\Common\\Annotations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'D' => 
+        array (
+            'Doctrine\\Common\\Lexer\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
+            ),
         ),
     );
 
@@ -55,6 +87,7 @@ class ComposerStaticInitd28cf80f8169c4160df3d3be994a1305
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitd28cf80f8169c4160df3d3be994a1305::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitd28cf80f8169c4160df3d3be994a1305::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd28cf80f8169c4160df3d3be994a1305::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }
