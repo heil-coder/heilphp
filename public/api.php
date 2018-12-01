@@ -54,11 +54,7 @@ while(($module_name = readdir($module_dir)) !== false) {
 						
 						// 添加path
 						if(preg_match_all('/\/\*((?!\*\/).)+\*\//s', $contents, $func_matches)) {
-							var_dump(json_encode($func_matches));
-							var_dump('<br/>');
 							$length = count($func_matches[0]);
-							var_dump($length);
-							var_dump('<br/>');
 							if($length > 1) {
 								for($i = 1; $i < $length; $i++) {
 									$func_array = array();
@@ -203,4 +199,3 @@ fclose($jsonFile);
 $url = '/swagger/index.html';
 Header('HTTP/1.1 303 See Other'); 
 Header("Location: $url"); 
-exit('end'.time());
