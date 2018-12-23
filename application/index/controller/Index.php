@@ -1,32 +1,62 @@
 <?php
-// +----------------------------------------------------------------------
-// | HeilPHP
-// +----------------------------------------------------------------------
-// | Copyright (c) 2018 http://www.heilphp.com All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: Jason <1878566968@qq.com>
-// +----------------------------------------------------------------------
+namespace app\api\controller;
 
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
-// +----------------------------------------------------------------------
-namespace app\index\controller;
-use think\Controller;
-
-class Index extends Controller
+/**
+ * swagger: 登录相关
+ */
+class Passport
 {
-    public function index()
-    {
-        $category = model('Category')->getTree();
-        $lists    = model('Document')->lists(null);
-
-        $this->assign('category',$category);//栏目
-        $this->assign('lists',$lists);//列表
-        $this->assign('page',model('Document')->page);//分页
-		return view();
-    }
+	/**
+	 * post: 发送验证码
+	 * path: sendVerify/{phone}/{deviceType}
+	 * method: sendVerify
+	 * param: phone - {string} 手机号
+	 * param: deviceType - {int} = [0|1|2|3|4] 设备类型(0: android手机, 1: ios手机, 2: android平板, 3: ios平板, 4: pc)
+	 */
+	public function sendVerify($phone, $deviceType) {
+		return [
+			'code'		=> 200,
+			'message'	=> '发送验证码',
+			'data'		=> [
+				'phone'			=> $phone,
+				'deviceType'		=> $deviceType
+			]
+		];
+	}
+	
+	/**
+	 * post: 登陆
+	 * path: login
+	 * method: login
+	 * param: phone - {string} 手机号
+	 * param: password - {string} 密码
+	 * param: deviceType - {int} = [0|1|2|3|4] 设备类型(0: android手机, 1: ios手机, 2: android平板, 3: ios平板, 4: pc)
+	 * param: verifyCode - {string} = 0 验证码
+	 */
+	public function login($phone, $password, $deviceType, $verifyCode = '0') {
+		return [
+			'code'		=> 200,
+			'message'	=> '登陆成功',
+			'data'		=> [
+				'phone'			=> $phone,
+				'password'		=> $password,
+				'deviceType'		=> $deviceType,
+				'verifyCode'		=> $verifyCode
+			]
+		];
+	}
+	
+	/**
+	 * get: 获取配置
+	 * path: profile
+	 * method: profile
+	 * param: keys - {string[]} 需要获取配置的Key值数组
+	 */
+	public function profile($keys) {
+		return [
+			'code'		=> 200,
+			'message'	=> '获取成功',
+			'data'		=> $keys
+		];
+	}
 }
