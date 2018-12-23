@@ -36,6 +36,7 @@ class Uploader extends Addon{
 		else{
 			$times++;
 		}
+		$param['multiple'] = !empty($param['multiple']) ? true : false;
 		$this->assign('times',$times);
 		$this->assign('param', $param);
 		$this->display('uploader');
