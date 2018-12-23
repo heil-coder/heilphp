@@ -84,9 +84,9 @@ delete_time为null时需要在模型中加入软删除设置,联合唯一的字�
 软删除标识字段统一为delete_time,数据表中的唯一字段由于删除引起的唯一冲突问题通过设置联合唯一索引解决，如：UNIQUE KEY un_id_card (id_card,delete_time)
 ```
 
-![](http://www.thinkphp.cn/Uploads/editor/2016-06-23/576b4732a6e04.png) 
+![](https://box.kancloud.cn/5a0aaa69a5ff42657b5c4715f3d49221) 
 
-ThinkPHP 5.1 —— 12载初心，你值得信赖的PHP框架
+ThinkPHP 5.1（LTS版本） —— 12载初心，你值得信赖的PHP框架
 ===============
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/top-think/framework/badges/quality-score.png?b=5.1)](https://scrutinizer-ci.com/g/top-think/framework/?branch=5.1)
