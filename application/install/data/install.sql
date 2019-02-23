@@ -281,7 +281,7 @@ INSERT INTO `heilphp_menu` VALUES ('121', '排序', '76', '0', 'Channel/sort', '
 INSERT INTO `heilphp_menu` VALUES ('122', '数据列表', '58', '0', 'think/lists', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('123', '审核列表', '3', '0', 'Article/examine', '1', '', '', '0','1');
 
-INSERT INTO `heilphp_menu` VALUES ('10001', 'SEO设置', '68', '0', 'seo/index', '0', '', '站点', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10001', 'SEO设置', '68', '10001', 'seo/index', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10002', '新增', '10001', '0', 'seo/add', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10003', '编辑', '10001', '0', 'seo/edit', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10004', '启用', '10001', '0', 'seo/changeStatus?method=resume', '0', '', '', '0','1');
@@ -289,7 +289,7 @@ INSERT INTO `heilphp_menu` VALUES ('10005', '禁用', '10001', '0', 'seo/changeS
 INSERT INTO `heilphp_menu` VALUES ('10006', '删除', '10001', '0', 'seo/changeStatus?method=delete', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10007', '排序', '10001', '0', 'seo/sort', '0', '', '', '0','1');
 
-INSERT INTO `heilphp_menu` VALUES ('10101', '广告位', '68', '0', 'adPosition/index', '0', '', '站点', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10101', '广告位', '68', '10101', 'adPosition/index', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10102', '新增', '10101', '0', 'adPosition/add', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10103', '编辑', '10101', '0', 'adPosition/edit', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10104', '启用', '10101', '0', 'adPosition/changeStatus?method=resume', '1', '', '', '0','1');
