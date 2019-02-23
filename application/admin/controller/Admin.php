@@ -487,9 +487,9 @@ class Admin extends Controller {
                                 $data[$key]    =   $options[$val];
                             }
                         }elseif('date'==$type){ // 日期型
-                            $data[$key]    =   date('Y-m-d',$val);
+                            is_numeric($val) && $data[$key]    =   date('Y-m-d',$val);
                         }elseif('datetime' == $type){ // 时间型
-                            $data[$key]    =   date('Y-m-d H:i',$val);
+                            is_numeric($val) && $data[$key]    =   date('Y-m-d H:i',$val);
                         }
                     }
                 }

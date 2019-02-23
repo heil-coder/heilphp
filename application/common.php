@@ -80,7 +80,8 @@ function addons_url($url, $param = array()){
  * @modify Jason <1878566968@qq.com>
  */
 function time_format($time = NULL,$format='Y-m-d H:i'){
-	$time = $time === NULL ? App::getBeginTime() : $time;
+    if(is_null($time))
+        return NULL;
 	$time = is_numeric($time) ? $time : strtotime($time);
 	return date($format, $time);
 }
