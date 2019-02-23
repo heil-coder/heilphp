@@ -25,7 +25,6 @@ class Action extends Admin {
         //获取列表数据
         $map[]    =   ['status','>=', 0];
         $list   =   $this->getListing('ActionLog', $map);
-        !empty($list) && $list = $list->toArray()['data'];
         int_to_string($list);
         foreach ($list as $key=>$value){
             $model_id                  =   get_model_field($value['model'],"name","id");

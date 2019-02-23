@@ -98,7 +98,6 @@ class User extends Admin{
 		$map = [];
 		$map[] = ['status','>=',0];
         $list   =   $this->getListing('Action',$map);
-        !empty($list) && $list = $list->toArray()['data'];
         int_to_string($list);
         // 记录当前列表页的cookie
         Cookie('__forward__',$_SERVER['REQUEST_URI']);

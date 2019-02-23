@@ -185,7 +185,7 @@ class Admin extends Controller {
 		}
 		$this->assign('_page', $listing->render());
 		$this->assign('_total', $listing->total());
-		return $listing;
+		return $listing->toArray()['data'];
     }
     /**
      * 对数据表中的单行或多行记录执行修改 GET参数id为数字或逗号分隔的数字
