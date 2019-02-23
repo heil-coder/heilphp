@@ -501,8 +501,8 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 | uid | int(10) unsigned|否|0|--|用户ID| 
 | name| varchar(40) |否|''|--|标识| 
 | title| varchar(80) |否|''|--|标题| 
-| category_id| int(10) unsigned |否|无|--|所属分类| 
-| group_id| mediumint(8) unsigned|否|无|--|所属分组| 
+| category_id| int(10) unsigned |否|0|--|所属分类| 
+| group_id| mediumint(8) unsigned|否|0|--|所属分组| 
 | description| varchar(140) |否|''|--|描述| 
 | root| int(10) unsigned |否|0|--|根节点| 
 | pid| int(10) unsigned |否|0|--|所属ID| 

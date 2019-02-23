@@ -220,7 +220,6 @@ class Article extends Admin {
                 $fields[] = $array[0];
             }
         }
-
         // 文档模型列表始终要获取的数据字段 用于其他用途
         $fields[] = 'category_id';
         $fields[] = 'model_id';

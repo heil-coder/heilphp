@@ -184,7 +184,8 @@ class Admin extends Controller {
 			$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->paginate($listRows);
 		}
 		$this->assign('_page', $listing->render());
-		return $listing;
+		$this->assign('_total', $listing->total());
+		return $listing->toArray()['data'];
     }
     /**
      * 对数据表中的单行或多行记录执行修改 GET参数id为数字或逗号分隔的数字
@@ -486,9 +487,9 @@ class Admin extends Controller {
                                 $data[$key]    =   $options[$val];
                             }
                         }elseif('date'==$type){ // 日期型
-                            $data[$key]    =   date('Y-m-d',$val);
+                            is_numeric($val) && $data[$key]    =   date('Y-m-d',$val);
                         }elseif('datetime' == $type){ // 时间型
-                            $data[$key]    =   date('Y-m-d H:i',$val);
+                            is_numeric($val) && $data[$key]    =   date('Y-m-d H:i',$val);
                         }
                     }
                 }
