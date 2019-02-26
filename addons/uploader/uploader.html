@@ -3,15 +3,23 @@
 <link rel="stylesheet" href="__STATIC__/webuploader/webuploader.css" />
 <script charset="utf-8" src="__STATIC__/webuploader/webuploader.min.js"></script>
 {/lt}
-<div  style="width:100px; height:100px; margin:0 5px;display:block; float:left;" id="uploader_{$param["name"]}">
+<div  style="width:100px; height:100px; margin:0 5px;display:
+	{if (empty($param.multiple) && $param['value'])}
+	none
+	{elseif !empty($param['multiple']) && $param['multiple'] <= count($param.value)}
+	none
+	{else /}
+	block
+	{/if}
+	; float:left;" id="uploader_{$param["name"]}">
 	<div class="btns">
 		<div id="fileup_{$param["name"]}">选择图片</div>
-		<input  type="hidden" name="{$param["name"]}" value="{$param.value|default=''}" />
+        <input  type="hidden" name="{$param["name"]}" value="{notEmpty name="param.value"}{$param.value}{/notEmpty}" />
 	</div>
 </div>
 <div id="fileView_{$param.name}" class="fileView" style="width:{$param['width']|default='100'}px;display:flex;flex-direction:row;justify-content:flex-start;float:left;">
 	{notEmpty name="param.value"}
-	{if !is_array($param.value)}
+	{if !$param.multiple}
 	<div class="file-item load thumbnail" style="margin-right:20px;">
 		<img width="{$param['width']|default='100'}" src="{:get_cover($param.value)}">
 		<a href="javascript:;">
@@ -21,12 +29,13 @@
 	</div>
 	{else /}
 	{volist name="param.value" id="vo"}
-	<div class="file-item load thumbnail">
-		<img width="{$param['width']|default='100'}" src="{:get_cover($vo[$param.multipleField ?: 'value'])}">
+	<div class="file-item load thumbnail" style="margin-right:20px;">
+		<img width="{$param['width']|default='100'}" src="{:get_cover($vo[$param.multipleField] ?: $vo['value'])}">
 		<a href="javascript:;">
 			<i class="fa fa-close"></i>
 			删除
 		</a>
+		<input  type="hidden" name="{$param.name}[]" value="{$vo[$param.multipleField] ?: $vo['value']}" />
 	</div>
 	{/volist}
 	{/if}
@@ -35,7 +44,7 @@
 <script>
 	$(function(){
 		var list{$param["name"]} =$("div#fileView_{$param["name"]}");
-		var multiple_{$param['name']} = {$param.multiple ?: false};
+		var multiple_{$param['name']} = {$param.multiple ?: 0};
 		var uploader_{$param.name} = WebUploader.create({
 			//自动上传
 			auto:true,
@@ -75,11 +84,18 @@
 			var li{$param.name} = $(
 				"<div id='" + file.id + "' class='file-item thumbnail' style='margin-right:20px;'>" +
 				"<img width='" + "{$param['width']|default='100'}" + "'><a href='javascript:;'><i class='fa fa-close'></i>删除&nbsp;&nbsp;&nbsp;<i class='percentage'></i></a>"+
+				{notEmpty name="param.multiple"}
+				"<input  type='hidden' name='{$param.name}[]' value='' />"+
+				{/notEmpty}
 				"</div>"
 			),
 				img{$param.name} = li{$param.name}.find("img");
 			// $list为容器jQuery实例
+			{notEmpty name="param.multiple"}
 			list{$param.name}.append(li{$param.name});
+			{else /}
+			list{$param.name}.html(li{$param.name});
+			{/notEmpty}
 			// 创建缩略图
 			// 如果为非图片文件，可以不用调用此方法。
 			// thumbnailWidth x thumbnailHeight 为 100 x 100
@@ -90,9 +106,12 @@
 				}
 				img{$param.name}.attr( "src", src );
 			},1,1 );
+			{notEmpty name="param.multiple"}
 			if(multiple_{$param.name} && $("#fileView_{$param.name}").find('.file-item').length >= multiple_{$param.name})
 				$("#uploader_{$param.name}").css("display","none");
-
+			{else /}
+				$("#uploader_{$param.name}").css("display","none");
+			{/notEmpty}
 		})
 		//上传进度
 		uploader_{$param.name}.on("uploadProgress",function(file,percentage){
@@ -100,7 +119,11 @@
 		})
 		//文件上传成功回调函数
 		uploader_{$param.name}.on("uploadSuccess",function(file,data){
+			{notEmpty name="param.multiple"}
+			$("#fileView_{$param.name}").find('.file-item#'+file.id + ' input').val(data.data.{$param.name}.id);
+			{else /}
 			$("input[name='{$param.name}']").val(data.data.{$param.name}.id);
+			{/notEmpty}
 		})
 		//删除当前图片
 		$("#fileView_{$param.name}").on("click","a",function(){
@@ -108,8 +131,11 @@
 			if($(this).parent().attr("id")){
 				uploader_{$param.name}.removeFile($(this).parent().attr("id"),true);
 			}
-			//$("#fileView_{$param.name}").html("");
-			$(this).parent().remove();
+			{notEmpty name="param.multiple"}
+				$(this).parent().remove();
+			{else}
+				$("#fileView_{$param.name}").html("");
+			{/notEmpty}
 			$("input[name='{$param.name}']").val("");
 			uploader_{$param.name}.option( 'fileNumLimit',multiple_{$param['name']} - $("#fileView_{$param.name}").find('.file-item.load').length);
 
