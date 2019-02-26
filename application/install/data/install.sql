@@ -512,11 +512,11 @@ INSERT INTO `heilphp_attribute` VALUES ('20', 'create_time', '创建时间', 'in
 INSERT INTO `heilphp_attribute` VALUES ('21', 'update_time', '更新时间', 'int(10) unsigned NOT NULL ', 'datetime', '0', '', '0', '', '1', '0', '1', '1383891233', '1384508277', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('22', 'status', '数据状态', 'tinyint(4) NOT NULL ', 'radio', '0', '', '0', '-1:删除\r\n0:禁用\r\n1:正常\r\n2:待审核\r\n3:草稿', '1', '0', '1', '1383891233', '1384508496', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('23', 'parse', '内容解析类型', 'tinyint(3) unsigned NOT NULL ', 'select', '0', '', '0', '0:html\r\n1:ubb\r\n2:markdown', '2', '0', '1', '1383891243', '1384511049', '', '0', '', '', '', '0', '');
-INSERT INTO `heilphp_attribute` VALUES ('24', 'content', '文章内容', 'text NOT NULL ', 'editor', '', '', '1', '', '2', '0', '1', '1383891243', '1383896225', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('24', 'content', '文章内容', 'text NULL ', 'editor', '', '', '1', '', '2', '0', '1', '1383891243', '1383896225', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('25', 'template', '详情页显示模板', 'varchar(100) NOT NULL ', 'string', '', '参照display方法参数的定义', '1', '', '2', '0', '1', '1383891243', '1383896190', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('26', 'bookmark', '收藏数', 'int(10) unsigned NOT NULL ', 'num', '0', '', '1', '', '2', '0', '1', '1383891243', '1383896103', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('27', 'parse', '内容解析类型', 'tinyint(3) unsigned NOT NULL ', 'select', '0', '', '0', '0:html\r\n1:ubb\r\n2:markdown', '3', '0', '1', '1383891252', '1387260461', '', '0', '', 'regex', '', '0', 'function');
-INSERT INTO `heilphp_attribute` VALUES ('28', 'content', '下载详细描述', 'text NOT NULL ', 'editor', '', '', '1', '', '3', '0', '1', '1383891252', '1383896438', '', '0', '', '', '', '0', '');
+INSERT INTO `heilphp_attribute` VALUES ('28', 'content', '下载详细描述', 'text NULL ', 'editor', '', '', '1', '', '3', '0', '1', '1383891252', '1383896438', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('29', 'template', '详情页显示模板', 'varchar(100) NOT NULL ', 'string', '', '', '1', '', '3', '0', '1', '1383891252', '1383896429', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('30', 'file_id', '文件ID', 'int(10) unsigned NOT NULL ', 'file', '0', '需要函数处理', '1', '', '3', '0', '1', '1383891252', '1383896415', '', '0', '', '', '', '0', '');
 INSERT INTO `heilphp_attribute` VALUES ('31', 'download', '下载次数', 'int(10) unsigned NOT NULL ', 'num', '0', '', '1', '', '3', '0', '1', '1383891252', '1383896380', '', '0', '', '', '', '0', '');
@@ -613,7 +613,7 @@ DROP TABLE IF EXISTS `heilphp_document_article`;
 CREATE TABLE `heilphp_document_article` (
   `id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '文档ID',
   `parse` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '内容解析类型',
-  `content` text NOT NULL COMMENT '文章内容',
+  `content` text NULL COMMENT '文章内容',
   `template` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页显示模板',
   `bookmark` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '收藏数',
   PRIMARY KEY (`id`)
@@ -631,7 +631,7 @@ DROP TABLE IF EXISTS `heilphp_document_download`;
 CREATE TABLE `heilphp_document_download` (
   `id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '文档ID',
   `parse` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '内容解析类型',
-  `content` text NOT NULL COMMENT '下载详细描述',
+  `content` text NULL COMMENT '下载详细描述',
   `template` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页显示模板',
   `file_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '文件ID',
   `download` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '下载次数',
@@ -742,7 +742,7 @@ DROP TABLE IF EXISTS `heilphp_ucenter_setting`;
 CREATE TABLE `heilphp_ucenter_setting` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '设置ID',
   `type` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '配置类型（1-用户配置）',
-  `value` text NOT NULL COMMENT '配置数据',
+  `value` text NULL COMMENT '配置数据',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='设置表';
 
@@ -843,7 +843,7 @@ CREATE TABLE IF NOT EXISTS `heilphp_ad` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id自增',
   `title` varchar(80) DEFAULT NULL COMMENT '广告位名称',
   `position` int(10) unsigned NOT NULL COMMENT '广告位id',
-  `data` text NOT NULL COMMENT '广告内容',
+  `data` text NULL COMMENT '广告内容',
   `url` varchar(250) DEFAULT NULL COMMENT '链接地址',
   `target` varchar(30) DEFAULT NULL COMMENT '打开位置 "_blank" 等',
   `click_num` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '点击次数',
