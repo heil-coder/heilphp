@@ -882,9 +882,10 @@ function get_cover($cover_id, $field = 'path'){
 }
 function get_cover_info($id){
 	$path = get_cover($id,'path');
-	if(empty($path)){
+	if(empty($path))
 		return null;
-	}
+	if(!is_file(Env::get('root_path').'public'.$path))
+		return null;
 	$pic = \think\Image::open(Env::get('root_path').'public'.$path);
 	return array('path'=>$path,'width'=>$pic->width(),'height'=>$pic->height());
 }
