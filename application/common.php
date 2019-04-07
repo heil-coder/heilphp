@@ -859,7 +859,6 @@ function check_rule($rule, $type=1 , $mode='string'){
  * @param string $field
  * @return 完整的数据  或者  指定的$field字段值
  * @author huajie <banhuajie@163.com>
- * @author huajie <banhuajie@163.com>
  */
 function get_cover($cover_id, $field = 'path'){
 	if(empty($cover_id)){
@@ -888,6 +887,126 @@ function get_cover_info($id){
 		return null;
 	$pic = \think\Image::open(Env::get('root_path').'public'.$path);
 	return array('path'=>$path,'width'=>$pic->width(),'height'=>$pic->height());
+}
+
+/**
+ * @param $filename
+ * @param int $width
+ * @param string $height
+ * @param bool $replace 是否替换原有缩略图
+ * @return mixed|string
+ * @auth Jason <1878566968@qq.com>
+ */
+function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = false)
+{
+	$UPLOAD_URL = '';
+	$UPLOAD_PATH = '';
+	$filename = str_ireplace($UPLOAD_URL, '', $filename); //将URL转化为本地地址
+	$info = pathinfo($filename);
+	$oldFile = $info['dirname'] . config('pathinfo_depr') . $info['filename'] . '.' . $info['extension'];
+	$thumbFile = $info['dirname'] . config('pathinfo_depr') . $info['filename'] . '_' . $width . '_' . $height . '.' . $info['extension'];
+
+	$oldFile = str_replace('\\', '/', $oldFile);
+	$thumbFile = str_replace('\\', '/', $thumbFile);
+
+
+	$filename = ltrim($filename, '/');
+	$oldFile = ltrim($oldFile, '/');
+	$thumbFile = ltrim($thumbFile, '/');
+
+	dump(file_exists($UPLOAD_PATH . $oldFile));
+
+    //原图不存在直接返回
+    if (!file_exists($UPLOAD_PATH . $oldFile)) {
+        @unlink($UPLOAD_PATH . $thumbFile);
+        $info['src'] = $oldFile;
+        $info['width'] = intval($width);
+        $info['height'] = intval($height);
+        return $info;
+        //缩图已存在并且  replace替换为false
+    } elseif (file_exists($UPLOAD_PATH . $thumbFile) && !$replace) {
+        $imageinfo = getimagesize($UPLOAD_PATH . $thumbFile);
+        $info['src'] = $thumbFile;
+        $info['width'] = intval($imageinfo[0]);
+        $info['height'] = intval($imageinfo[1]);
+        return $info;
+        //执行缩图操作
+    } else {
+        $oldimageinfo = getimagesize($UPLOAD_PATH . $oldFile);
+		dump($oldimageinfo);
+		exit();
+        $old_image_width = intval($oldimageinfo[0]);
+        $old_image_height = intval($oldimageinfo[1]);
+        if ($old_image_width <= $width && $old_image_height <= $height) {
+            @unlink($UPLOAD_PATH . $thumbFile);
+            @copy($UPLOAD_PATH . $oldFile, $UPLOAD_PATH . $thumbFile);
+            $info['src'] = $thumbFile;
+            $info['width'] = $old_image_width;
+            $info['height'] = $old_image_height;
+            return $info;
+        } else {
+            if ($height == "auto") $height = $old_image_height * $width / $old_image_width;
+            if ($width == "auto") $width = $old_image_width * $width / $old_image_height;
+            if (intval($height) == 0 || intval($width) == 0) {
+                return 0;
+            }
+            require_once('ThinkPHP/Library/Vendor/phpthumb/PhpThumbFactory.class.php');
+            $thumb = PhpThumbFactory::create($UPLOAD_PATH . $filename);
+            if ($type == 0) {
+                $thumb->adaptiveResize($width, $height);
+            } else {
+                $thumb->resize($width, $height);
+            }
+            $res = $thumb->save($UPLOAD_PATH . $thumbFile);
+
+            $info['src'] = $UPLOAD_PATH . $thumbFile;
+            $info['width'] = $old_image_width;
+            $info['height'] = $old_image_height;
+            return $info;
+
+            //内置库缩略
+            /*  $image = new \Think\Image();
+              $image->open($UPLOAD_PATH . $filename);
+              //dump($image);exit;
+              $image->thumb($width, $height, $type);
+              $image->save($UPLOAD_PATH . $thumbFile);
+              //缩图失败
+              if (!$image) {
+                  $thumbFile = $oldFile;
+              }
+              $info['width'] = $width;
+              $info['height'] = $height;
+              $info['src'] = $thumbFile;
+              return $info;*/
+
+
+        }
+    }
+
+
+
+}
+
+/**通过ID获取到图片的缩略图
+ * @param        $image_id 图片的ID
+ * @param int    $width 需要取得的宽
+ * @param string $height 需要取得的高
+ * @param int    $type 图片的类型，qiniu 七牛，local 本地, sae SAE
+ * @param bool   $replace 是否强制替换
+ * @return string
+ * @auth Jason <1878566968@qq.com>
+ */
+function get_thumb_image_by_id($image_id, $width = 100, $height = 'auto', $replace = false)
+{
+
+    $picture = get_cover($image_id);
+    if (empty($picture)) {
+        return null;
+    }
+	$attach = get_thumb_image($picture, $width, $height, $replace);
+	$attach['src'] = $attach['src'];
+	return $attach['src'];
+
 }
 
 /**
