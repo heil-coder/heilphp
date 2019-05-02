@@ -909,12 +909,9 @@ function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = f
 	$oldFile = str_replace('\\', '/', $oldFile);
 	$thumbFile = str_replace('\\', '/', $thumbFile);
 
-
 	$filename = ltrim($filename, '/');
 	$oldFile = ltrim($oldFile, '/');
 	$thumbFile = ltrim($thumbFile, '/');
-
-	dump(file_exists($UPLOAD_PATH . $oldFile));
 
     //原图不存在直接返回
     if (!file_exists($UPLOAD_PATH . $oldFile)) {
@@ -933,8 +930,6 @@ function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = f
         //执行缩图操作
     } else {
         $oldimageinfo = getimagesize($UPLOAD_PATH . $oldFile);
-		dump($oldimageinfo);
-		exit();
         $old_image_width = intval($oldimageinfo[0]);
         $old_image_height = intval($oldimageinfo[1]);
         if ($old_image_width <= $width && $old_image_height <= $height) {
@@ -950,14 +945,8 @@ function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = f
             if (intval($height) == 0 || intval($width) == 0) {
                 return 0;
             }
-            require_once('ThinkPHP/Library/Vendor/phpthumb/PhpThumbFactory.class.php');
-            $thumb = PhpThumbFactory::create($UPLOAD_PATH . $filename);
-            if ($type == 0) {
-                $thumb->adaptiveResize($width, $height);
-            } else {
-                $thumb->resize($width, $height);
-            }
-            $res = $thumb->save($UPLOAD_PATH . $thumbFile);
+			$image = \think\Image::open($oldFile);
+			$res = $image->thumb(150, 150)->save($UPLOAD_PATH . $thumbFile);
 
             $info['src'] = $UPLOAD_PATH . $thumbFile;
             $info['width'] = $old_image_width;
@@ -1000,9 +989,8 @@ function get_thumb_image_by_id($image_id, $width = 100, $height = 'auto', $repla
 {
 
     $picture = get_cover($image_id);
-    if (empty($picture)) {
+    if (empty($picture)) 
         return null;
-    }
 	$attach = get_thumb_image($picture, $width, $height, $replace);
 	$attach['src'] = $attach['src'];
 	return $attach['src'];
