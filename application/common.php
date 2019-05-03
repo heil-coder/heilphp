@@ -946,29 +946,12 @@ function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = f
                 return 0;
             }
 			$image = \think\Image::open($oldFile);
-			$res = $image->thumb(150, 150)->save($UPLOAD_PATH . $thumbFile);
+			$res = $image->thumb($width , $height)->save($UPLOAD_PATH . $thumbFile);
 
             $info['src'] = $UPLOAD_PATH . $thumbFile;
             $info['width'] = $old_image_width;
             $info['height'] = $old_image_height;
             return $info;
-
-            //内置库缩略
-            /*  $image = new \Think\Image();
-              $image->open($UPLOAD_PATH . $filename);
-              //dump($image);exit;
-              $image->thumb($width, $height, $type);
-              $image->save($UPLOAD_PATH . $thumbFile);
-              //缩图失败
-              if (!$image) {
-                  $thumbFile = $oldFile;
-              }
-              $info['width'] = $width;
-              $info['height'] = $height;
-              $info['src'] = $thumbFile;
-              return $info;*/
-
-
         }
     }
 
