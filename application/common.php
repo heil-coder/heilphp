@@ -932,16 +932,17 @@ function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = f
         $oldimageinfo = getimagesize($UPLOAD_PATH . $oldFile);
         $old_image_width = intval($oldimageinfo[0]);
         $old_image_height = intval($oldimageinfo[1]);
+
+		if ($height == "auto") $height = $old_image_height * $width / $old_image_width;
+		if ($width == "auto") $width = $old_image_width * $width / $old_image_height;
+
         if ($old_image_width <= $width && $old_image_height <= $height) {
             @unlink($UPLOAD_PATH . $thumbFile);
-            @copy($UPLOAD_PATH . $oldFile, $UPLOAD_PATH . $thumbFile);
-            $info['src'] = $thumbFile;
+            $info['src'] = $oldFile;
             $info['width'] = $old_image_width;
             $info['height'] = $old_image_height;
             return $info;
         } else {
-            if ($height == "auto") $height = $old_image_height * $width / $old_image_width;
-            if ($width == "auto") $width = $old_image_width * $width / $old_image_height;
             if (intval($height) == 0 || intval($width) == 0) {
                 return 0;
             }
@@ -949,8 +950,8 @@ function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = f
 			$res = $image->thumb($width , $height)->save($UPLOAD_PATH . $thumbFile);
 
             $info['src'] = $UPLOAD_PATH . $thumbFile;
-            $info['width'] = $old_image_width;
-            $info['height'] = $old_image_height;
+            $info['width'] = $width;
+            $info['height'] = $height;
             return $info;
         }
     }
