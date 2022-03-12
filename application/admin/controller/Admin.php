@@ -164,7 +164,6 @@ class Admin extends Controller {
 		if(!empty($tmpOptions['where']['AND'])){
 			if(in_array('delete_time',$tmpOptions['where']['AND'])){
 				$hasSoftDeleteCondition = true;
-				break;
 			}
 			foreach($tmpOptions['where']['AND'] as $val){
 				if(is_array($val) && in_array('delete_time',$val)){
