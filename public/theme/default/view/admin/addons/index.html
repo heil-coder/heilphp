@@ -66,7 +66,7 @@
 				  $has_config = 0;
 				  }else{
 				  $addon = new $class();
-				  $has_config = count($addon->getConfig());
+				  $has_config = !empty($addon->getConfig());
 				  }
 				  ?>
 				  {if $has_config}
