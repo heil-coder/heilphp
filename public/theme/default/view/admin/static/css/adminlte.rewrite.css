@@ -1,0 +1,55 @@
+.main-header{
+	position:fixed;
+	width:100%;
+}
+
+@media (min-width: 992px){
+	.sidebar-mini.sidebar-collapse .main-header {
+		margin-left: 0 !important;
+		padding-left: 4.6rem !important;
+	}
+}
+
+@media (min-width: 768px){
+	.main-header {
+		margin-left: 0;
+		transition: padding-left 0.3s ease-in-out;
+		padding-left: 250px;
+	}
+}
+
+@media (min-width: 768px){
+	.sidebar-collapse .main-header {
+		margin-left: 0;
+		padding-left: 0;
+	}
+}
+
+@media (max-width: 991.98px){
+	.main-header, .main-header:before {
+		margin-left: 0;
+		padding-left:0;
+	}
+}
+
+.content-wrapper{
+	margin-top:57px;
+}
+
+.has_config.hidden,.has_adminlist.hidden{
+	display:none!important;
+}
+.main-sidebar{
+	z-index:1100;
+}
+
+
+/**
+ * 以下是为修复AdminLTE的UI异常增加的样式重写
+ */
+.nav-pills .show .nav-link:not(.active):hover {
+	color:#ffffff;
+}
+/**
+ * 以上是为修复AdminLTE的UI异常增加的样式重写
+ */

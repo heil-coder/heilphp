@@ -37,7 +37,7 @@ class Index extends Controller
 		Session::delete('step');
 		Session::delete('error');
 		Session::delete('update');
-		Url::root('index.php');
+		Url::root('/');
 		return view();
     }
 

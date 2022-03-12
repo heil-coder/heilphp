@@ -17,7 +17,7 @@ define('IS_WRITE',true);		//检查是否sae模式
 function check_env(){
     $items = array(
         'os'      => array('操作系统', '不限制', '类Unix', PHP_OS, 'success'),
-        'php'     => array('PHP版本', '5.5', '5.5+', PHP_VERSION, 'success'),
+        'php'     => array('PHP版本', '5.6', '5.6+', PHP_VERSION, 'success'),
         'upload'  => array('附件上传', '不限制', '2M+', '未知', 'success'),
         'gd'      => array('GD库', '2.0', '2.0+', '未知', 'success'),
         'disk'    => array('磁盘空间', '5M', '不限制', '未知', 'success'),
@@ -176,7 +176,7 @@ function register_administrator($db, $prefix, $admin, $salt){
 
 
     $sql = "INSERT INTO `[PREFIX]member` VALUES ".
-           "('1','[NICK]', '0', '0000-00-00', '', '0', '1', '[TIME]','[IP]', '[TIME]', '[IP]','[TIME]', '1',null);";
+           "('1','[NICK]', '0', '1000-01-01', '', '0', '1', '[TIME]','[IP]', '[TIME]', '[IP]','[TIME]', '1',null);";
     $sql = str_replace(
         array('[PREFIX]','[NICK]', '[TIME]','[IP]'),
         array($prefix,$admin['username'], App::getBeginTime(),get_client_ip(1)),

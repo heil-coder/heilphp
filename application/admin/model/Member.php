@@ -45,7 +45,7 @@ class Member extends Model {
         }
 
         //记录行为
-        action_log('user_login', 'member', $uid, $uid);
+        action_log('user_login', '用户', $uid, $uid);
 
         /* 登录用户 */
         $this->autoLogin($user);
@@ -57,8 +57,7 @@ class Member extends Model {
      * @return void
      */
     public function logout(){
-        session('user_auth', null);
-        session('user_auth_sign', null);
+        session(null);
     }
 
     /**
@@ -69,11 +68,10 @@ class Member extends Model {
         /* 更新登录信息 */
         $data = array(
             'uid'             => $user['uid'],
-            'login'           => array('exp', '`login`+1'),
             'last_login_time' => app()->getBeginTime(),
             'last_login_ip'   => get_client_ip(1),
         );
-        $this->getByUid($user['uid'])->save($data);
+        $this->where('uid',$user['uid'])->data($data)->inc('login')->update();
 
         /* 记录登录SESSION和COOKIES */
         $auth = array(

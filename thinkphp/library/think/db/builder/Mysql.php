@@ -14,6 +14,7 @@ namespace think\db\builder;
 use think\db\Builder;
 use think\db\Expression;
 use think\db\Query;
+use think\Exception;
 
 /**
  * mysql数据库驱动
@@ -32,6 +33,7 @@ class Mysql extends Builder
         'parseBetweenTime' => ['BETWEEN TIME', 'NOT BETWEEN TIME'],
         'parseTime'        => ['< TIME', '> TIME', '<= TIME', '>= TIME'],
         'parseExists'      => ['NOT EXISTS', 'EXISTS'],
+        'parseColumn'      => ['COLUMN'],
     ];
 
     protected $insertAllSql = '%INSERT% INTO %TABLE% (%FIELD%) VALUES %DATA% %COMMENT%';
@@ -105,22 +107,25 @@ class Mysql extends Builder
      * 字段和表名处理
      * @access public
      * @param  Query     $query 查询对象
-     * @param  string    $key   字段名
+     * @param  mixed     $key   字段名
      * @param  bool      $strict   严格检测
      * @return string
      */
     public function parseKey(Query $query, $key, $strict = false)
     {
-        if (is_int($key)) {
+        if (is_numeric($key)) {
             return $key;
+        } elseif ($key instanceof Expression) {
+            return $key->getValue();
         }
+
         $key = trim($key);
 
         if (strpos($key, '->') && false === strpos($key, '(')) {
             // JSON字段支持
             list($field, $name) = explode('->', $key, 2);
 
-            return 'json_extract(' . $this->parseKey($query, $field) . ', \'$.' . str_replace('->', '.', $name) . '\')';
+            return 'json_extract(' . $this->parseKey($query, $field, true) . ', \'$.' . str_replace('->', '.', $name) . '\')';
         } elseif (strpos($key, '.') && !preg_match('/[,\'\"\(\)`\s]/', $key)) {
             list($table, $key) = explode('.', $key, 2);
 
@@ -134,6 +139,10 @@ class Mysql extends Builder
             if (isset($alias[$table])) {
                 $table = $alias[$table];
             }
+        }
+
+        if ($strict && !preg_match('/^[\w\.\*]+$/', $key)) {
+            throw new Exception('not support data:' . $key);
         }
 
         if ('*' != $key && ($strict || !preg_match('/[,\'\"\*\(\)`.\s]/', $key))) {

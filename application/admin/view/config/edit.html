@@ -6,7 +6,7 @@
 	</div>
 	<form action="{:Url()}" method="post" class="form-horizontal">
 		<div class="form-item">
-			<label class="item-label">配置标识<span class="check-tips">（用于C函数调用，只能使用英文且不能重复）</span></label>
+			<label class="item-label">配置标识<span class="check-tips">（用于Config函数调用，只能使用英文且不能重复）</span></label>
 			<div class="controls">
 				<input type="text" class="text input-large" name="name" value="{$info.name|default=''}">
 			</div>
@@ -27,11 +27,9 @@
 			<label class="item-label">配置类型<span class="check-tips">（系统会根据不同类型解析配置值）</span></label>
 			<div class="controls">
 				<select name="type">
-					{notempty name='typeList'}
-					{foreach :config('CONFIG_TYPE_LIST') as $key => $type }
-						<option value="{$key}">{$type}</option>
-					{/foreach}
-					{/notempty}
+					{volist name="Think.config.CONFIG_TYPE_LIST" id="type"}
+					<option value="{$key}">{$type}</option>
+					{/volist}
 				</select>
 			</div>
 		</div>
@@ -41,10 +39,9 @@
 				<select name="group">
 					<option value="0">不分组</option>
 					{notempty name='groupList'}
-					{foreach :config('CONFIG_GROUP_LIST') as $key => $group }
-						<option value="{$key}">{$group}</option>
-					{/foreach}
-					{/notempty}
+					{volist name="Think.config.CONFIG_GROUP_LIST" id="group"}
+					<option value="{$key}">{$group}</option>
+					{/volist}
 				</select>
 			</div>
 		</div>

@@ -1,0 +1,234 @@
+{extend name="public/base" /}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">文档列表({$_total})
+					[
+					{notempty name="rightNav"}
+					{volist name="rightNav" id="nav"}
+					<a href="{:Url('index','cate_id='.$nav['id'])}">{$nav.title}</a>
+					{if condition="count($rightNav) gt $i"}<i class="ca"></i>{/if}
+					{/volist}
+					{present name="article"}：<a href="{:Url('index','cate_id='.$cate_id.'&pid='.$article['id'])}">{$article.title}</a>{/present}
+					{else/}
+					{empty name="position"}全部{else/}<a href="{:Url('article/index')}">全部</a>{/empty}
+					{foreach name="Think.config.DOCUMENT_POSITION" item="vo"}
+					{neq name="position" value="$key"}<a href="{:Url('index',array('position'=>$key))}">{$vo}</a>{else/}{$vo}{/neq}&nbsp;
+					{/foreach}
+					{/notempty}
+					]
+					{eq name="allow" value="0"}（该分类不允许发布内容）{/eq}
+					{if condition="count($model) gt 1"}[ 模型：{empty name="model_id"}<strong>全部</strong>{else/}<a href="{:Url('index',array('pid'=>$pid,'cate_id'=>$cate_id))}">全部</a>{/empty}
+					{volist name="model" id="vo"}
+					{neq name="model_id" value="$vo"}<a href="{:Url('index',array('pid'=>$pid,'cate_id'=>$cate_id,'model_id'=>$vo))}">{$vo|get_document_model='title'}</a>{else/}<strong>{$vo|get_document_model='title'}</strong>{/neq}&nbsp;
+					{/volist}
+					]{/if}
+					{notempty name="groups"}[ 分组：{empty name="group_id"}<strong>全部</strong>{else/}<a href="{:Url('index',array('pid'=>$pid,'cate_id'=>$cate_id))}">全部</a>{/empty}
+					{foreach name="groups" item="vo"}
+					{neq name="group_id" value="$key"}<a href="{:Url('index',array('pid'=>$pid,'cate_id'=>$cate_id,'model_id'=>$model_id,'group_id'=>$key))}">{$vo}</a>{else/}<strong>{$vo}</strong>{/neq}&nbsp;
+					{/foreach}
+					]{/notempty}
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item active">文档列表</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="main-sidebar"}
+{include file="article/main-sidebar" /}
+{/block}
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="card">
+					<div class="card-header border-transparent">
+						<div class="pull-left">
+							<a href="javascript:location.reload();"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></button></a>
+							<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-reply"></i></button></a>
+
+							{gt name="allow" value="0"}
+							{if count($model) gt 1}
+							<div class="btn-group">
+								<button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>新增
+									<span class="caret"></span>
+									<span class="sr-only">新增</span>
+								</button>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="btnGroupDropAdd">
+									{volist name="model" id="vo"}
+									<li><a href="{:Url('article/add',array('cate_id'=>$cate_id,'model_id'=>$vo,'pid'=>$pid,'group_id'=>$group_id))}">{$vo|get_document_model='title'}</a></li>
+									{/volist}
+								</ul>
+							</div>
+							{else /}
+							<a href="{:Url('article/add',array('cate_id'=>$cate_id,'pid'=>$pid,'model_id'=>$model[0],'group_id'=>$group_id))}"><button type="button" class="btn btn-sm btn-success"><i class="fa fa-plus"></i>新增</button></a>
+							{/if}
+							{else /}
+							<button class="btn btn-sm btn-success disabled"><i class="fa fa-plus"></i>新 增
+								{if count($model) gt 1}<i class="fa fa-caret-down"></i>{/if}
+							</button>
+							{/gt}
+
+							<button type="button" class="btn btn-sm btn-success ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>1))}"><i class="fa fa-eye"></i>启用</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/setStatus",array("status"=>0))}"><i class="fa fa-eye-slash"></i>禁用</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/move")}"><i class="fa fa-cut"></i>移动</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" url="{:Url("Article/copy")}"><i class="fa fa-copy"></i>复制</button>
+							<button type="button" class="btn btn-sm btn-warning ajax-post" target-form="ids" hide-data="true" url="{:Url("Article/paste")}"><i class="fa fa-paste"></i>粘贴</button>
+
+							<input type="hidden" class="hide-data" name="cate_id" value="{$cate_id}"/>
+							<input type="hidden" class="hide-data" name="pid" value="{$pid}"/>
+
+							<button type="button" class="btn btn-sm btn-danger ajax-post confirm" target-form="ids" url="{:Url("Article/setStatus",array("status"=>-1))}"><i class="fa fa-remove"></i>删除</button>
+							<button type="button" class="btn btn-sm btn-info list_sort" url="{:Url('sort',array('cate_id'=>$cate_id,'pid'=>$pid),'')}"><i class="fa fa-sort"></i>排序</button>
+						</div>
+						<div class="search-form pull-right">
+							<div class="pull-left">
+								<div class="input-group input-group-sm mb-3">
+									<div class="input-group-prepend drop-down">
+										<button id="sch-sort-txt" data="{$status}" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+											{if condition="get_status_title($status) eq ''"}所有{else/}{:get_status_title($status)}{/if} 
+										</button>
+										<ul id="sub-sch-menu" class="dropdown-menu">
+											<li class="dropdown-item"><a href="javascript:;" value="">所有</a></li>
+											<li class="dropdown-divider"></li>
+											<li class="dropdown-item"><a href="javascript:;" value="1">正常</a></li>
+											<li class="dropdown-item"><a href="javascript:;" value="0">禁用</a></li>
+											<li class="dropdown-item"><a href="javascript:;" val="2">待审核</a></li>
+										</ul>
+									</div>
+									<!-- /btn-group -->
+									<input type="text" name="title" value="{:input('title')}" placeholder="请输入标题文档" class="form-control">
+									<span class="input-group-append">
+										<button type="button" id="search" class="btn btn-info btn-flat" url="{:Url('article/index','pid='.$pid.'&cate_id='.$cate_id,false)}"><i class="fa fa-search"></i></button>
+									</span>
+								</div>
+								<!-- /input-group -->
+							</div>
+						</div>
+					</div>
+					<div class="card-body p-0">
+						<div class="table-responsive">
+							<table class="table m-0">
+								<thead>
+									<tr>
+										<th class="row-selected row-selected">
+											<input class="check-all" type="checkbox">
+										</th>
+										{volist name="list_grids" id="field"}
+										<th>{$field.title}</th>
+										{/volist}
+									</tr>
+								</thead>
+								<tbody>
+									{notempty name="list"}
+									{volist name="list" id="data"}
+									<tr>
+										<td><input class="ids" type="checkbox" value="{$data['id']}" name="ids[]"></td>
+										{volist name="list_grids" id="grid"}
+										<td>{:get_list_field($data,$grid)}</td>
+										{/volist}
+									</tr>
+									{/volist}
+									{else/}
+									<td colspan="9" class="text-center"> aOh! 暂时还没有内容! </td>
+									{/notempty}
+								</tbody>
+							</table>
+						</div>
+						<!-- /.table-responsive -->
+					</div>
+					<!-- /.card-body -->
+					{notempty name="_page"}
+					<div class="card-footer clearfix">
+						<div class="page">
+							{$_page|raw}
+						</div>
+					</div>
+					<!-- /.card-footer -->
+					{/notempty}
+				</div>
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+$(function(){
+	highlight_subnav('{:Url('article/index',['cate_id'=>input('param.cate_id')])}');
+
+	//搜索功能
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+		console.log(url);
+		var status = $("#sch-sort-txt").attr("data");
+		console.log(status);
+        var query  = $('.search-form').find('input').serialize();
+		console.log(query);
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+		if(status != ''){
+			query = 'status=' + status + "&" + query;
+        }
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+	});
+
+	/* 状态搜索子菜单 */
+	$(".search-form").find(".drop-down").hover(function(){
+		$(this).find('button').click();
+	},function(){
+		$(this).click();
+	});
+	$("#sub-sch-menu li").find("a").each(function(){
+		$(this).click(function(){
+			var text = $(this).text();
+			$("#sch-sort-txt").text(text).attr("data",$(this).attr("value"));
+			$("#sub-sch-menu").addClass("hidden");
+		})
+	});
+
+	//点击排序
+	$('.list_sort').click(function(){
+		var url = $(this).attr('url');
+		var ids = $('.ids:checked');
+		var param = '';
+		if(ids.length > 0){
+			var str = new Array();
+			ids.each(function(){
+				str.push($(this).val());
+			});
+			param = str.join(',');
+		}
+
+		if(url != undefined && url != ''){
+			window.location.href = url + '/ids/' + param;
+		}
+	});
+})
+</script>
+{/block}

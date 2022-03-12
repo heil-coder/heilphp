@@ -33,7 +33,7 @@ class User extends Admin{
         }
 
         $list   = $this->getListing('Member', $map);
-        int_to_string($list);
+        //int_to_string($list);
         $this->assign('_list', $list);
         $this->meta_title = '用户信息';
         $this->assign('meta_title', $this->meta_title);
@@ -66,7 +66,7 @@ class User extends Admin{
      * @author 朱亚杰 <zhuyajie@topthink.net>
      */
     public function changeStatus($method=null){
-        $id = array_unique(Request::param('id/a',0));
+        $id = array_unique(Request::param('id/a',[]));
         if( in_array(config('heilphp.USER_ADMINISTRATOR'), $id)){
             $this->error("不允许对超级管理员执行该操作!");
         }

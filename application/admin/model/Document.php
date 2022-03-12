@@ -9,7 +9,7 @@
 
 namespace app\admin\model;
 use think\Model;
-use app\admin\model\AuthGroup;
+use think\model\concern\SoftDelete;
 use Request;
 use Env;
 use Hook;
@@ -18,27 +18,13 @@ use Hook;
  * 文档基础模型
  */
 class Document extends Model{
-	public $error;
+	use SoftDelete;
 	protected $autoWriteTimestamp = true;
-    /* 自动验证规则 */
-    //protected $_validate = array(
-    //    array('name', '/^[a-zA-Z]\w{0,39}$/', '文档标识不合法', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
-    //    array('name', 'checkName', '标识已经存在', self::VALUE_VALIDATE, 'callback', self::MODEL_BOTH),
-    //    array('title', 'require', '标题不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
-    //    array('title', '1,80', '标题长度不能超过80个字符', self::MUST_VALIDATE, 'length', self::MODEL_BOTH),
-    //    array('level', '/^[\d]+$/', '优先级只能填正整数', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
-    //    array('description', '1,140', '简介长度不能超过140个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-    //    array('category_id', 'require', '分类不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_INSERT),
-    //    array('category_id', 'require', '分类不能为空', self::EXISTS_VALIDATE , 'regex', self::MODEL_UPDATE),
-    //    array('category_id', 'check_category', '该分类不允许发布内容', self::EXISTS_VALIDATE , 'function', self::MODEL_UPDATE),
-    //    array('category_id,type', 'check_category', '内容类型不正确', self::MUST_VALIDATE, 'function', self::MODEL_INSERT),
-    //    array('model_id,pid,category_id', 'check_category_model', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'function', self::MODEL_INSERT),
-    //);
 
+	protected $auto = ['uid','status','attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];
 
-	protected $auto = ['attach'=>0,'view'=>0,'comment'=>0,'extend'=>0];
-	protected function setUidAttr(){
-		return is_login();
+	protected function setUidAttr($value){
+		return UID ?: is_login();
 	}
 	protected function setTitleAttr($value){
 		return htmlspecialchars($value);	
@@ -92,7 +78,7 @@ class Document extends Model{
         if(empty($id)){	//新增
         	$cate = input('post.category_id');
         	$check 	=	db('Category')->getFieldById($cate,'check');  	
-            $status = 	$check ? 2 : 1;
+            $status = 	!empty($this->auto['status']) ? $this->auto['status'] : ($check ? 2 : 1);
         }else{				//更新
             $status = $this->getFieldById($id, 'status');
             //编辑草稿改变状态
@@ -155,7 +141,7 @@ class Document extends Model{
      */
     public function edit($data = null){
         /* 检查文档类型是否符合要求 */
-        $res = $this->checkDocumentType( Input('type',2), Input('pid') );
+        $res = $this->checkDocumentType( Input('param.type',2), Input('param.pid') );
         if(!$res['status']){
             $this->error = $res['info'];
             return false;
@@ -168,6 +154,12 @@ class Document extends Model{
             return false;
         }
 
+		$validate = new \app\admin\validate\Document;
+		if(!$validate->check($data)){
+			$this->error = $validate->getError();
+			return false;
+		}
+
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
             $this->save($data); //添加基础内容
@@ -175,22 +167,21 @@ class Document extends Model{
                 $this->error = '新增基础内容出错！';
                 return false;
             }
-			$id = $this->id;
+			$data['id'] = $this->id;
         } else { //更新数据
-            $status = $this->find($data['id'])->save($data); //更新基础内容
+            $status = $this->save($data,['id'=>$data['id']]); //更新基础内容
             if(false === $status){
                 $this->error = '更新基础内容出错！';
                 return false;
             }
-			$id = $data['id'];
         }
 
         /* 添加或新增扩展内容 */
         $logic = $this->logic($data['model_id']);
         $logic->checkModelAttr($data['model_id']);
-        if(!$logic->edit($id)){
-            if(isset($id)){ //新增失败，删除基础数据
-                $this->delete($id);
+        if(!$logic->edit($data['id'])){
+            if(isset($data['id'])){ //新增失败，删除基础数据
+                $this->delete($data['id']);
             }
             $this->error = $logic->error;
             return false;
@@ -199,9 +190,7 @@ class Document extends Model{
 		Hook::listen('documentSaveComplete', array('model_id'=>$data['model_id']));
 
         //行为记录
-        if($id){
-            action_log('add_document', 'document', $id, UID);
-        }
+        action_log('add_document', 'document', $data['id'], UID);
 
         //内容添加或更新完成
         return $data;
@@ -216,7 +205,7 @@ class Document extends Model{
      */
     private function logic($model){
         $name  = parse_name(get_document_model($model, 'name'), 1);
-        $class = is_file(Env::get('module_path') . 'logic/' . $name .'.php') ? $name : 'Base';
+        $class = is_file(Env('module_path') . 'logic/' . $name .'.php') ? $name : 'Base';
         $class = 'app\\'.Request::module() . '\\logic\\' . $class;
         return new $class($name);
     }
@@ -281,12 +270,13 @@ class Document extends Model{
     public function remove(){
         //查询假删除的基础数据
         if ( is_administrator() ) {
-            $map = array('status'=>-1);
-        }else{
+			$base_list = $this->onlyTrashed()->field('id,model_id')->select()->toArray();
+		}
+		else{
             $cate_ids = AuthGroupModel::getAuthCategories(UID);
-            $map = array('status'=>-1,'category_id'=>array( 'IN',trim(implode(',',$cate_ids),',') ));
+			$map[] = ['category_id','IN',trim(implode(',',$cate_ids),',')];
+			$base_list = $this->onlyTrashed()->where($map)->field('id,model_id')->select()->toArray();
         }
-        $base_list = $this->where($map)->field('id,model_id')->select();
         //删除扩展模型数据
         $base_ids = array_column($base_list,'id');
         //孤儿数据
@@ -295,16 +285,16 @@ class Document extends Model{
         $all_list  = array_merge( $base_list,$orphan );
         foreach ($all_list as $key=>$value){
             $logic = $this->logic($value['model_id']);
-            $logic->delete($value['id']);
+            $logic->where('id',$value['id'])->delete();
         }
 
         //删除基础数据
         $ids = array_merge( $base_ids, (array)array_column($orphan,'id') );
         if(!empty($ids)){
-            $res = $this->where( array( 'id'=>array( 'IN',trim(implode(',',$ids),',') ) ) )->delete();
+            $res = Db($this->getName())->where('id','IN',trim(implode(',',$ids),','))->delete();
         }
 
-        return $res;
+        return isset($res) ? $res : true;
     }
 
 
@@ -315,10 +305,10 @@ class Document extends Model{
      * @author huajie <banhuajie@163.com>
      */
     public function autoSave(){
-        $post = I('post.');
+		$data = Request::param();
 
         /* 检查文档类型是否符合要求 */
-        $res = $this->checkDocumentType( I('type',2), I('pid') );
+        $res = $this->checkDocumentType( Input('param.type',2), Input('param.pid') );
         if(!$res['status']){
             $this->error = $res['info'];
             return false;
@@ -327,7 +317,7 @@ class Document extends Model{
         //触发自动保存的字段
         $save_list = array('name','title','description','position','link_id','cover_id','deadline','create_time','content');
         foreach ($save_list as $value){
-            if(!empty($post[$value])){
+            if(!empty($data[$value])){
                 $if_save = true;
                 break;
             }
@@ -339,47 +329,51 @@ class Document extends Model{
         }
 
         //重置自动验证
-        $this->_validate = array(
-            array('name', '/^[a-zA-Z]\w{0,39}$/', '文档标识不合法', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
-            array('name', '', '标识已经存在', self::VALUE_VALIDATE, 'unique', self::MODEL_BOTH),
-            array('title', '1,80', '标题长度不能超过80个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-            array('description', '1,140', '简介长度不能超过140个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
-            array('category_id', 'require', '分类不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
-            array('category_id', 'check_category', '该分类不允许发布内容', self::EXISTS_VALIDATE , 'function', self::MODEL_UPDATE),
-            array('category_id,type', 'check_category', '内容类型不正确', self::MUST_VALIDATE, 'function', self::MODEL_INSERT),
-            array('model_id,pid,category_id', 'check_catgory_model', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'function', self::MODEL_INSERT),
-            array('deadline', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
-            array('create_time', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
-        );
-        $this->_auto[] = array('status', '3', self::MODEL_BOTH);
+        //$this->_validate = array(
+        //    array('name', '/^[a-zA-Z]\w{0,39}$/', '文档标识不合法', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
+        //    array('name', '', '标识已经存在', self::VALUE_VALIDATE, 'unique', self::MODEL_BOTH),
+        //    array('title', '1,80', '标题长度不能超过80个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
+        //    array('description', '1,140', '简介长度不能超过140个字符', self::VALUE_VALIDATE, 'length', self::MODEL_BOTH),
+        //    array('category_id', 'require', '分类不能为空', self::MUST_VALIDATE , 'regex', self::MODEL_BOTH),
+        //    array('category_id', 'check_category', '该分类不允许发布内容', self::EXISTS_VALIDATE , 'function', self::MODEL_UPDATE),
+        //    array('category_id,type', 'check_category', '内容类型不正确', self::MUST_VALIDATE, 'function', self::MODEL_INSERT),
+        //    array('model_id,pid,category_id', 'check_catgory_model', '该分类没有绑定当前模型', self::MUST_VALIDATE , 'function', self::MODEL_INSERT),
+        //    array('deadline', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
+        //    array('create_time', '/^\d{4,4}-\d{1,2}-\d{1,2}(\s\d{1,2}:\d{1,2}(:\d{1,2})?)?$/', '日期格式不合法,请使用"年-月-日 时:分"格式,全部为数字', self::VALUE_VALIDATE  , 'regex', self::MODEL_BOTH),
+        //);
+        //$this->_auto[] = array('status', '3', self::MODEL_BOTH);
+		$this->auto['status'] = 3;
 
-        if(!($data = $this->create())){
-            return false;
-        }
+        //if(!($data = $this->create())){
+        //    return false;
+        //}
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据
-            $id = $this->add(); //添加基础内容
-            if(!$id){
+            $this->save($data); //添加基础内容
+            if(!$this->id){
                 $this->error = '新增基础内容出错！';
                 return false;
             }
-            $data['id'] = $id;
+			$id = $this->id;
+			$data['id'] = $this->id;
         } else { //更新数据
-            $status = $this->save(); //更新基础内容
+            $status = $this->find($data['id'])->save($data); //更新基础内容
             if(false === $status){
                 $this->error = '更新基础内容出错！';
                 return false;
             }
+			$id = $data['id'];
         }
 
         /* 添加或新增扩展内容 */
         $logic = $this->logic($data['model_id']);
-        if(!$logic->autoSave($id)){
+        $logic->checkModelAttr($data['model_id']);
+        if(!$logic->edit($id)){
             if(isset($id)){ //新增失败，删除基础数据
                 $this->delete($id);
             }
-            $this->error = $logic->getError();
+            $this->error = $logic->error;
             return false;
         }
 

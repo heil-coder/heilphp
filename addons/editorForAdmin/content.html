@@ -10,9 +10,9 @@
 		{// 富文本 }
 		<input type="hidden" name="parse" value="0">
 		{eq name="addons_config.editor_wysiwyg" value="1"}
-			<link rel="stylesheet" href="/static/kindeditor/default/default.css" />
-			<script charset="utf-8" src="/static/kindeditor/kindeditor-min.js"></script>
-			<script charset="utf-8" src="/static/kindeditor/zh_CN.js"></script>
+			<link rel="stylesheet" href="__STATIC__/kindeditor/default/default.css" />
+			<script charset="utf-8" src="__STATIC__/kindeditor/kindeditor-min.js"></script>
+			<script charset="utf-8" src="__STATIC__/kindeditor/zh_CN.js"></script>
 			<script type="text/javascript">
 				var editor_{$addons_data.name};
 				KindEditor.ready(function(K) {
@@ -46,27 +46,28 @@
 			</script>
 
 		{else /}
-			<script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.config.js"></script>
-			<script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.js"></script>
-			<script type="text/javascript" charset="utf-8" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
+			<script type="text/javascript" charset="utf-8" src="__STATIC__/ueditor/ueditor.config.js"></script>
+			<script type="text/javascript" charset="utf-8" src="__STATIC__/ueditor/ueditor.all.js"></script>
+			<script type="text/javascript" charset="utf-8" src="__STATIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
 			<script type="text/javascript">
 				$('textarea[name="{$addons_data.name}"]').attr('id', 'editor_id_{$addons_data.name}');
-				window.UEDITOR_HOME_URL = "/static/ueditor";
+				window.UEDITOR_HOME_URL = "__STATIC__/ueditor";
 				window.UEDITOR_CONFIG.initialFrameHeight = parseInt('{$addons_config.editor_height}');
 				window.UEDITOR_CONFIG.scaleEnabled = {eq name="addons_config.editor_resize_type" value="1"}true{else /}false{/eq};
 				window.UEDITOR_CONFIG.imageUrl = '{:addons_url("EditorForAdmin://Upload/ue_upimg")}';
 				window.UEDITOR_CONFIG.imagePath = '';
 				window.UEDITOR_CONFIG.imageFieldName = 'imgFile';
+				window.UEDITOR_CONFIG.wordCount = false;
 				UE.getEditor('editor_id_{$addons_data.name}');
 			</script>
 		{/eq}
 	{/case}
 	{case value="3"}
 		{// UBB 官网http://xheditor.com/demos/demo07.html}
-		<script type="text/javascript" src="/static/js/jquery-migrate-1.2.1.min.js"></script>
-		<script charset="utf-8" src="/static/xheditor/xheditor-1.2.1.min.js"></script>
-		<script charset="utf-8" src="/static/xheditor/xheditor_lang/zh-cn.js"></script>
-		<script type="text/javascript" src="/static/xheditor/xheditor_plugins/ubb.js"></script>
+		<script type="text/javascript" src="__STATIC__/js/jquery-migrate-1.2.1.min.js"></script>
+		<script charset="utf-8" src="__STATIC__/xheditor/xheditor-1.2.1.min.js"></script>
+		<script charset="utf-8" src="__STATIC__/xheditor/xheditor_lang/zh-cn.js"></script>
+		<script type="text/javascript" src="__STATIC__/xheditor/xheditor_plugins/ubb.js"></script>
 		<script type="text/javascript">
 		var submitForm = function (){
 			$('textarea[name="{$addons_data.name}"]').closest('form').submit();
@@ -87,9 +88,9 @@
 	{/case}
 	{case value="4"}
 		{// markdown }
-		<link rel="stylesheet" href="/static/thinkeditor/skin/default/style.css">
-		<script type="text/javascript" src="/static/js/jquery-migrate-1.2.1.min.js"></script>
-		<script type="text/javascript" src="/static/thinkeditor/jquery.thinkeditor.js"></script>
+		<link rel="stylesheet" href="__STATIC__/thinkeditor/skin/default/style.css">
+		<script type="text/javascript" src="__STATIC__/js/jquery-migrate-1.2.1.min.js"></script>
+		<script type="text/javascript" src="__STATIC__/thinkeditor/jquery.thinkeditor.js"></script>
 		<script type="text/javascript">
 			$(function(){
 				$('textarea[name="{$addons_data.name}"]').attr('id', 'editor_id_{$addons_data.name}');

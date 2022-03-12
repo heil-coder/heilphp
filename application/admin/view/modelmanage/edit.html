@@ -2,7 +2,7 @@
 
 {block name="body"}
 	<div class="main-title cf">
-		<h2>{if condition="$Request.action eq 'add'"}新增{else/}编辑{/if}模型</h2>
+		<h2>编辑模型</h2>
 	</div>
 
 	<!-- 标签页导航 -->
@@ -157,7 +157,7 @@
 	</div>
 {/block}
 {block name="script"}
-<script type="text/javascript" src="/static/js/jquery.dragsort-0.5.1.min.js"></script>
+<script type="text/javascript" src="__STATIC__/js/jquery.dragsort-0.5.1.min.js"></script>
 <script type="text/javascript" charset="utf-8">
 Think.setValue("extend", {$info.extend|default=0});
 

@@ -27,7 +27,7 @@
 		<li {eq name="Request.action" value="draftbox"}class="current"{/eq}><a class="item" href="{:Url('article/draftbox')}">草稿箱</a></li>
 		{/eq}
 		{eq name="show_examine" value="1"}
-		<li {eq name="Request.action" value="draftbox"}class="examine"{/eq}><a class="item" href="{:Url('article/examine')}">待审核</a></li>
+		<li {eq name="Request.action" value="examine"}class="current"{/eq}><a class="item" href="{:Url('article/examine')}">待审核</a></li>
 		{/eq}
  	</ul>
 
@@ -38,6 +38,7 @@
 				<i class="icon {neq name="sub_menu['current']" value="1"}icon-fold{/neq}"></i>
 				{gt name="sub_menu['allow_publish']" value="0"}<a class="item" href="{$sub_menu.url|Url}">{$sub_menu.title}</a>{else/}{$sub_menu.title}{/gt}
             </h3>
+			{present name="sub_menu['_child']"}
 			<ul class="side-sub-menu {neq name='sub_menu["current"]' value="1"}subnav-off{/neq}">
 				{volist name="sub_menu['_child']" id="menu"}
 					<li {if $menu['id'] eq $cate_id or $menu['current'] eq 1}class="current"{/if}>
@@ -79,6 +80,7 @@
                     </li>
 				{/volist}
             </ul>
+			{/present}
 		{/notempty}
         <!-- /子导航 -->
 	{/volist}

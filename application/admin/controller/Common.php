@@ -68,7 +68,6 @@ class Common extends Controller {
     public function logout(){
         if(is_login()){
             model('Member')->logout();
-            session('[destroy]');
             $this->success('退出成功！', Url('login'));
         } else {
             $this->redirect('login');

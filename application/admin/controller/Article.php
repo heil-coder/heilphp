@@ -7,10 +7,17 @@
 // | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: huajie <banhuajie@163.com>
+// +----------------------------------------------------------------------
+
 namespace app\admin\controller;
 use app\admin\controller\Admin;
 use app\admin\model\AuthGroup;
-use Request;
 
 /**
  * 后台内容控制器
@@ -33,19 +40,19 @@ class Article extends Admin {
      */
     protected function checkDynamic(){
         $cates = AuthGroup::getAuthCategories(UID);
-        switch(strtolower(Request::action())){
+        switch(strtolower(Request()->action())){
             case 'index':   //文档列表
             case 'add':   // 新增
-				$cate_id =  Request::param('cate_id');
+				$cate_id =  input('param.cate_id/d');
                 break;
             case 'edit':    //编辑
             case 'update':  //更新
-                $doc_id  =  Request::param('id');
+                $doc_id  =  input('param.id/d');
                 $cate_id =  db('Document')->where('id',$doc_id)->value('category_id');
                 break;
             case 'setstatus': //更改状态
             case 'permit':    //回收站
-                $doc_id  =  Request::param('ids/a');;
+                $doc_id  =  input('param.ids/a',[]);
                 $cate_id =  db('Document')->where('id','in',$doc_id)->column('category_id');
                 $cate_id =  array_unique($cate_id);
                 break;
@@ -82,12 +89,12 @@ class Article extends Admin {
         $cate           =   list_to_tree($cate);    //生成分类树
 
         //获取分类id
-        $cate_id        =   Request::param('cate_id');
+        $cate_id        =   input('param.cate_id/d');
         $this->cate_id  =   $cate_id;
 
         //是否展开分类
         $hide_cate = false;
-        if(Request::action()!= 'recycle' && Request::action() != 'draftbox' && Request::action() != 'mydocument'){
+        if(Request()->action()!= 'recycle' && Request()->action() != 'draftbox' && Request()->action() != 'mydocument'){
             $hide_cate  =   true;
         }
 
@@ -156,9 +163,9 @@ class Article extends Admin {
             $cate_id = $this->cate_id;
         }
         if(!empty($cate_id)){
-            $pid = input('pid',0);
+            $pid = input('param.pid/d',null);
             // 获取列表绑定的模型
-            if ($pid == 0) {
+            if (empty($pid)) {
                 $models     =   get_category($cate_id, 'model');
 				// 获取分组定义
 				$groups		=	get_category($cate_id, 'groups');
@@ -213,7 +220,6 @@ class Article extends Admin {
                 $fields[] = $array[0];
             }
         }
-
         // 文档模型列表始终要获取的数据字段 用于其他用途
         $fields[] = 'category_id';
         $fields[] = 'model_id';
@@ -247,35 +253,33 @@ class Article extends Admin {
     protected function getDocumentList($cate_id=0,$model_id=null,$position=null,$field=true,$group_id=null){
         /* 查询条件初始化 */
         $map = array();
-        if(Request::has('title')){
-            $map[]  = ['title','like','%'.Request::param('title/s').'%'];
+        if(Request()->has('title')){
+            $map[]  = ['title','like','%'.input('param.title/s').'%'];
         }
-        if(Request::has('status')){
-			$status = Request::param('status');
+        if(Request()->has('status')){
+			$status = input('param.status/d');
             $map[] = ['status','=',$status];
         }else{
             $status = null;
             $map[] = ['status','in','0,1,2'];
         }
-        if ( Request::has('time-start') ) {
+        if (Request()->has('time-start') ) {
             $map[] = ['update_time','>=',strtotime(input('time-start'))];
         }
-        if ( Request::has('time-end') ) {
+        if (Request()->has('time-end') ) {
             $map[] = ['update_time','<=',24*60*60 + strtotime(input('time-end'))];
         }
-        if ( Request::has('nickname') ) {
+        if (Request()->has('nickname') ) {
             $map[] = ['uid','in',db('Member')->where('nickname','like','%'.input('nickname').'%')->column('id')];
         }
 
         // 构建列表数据
         $Document = db('Document');
 
-        if($cate_id){
-        }
-        $map[]         =   ['pid','=',Request::param('pid',0)];
+        $map[]         =   ['pid','=',input('param.pid/d',0)];
         //非子文档列表 && 收到分类id条件
-		if(!Request::has('pid') && $cate_id){
-            $map['category_id'] =   ['category_id','=',$cate_id];
+		if(!Request()->has('pid') && $cate_id){
+            $map[] =   ['category_id','=',$cate_id];
 		}
         $Document->alias('DOCUMENT');
         if(!is_null($model_id)){
@@ -291,7 +295,7 @@ class Article extends Admin {
             }            
         }
         if(!is_null($position)){
-            $map[] = "position & {$position} = {$position}";
+			$Document = $Document->where('position','exp'," & {$position} > 0");
         }
 		if(!is_null($group_id)){
 			$map[]	=	['group_id','=',$group_id];
@@ -299,9 +303,9 @@ class Article extends Admin {
 
         $list = $this->getListing($Document,$map,'level DESC,id DESC',$field);
 
-        if(Request::has('pid')){
+        if(Request()->has('pid')){
             // 获取上级文档
-            $article    =   $Document->field('id,title,type')->find(Request::has('pid'));
+            $article    =   $Document->field('id,title,type')->find(input('param.pid/d'));
             $this->assign('article',$article);
         }
         //检查该分类是否允许发布内容
@@ -309,7 +313,7 @@ class Article extends Admin {
 
         $this->assign('status', $status);
         $this->assign('allow',  $allow_publish);
-        $this->assign('pid',    Request::param('pid'));
+        $this->assign('pid',    input('param.pid/d',null));
 
         $this->assign('meta_title','文档列表');
         return $list;
@@ -326,14 +330,15 @@ class Article extends Admin {
     /**
      * 文档新增页面初始化
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function add(){
         //获取左边菜单
         $this->getMenu();
 
-        $cate_id    =   Request::param('cate_id',0);
-        $model_id   =   Request::param('model_id',0);
-		$group_id	=	Request::param('get.group_id','');
+        $cate_id    =   input('param.cate_id/d',null);
+        $model_id   =   input('param.model_id/d',null);
+		$group_id	=	input('param.group_id/d',null);
 
         empty($cate_id) && $this->error('参数不能为空！');
         empty($model_id) && $this->error('该分类未绑定模型！');
@@ -346,14 +351,14 @@ class Article extends Admin {
         $model    =   get_document_model($model_id);
 
         //处理结果
-        $info['pid']            =   Request::param('pid',0);
+        $info['pid']            =   input('param.pid',0);
         $info['model_id']       =   $model_id;
         $info['category_id']    =   $cate_id;
 		$info['group_id']		=	$group_id;
 
         if($info['pid']){
             // 获取上级文档
-            $article            =   M('Document')->field('id,title,type')->find($info['pid']);
+            $article            =   db('Document')->field('id,title,type')->find($info['pid']);
             $this->assign('article',$article);
         }
 
@@ -370,6 +375,7 @@ class Article extends Admin {
     /**
      * 文档编辑页面初始化
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function edit(){
         //获取左边菜单
@@ -414,6 +420,7 @@ class Article extends Admin {
     /**
      * 更新一条数据
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function update(){
         $document   =   model('Document');
@@ -457,6 +464,7 @@ class Article extends Admin {
     /**
      * 回收站列表
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function recycle(){
         //获取左边菜单
@@ -488,22 +496,24 @@ class Article extends Admin {
     /**
      * 写文章时自动保存至草稿箱
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function autoSave(){
-        $res = D('Document')->autoSave();
+        $res = model('Document')->autoSave();
         if($res !== false){
             $return['data']     =   $res;
-            $return['info']     =   '保存草稿成功';
-            $return['status']   =   1;
-            $this->ajaxReturn($return);
-        }else{
-            $this->error('保存草稿失败：'.D('Document')->getError());
+            $return['msg']     =   '保存草稿成功';
+            $return['code']   =   1;
+			return json($return);
+		}else{
+            $this->error('保存草稿失败：'.model('Document')->getError());
         }
     }
 
     /**
      * 草稿箱
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function draftBox(){
         //获取左边菜单
@@ -565,7 +575,7 @@ class Article extends Admin {
      */
     public function permit(){
         /*参数过滤*/
-        $ids = input('param.ids');
+        $ids = input('param.ids/a',[]);
         if(empty($ids)){
             $this->error('请选择要操作的数据');
         }
@@ -573,20 +583,17 @@ class Article extends Admin {
         /*拼接参数并修改状态*/
         $Model  =   'Document';
         $map    =   array();
-        if(is_array($ids)){
-            $map['id'] = array('in', $ids);
-        }elseif (is_numeric($ids)){
-            $map['id'] = $ids;
-        }
+        $map[] = ['id','in',$ids];
         $this->restore($Model,$map);
     }
 
     /**
      * 清空回收站
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function clear(){
-        $res = D('Document')->remove();
+        $res = model('Document')->remove();
         if($res !== false){
             $this->success('清空回收站成功！');
         }else{
@@ -597,6 +604,7 @@ class Article extends Admin {
     /**
      * 移动文档
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function move() {
         if(empty($_POST['ids'])) {
@@ -610,6 +618,7 @@ class Article extends Admin {
     /**
      * 拷贝文档
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function copy() {
         if(empty($_POST['ids'])) {
@@ -623,6 +632,7 @@ class Article extends Admin {
     /**
      * 粘贴文档
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function paste() {
         $moveList = session('moveArticle');
@@ -655,7 +665,7 @@ class Article extends Admin {
                     $p_root = $Model->getFieldById($pid, 'root');
                     $data['root'] = $p_root == 0 ? $pid : $p_root;
                 }
-                $res = $Model->where($map)->save($data);
+                $res = $Model->where($map)->update($data);
             }
             session('moveArticle', null);
             if(false !== $res){
@@ -702,6 +712,7 @@ class Article extends Admin {
     /**
      * 检查数据是否符合粘贴的要求
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     protected function checkPaste($list, $cate_id, $pid){
         $return = array('status'=>1);
@@ -749,6 +760,7 @@ class Article extends Admin {
     /**
      * 文档排序
      * @author huajie <banhuajie@163.com>
+	 * @modify Jason <1878566968@qq.com>
      */
     public function sort(){
         if(Request()->isGet()){
@@ -760,15 +772,15 @@ class Article extends Admin {
             $pid        =   Input('get.pid/d');
 
             //获取排序的数据
-            $map['status'] = ['status','>',-1];
+            $map[] = ['status','>',-1];
             if(!empty($ids)){
-                $map['id'] = ['id','in',$ids];
+                $map[] = ['id','in',$ids];
             }else{
                 if(!is_null($cate_id)){
-                    $map['category_id'] = ['category_id','=',$cate_id];
+                    $map[] = ['category_id','=',$cate_id];
                 }
                 if(!is_null($pid)){
-                    $map['pid'] = ['pid','=',$pid];
+                    $map[] = ['pid','=',$pid];
                 }
             }
             $list = db('Document')->where($map)->field('id,title')->order('level DESC,id DESC')->select();

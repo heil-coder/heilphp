@@ -112,7 +112,10 @@ class Install extends Controller{
         if(Session::get('step') != 2){
             $this->redirect('step2');
         }
-
+		view();
+        $this->view    = \think\Container::get('view')->init(
+			config('template.')
+        );
 		echo $this->fetch();
 		
         if(Session::get('update')){

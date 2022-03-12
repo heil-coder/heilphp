@@ -1,0 +1,115 @@
+{extend name="public/base" /}
+{block name="style_before"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/base.css?v={:time_version()}">
+{/block}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					<h1>分类授权</h1>
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('authmanage/index')}">权限管理</a></li>
+					<li class="breadcrumb-item active">分类授权</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+				<div class="tab-wrap">
+					<ul class="tab-nav nav">
+						<li><a href="{:Url('Authmanage/access',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">访问授权</a></li>
+						<li class="current"><a href="javascript:;">分类授权</a></li>
+						<li><a href="{:Url('Authmanage/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">成员授权</a></li>
+						<li class="fr">
+							<select name="group">
+								{volist name="auth_group" id="vo"}
+								<option value="{:Url('Authmanage/category',array('group_id'=>$vo['id'],'group_name'=>$vo['title']))}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
+								{/volist}
+							</select>
+						</li>
+					</ul>
+					<!-- 表格列表 -->
+					<div class="tb-unit posr">
+						<form class="save-category" action="{:Url('Authmanage/addToCategory')}" method="post" enctype="application/x-www-form-urlencoded">
+							<input type="hidden" name="group_id" value="{:input('group_id')}">
+							<div class="category auth-category">
+								<div class="hd cf">
+									<div class="fold">折叠</div>
+									<div class="order">选择</div>
+									<div class="name">栏目名称</div>
+								</div>
+								{:action('Authmanage/tree', array($group_list))}
+							</div>
+
+							<div class="tb-unit-bar">
+								<button class="btn submit-btn ajax-post" type="submit" target-form="save-category">确 定</button>
+								<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript">
++function($){
+	/* 分类展开收起 */
+	$(".category dd").prev().find(".fold i").addClass("icon-unfold")
+		.click(function(){
+			var self = $(this);
+			if(self.hasClass("icon-unfold")){
+				self.closest("dt").next().slideUp("fast", function(){
+					self.removeClass("icon-unfold").addClass("icon-fold");
+				});
+			} else {
+				self.closest("dt").next().slideDown("fast", function(){
+					self.removeClass("icon-fold").addClass("icon-unfold");
+				});
+			}
+		});
+
+	var auth_groups = [{$authed_group}];
+	$('.cate_id').each(function(){
+		if( $.inArray( parseInt(this.value,10),auth_groups )>-1 ){
+			$(this).prop('checked',true);
+		}
+	});
+	$('select[name=group]').change(function(){
+		location.href = this.value;
+	});
+}(jQuery);
+//导航高亮
+highlight_subnav('{:Url('AuthManager/index')}');
+</script>
+{/block}

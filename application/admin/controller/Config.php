@@ -7,28 +7,37 @@
 // | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
+// +----------------------------------------------------------------------
 namespace app\admin\controller;
 use Request;
 
 /**
  * 后台配置控制器
- * @author Jason	<1878566968@qq.com>
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+ * @modify Jason	<1878566968@qq.com>
  */
 class Config extends Admin{
 
     /**
      * 配置管理
-     * @author Jason	<1878566968@qq.com>
+     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
+     * @modify Jason	<1878566968@qq.com>
      */
     public function index(){
         /* 查询条件初始化 */
         $map = array();
         $map[]  = ['status','=',1];
-        if(isset($_GET['group'])){
-            $map[]   =  ['group','=',Request::get('group/d',0)];
+        if(!empty(input('param.group'))){
+            $map[]   =  ['group','=',input('param.group/d',0)];
         }
-        if(isset($_GET['name'])){
-            $map[]    =   ['name','like', '%'.Request::get('name/s','').'%'];
+        if(!empty(input('param.name/s',''))){
+            $map[]    =   ['name','like', '%' . input('param.name/s','') . '%'];
         }
 
         $list = $this->getListing('Config', $map,'sort,id');
@@ -47,19 +56,11 @@ class Config extends Admin{
     public function edit($id = 0){
         if(Request::isPost()){
             $mConfig = model('Config');
-            $data = Request::only(['id','name','type','title','group','extra','remark','value','sort']);
-            if($data){
-				!empty($data['id']) && $mConfig->where('id',$data['id']);
-                if($mConfig->save($data) === false){
-                    $this->error('更新失败');
-                } else {
-                    cache('DB_CONFIG_DATA',null);
-                    //记录行为
-                    //action_log('update_config','config',$data['id'],UID);
-                    $this->success('更新成功', Cookie('__forward__'));
-                }
-            } else {
-                $this->error($mConfig->getError());
+			$res = $mConfig->edit();
+            if($res === false){
+				$this->error($mConfig->getError() ?: '更新失败');
+			}else{
+				$this->success('更新成功', Cookie('__forward__'));
             }
         } else {
             $info = array();
@@ -111,7 +112,7 @@ class Config extends Admin{
      * 删除配置
      */
     public function del(){
-        $id = array_unique(Request::param('id/a',0));
+        $id = array_unique(Request::param('id/a',[]));
 
         if ( empty($id) ) {
             $this->error('请选择要操作的数据!');

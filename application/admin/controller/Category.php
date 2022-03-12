@@ -34,7 +34,7 @@ class Category extends Admin {
     public function tree($tree = null){
         config('_SYS_GET_CATEGORY_TREE_') || $this->_empty();
         $this->assign('tree', $tree);
-		return $this->fetch('tree');
+		return fetch('tree');
     }
 
     /* 编辑分类 */
@@ -189,7 +189,7 @@ class Category extends Admin {
      */
     public function merge(){
         $to = Request::param('to');;
-        $from = Request::param('frn');
+        $from = Request::param('from');
         $Model = db('Category');
 
         //检查分类绑定的模型

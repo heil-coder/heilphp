@@ -1,0 +1,26 @@
+@import 'adminlte.rewrite.css';
+
+:root{
+}
+.card-content-nav{
+	margin-bottom:0.5rem!important;
+}
+.card-content-nav:last-child{
+	margin-bottom:0!important;
+}
+.card-content-nav:first-child{
+	margin-bottom:0.5rem!important;
+}
+.card-content-nav .card-header{
+	padding-top:0.25rem!important;
+	padding-bottom:0.25rem!important;
+}
+
+.clear{
+	clear:both!important;
+}
+.form-group p.tips{
+	margin-top:0.3rem;
+	color:#999999;
+}
+

@@ -7,6 +7,14 @@
 // | Author: Jason <1878566968@qq.com>
 // +----------------------------------------------------------------------
 
+// +----------------------------------------------------------------------
+// | OneThink [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: huajie <banhuajie@163.com>
+// +----------------------------------------------------------------------
+
 namespace app\admin\model;
 use think\Model;
 use Request;
@@ -18,7 +26,6 @@ use Request;
 class Modelmanage extends Model{
 	protected $name= 'model';
 	protected $autoWriteTimestamp = true;
-    /* 自动验证规则 */
 
     /* 自动完成规则 */
 	protected $auto = ['status'=>1];
@@ -51,6 +58,12 @@ class Modelmanage extends Model{
         if(empty($data)){
             return false;
         }
+
+		$validate = new \app\admin\validate\Model;
+		if(!$validate->scene('add')->check($data)){
+			$this->error = $validate->getError();
+			return false;
+		}
 
         /* 添加或新增基础内容 */
         if(empty($data['id'])){ //新增数据

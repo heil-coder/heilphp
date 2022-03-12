@@ -1,5 +1,13 @@
 <?php
 // +----------------------------------------------------------------------
+// | HeilPHP
+// +----------------------------------------------------------------------
+// | Copyright (c) 2018 http://www.heilphp.com All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: Jason <1878566968@qq.com>
+// +----------------------------------------------------------------------
+
+// +----------------------------------------------------------------------
 // | OneThink [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
@@ -14,6 +22,7 @@ use think\Model;
  * 所有逻辑层模型都需要继承此模型
  */
 class Base extends Model {
+	protected $name= '';
 
     /* 自动验证规则 */
     protected $validate   =   ['rule'=>[],'message'=>[]];
@@ -41,7 +50,7 @@ class Base extends Model {
      * @return array       当前模型详细信息
      */
     public function detail($id) {
-        if ($this->getConnection()->getTableFields($this->getTable()) == false) {
+        if ($this->getTableFields($this->getTable()) == false) {
             $data = array();
         } else {
             $data = $this->field(true)->find($id);
@@ -63,8 +72,7 @@ class Base extends Model {
      */
     public function edit($id = 0) {
         /* 获取数据 */
-		$fields = $this->getConnection()->getTableFields($this->getTable());
-        $data = request()->only($fields);
+        $data = input('param.'); 
         if ($data === false) {
             return false;
         }

@@ -1,0 +1,114 @@
+{extend name="public/base" /}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					{:isset($info['id'])?'编辑':'新增'}后台菜单
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('menu/index')}">菜单管理</a></li>
+					<li class="breadcrumb-item active">{:isset($info['id'])?'编辑':'新增'}菜单</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+
+    <form action="{:Url()}" method="post" class="form-horizontal">
+        <div class="form-item">
+            <label class="item-label">标题<span class="check-tips">（用于后台显示的配置标题）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">排序<span class="check-tips">（用于分组显示的顺序）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-small" name="sort" value="{$info.sort|default=0}">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">链接<span class="check-tips">（Url函数解析的URL或者外链）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="url" value="{$info.url|default=''}">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">上级菜单<span class="check-tips">（所属的上级菜单）</span></label>
+            <div class="controls">
+                <select name="pid">
+					{volist name="Menus" id="menu"}
+					<option value="{$menu.id}" {if $Request.param.pid == $menu.id || $info.pid == $menu.id}selected{/if}>{$menu.title_show|raw}</option>
+					{/volist}
+                </select>
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">分组<span class="check-tips">（用于左侧分组二级菜单）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="group" value="{$info.group|default=''}">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">是否隐藏<span class="check-tips"></span></label>
+            <div class="controls">
+                <label class="radio"><input type="radio" name="hide" value="1">是</label>
+                <label class="radio"><input type="radio" name="hide" value="0">否</label>
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">仅开发者模式可见<span class="check-tips"></span></label>
+            <div class="controls">
+                <label class="radio"><input type="radio" name="is_dev" value="1">是</label>
+                <label class="radio"><input type="radio" name="is_dev" value="0">否</label>
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">说明<span class="check-tips">（菜单详细说明）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="tip" value="{$info.tip|default=''}">
+            </div>
+        </div>
+        <div class="form-item">
+            <input type="hidden" name="id" value="{$info.id|default=''}">
+            <button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+        </div>
+    </form>
+
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+highlight_subnav('{:Url('index')}');
+</script>
+{/block}

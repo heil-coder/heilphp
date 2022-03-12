@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		{block name="seo"}
+		{include file="public/seo" /}
+		{/block}
+		<link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+		{block name="style_before"}
+		{/block}
+		<!-- Font Awesome Icons -->
+		<link rel="stylesheet" href="__STATIC__/AdminLTE/plugins/font-awesome/css/font-awesome.min.css">
+		<!-- Theme style -->
+		<link rel="stylesheet" href="__STATIC__/AdminLTE/dist/css/adminlte.min.css">
+		<link rel="stylesheet" href="__STATIC__/layui/css/layui.css">
+		<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/common.css?v={:time_version()}">
+		<!-- Google Font: Source Sans Pro -->
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+		<!--[if lt IE 9]>
+			<script type="text/javascript" src="__STATIC__/js/jquery-1.10.2.min.js"></script>
+		<![endif]-->
+		<!--[if gte IE 9]><!-->
+	  <script type="text/javascript" src="__STATIC__/js/jquery-2.1.4.min.js"></script>
+	  <!--<![endif]-->
+	  <!-- 页面header钩子，一般用于加载插件CSS文件和代码 -->
+	  {block name="style"}
+	  {/block}
+	</head>
+	<body class="hold-transition sidebar-mini {if $Request.module == 'admin' && $Request.controller == 'Index' && $Request.action == 'index'}sidebar-collapse{/if}">
+		<div class="wrapper">
+
+			{block name="navbar"}	
+			{include file='public/navbar' /}
+			{/block}
+
+			{block name="main-sidebar"}
+			{include file='public/main-sidebar' /}
+			{/block}
+
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				{block name="content-top-header"}
+				{include file="public/content-top-alert" /}
+				{/block}
+
+				{block name="content-header"}
+				{include file="public/content-header" /}
+				{/block}
+
+				{block name="content-content"}
+				{include file="public/content-content" /}
+				{/block}
+			</div>
+			<!-- /.content-wrapper -->
+
+			{block name="control-sidebar"}
+			{include file="public/control-sidebar" /}
+			{/block}
+
+			{block name="footer"}
+			{include file='public/footer' /}
+			{/block}
+		</div>
+		<!-- ./wrapper -->
+
+		{block name='js'}
+		{include file='public/js' /}
+		{/block}
+		<script type="text/javascript">
+			(function(){
+				var ThinkPHP = window.Think = {
+					"ROOT"   : "__ROOT__", //当前网站地址
+					"APP"    : "__APP__", //当前项目地址
+					"PUBLIC" : "__PUBLIC__", //项目公共目录地址
+					"DEEP"   : "{:Config('URL_PATHINFO_DEPR')}", //PATHINFO分割符
+					"MODEL"  : ["{:config('URL_MODEL')}", "{:config('URL_CASE_INSENSITIVE')}", "{:config('URL_HTML_SUFFIX')}"],
+					"VAR"    : ["{:config('VAR_MODULE')}", "{:config('VAR_CONTROLLER')}", "{:config('VAR_ACTION')}"]
+				}
+			})();
+		</script>
+
+		<script type="text/javascript" src="__STATIC__/js/think.js"></script>
+		{block name='script'}
+		{/block}
+	</body>
+</html>

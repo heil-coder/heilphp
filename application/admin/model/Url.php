@@ -46,14 +46,14 @@ class Url extends Model {
 
         /* 添加或新增行为 */
         if(empty($data['id'])){ //新增数据
-            $this->save($data);
+            $this->allowField(true)->save($data);
             $data['id'] = $this->id;
             if(!$id){
                 $this->error = '新增链接出错！';
                 return false;
             }
         } else { //更新数据
-            $status = $this->get($data['id'])->save(); //更新基础内容
+            $status = $this->allowField(true)->save($data,['id'=>$data['id']]); //更新基础内容
             if(false === $status){
                 $this->error = '更新链接出错！';
                 return false;

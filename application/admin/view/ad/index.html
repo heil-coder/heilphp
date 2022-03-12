@@ -1,0 +1,98 @@
+{extend name="public/base"/}
+
+{block name="style"}
+	<style>
+	table td img{
+		max-width:80px;
+		max-height:80px;
+	}
+	</style>
+{/block}
+{block name="body"}
+	<div class="main-title">
+		<h2>{$position['title']}-广告管理 </h2>
+	</div>
+
+	<div class="cf">
+		<a class="btn" href="{:Url('add',['position'=>input('param.position/d')])}">新 增</a>
+		<button class="btn ajax-post" url="{:Url('changeStatus?method=resume')}" target-form="ids">启 用</button>
+		<button class="btn ajax-post" url="{:Url('changeStatus?method=forbid')}" target-form="ids">禁 用</button>
+        <button class="btn ajax-post confirm" url="{:Url('changeStatus?method=delete')}" target-form="ids">删 除</button>
+		<button class="btn list_sort" url="{:Url('sort',['position'=>input('param.position/d')],'')}">排序</button>
+	</div>
+
+	<div class="data-table table-striped">
+		<table>
+			<thead>
+				<tr>
+					<th class="row-selected">
+						<input class="checkbox check-all" type="checkbox">
+					</th>
+					<th>ID</th>
+					<th>名称</th>
+					<th>内容</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				{notempty name="list"}
+				{volist name="list" id="vo"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="ids[]" value="{$vo['id']}"> </td>
+						<td>{$vo.id}</td>
+						<td><a href="{:Url('edit?id='.$vo['id'])}">{$vo.title}</a></td>
+						<td>
+							{switch name="position['type']"}
+							{case 0}
+							<img src="{$vo['data']|get_cover='path'}" />
+							{/case}
+							{case 1}
+							<img src="{$vo['data']|get_cover='path'}" />
+							{/case}
+							{case 2}{$vo['data']}{/case}
+							{case 3}<code>{$vo['data']|raw}</code>{/case}
+							{/switch}
+						</td>
+						<td>
+							<a title="编辑" href="{:Url('edit?id='.$vo['id'])}">编辑</a>
+							{eq name="vo.status" value="1"}
+							<a href="{:Url('changeStatus?method=forbid&ids='.$vo['id'])}" class="ajax-get">禁用</a>
+							{else/}
+							<a href="{:Url('changeStatus?method=resume&ids='.$vo['id'])}" class="ajax-get">启用</a>
+							{/eq}
+							<a class="confirm ajax-get" title="删除" href="{:Url('changeStatus',['method'=>'delete','ids'=>$vo['id']])}">删除</a>
+						</td>
+					</tr>
+				{/volist}
+				{else/}
+				<td colspan="10" class="text-center"> aOh! 暂时还没有内容! </td>
+				{/notempty}
+			</tbody>
+		</table>
+	</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+    $(function() {
+		highlight_subnav('{:Url('AdPosition/index')}');
+    	//点击排序
+    	$('.list_sort').click(function(){
+    		var url = $(this).attr('url');
+    		var ids = $('.ids:checked');
+    		var param = '';
+    		if(ids.length > 0){
+    			var str = new Array();
+    			ids.each(function(){
+    				str.push($(this).val());
+    			});
+    			param = str.join(',');
+    		}
+
+    		if(url != undefined && url != ''){
+    			window.location.href = url + '/ids/' + param;
+    		}
+    	});
+    });
+</script>
+{/block}

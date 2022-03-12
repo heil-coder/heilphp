@@ -1,0 +1,91 @@
+/** 
+ * 描述：重置页面元素并基础样式
+ * 作用范围： 全局
+ */
+img {
+	max-width: 100%;
+	border:0 none;
+}
+a {
+	color: #2d7200;
+	text-decoration:none;
+}
+a:hover{
+	color: #4bbd00;
+}
+input,button,textarea,select,option {
+	font-family:inherit;
+	font-size:100%;	
+	outline: 0;
+}
+textarea {
+	overflow: auto;
+	resize: none;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/* 布局样式 */
+.cf,.nav,.container-span {
+	*zoom: 1;
+}
+.cf:before, .cf:after,
+.nav:before, .nav:after,
+.container-span:before,
+.container-span:after {
+	display: table;
+	content: "";
+}
+.cf:after,.nav:after,
+.container-span:after {
+	clear: both;
+}
+.fl{
+	float: left!important;
+}
+.fr{
+	float: right!important;
+}
+.hidden {
+	display: none;
+}
+.block {
+	display: block!important;
+}
+.fixed{
+    position: fixed!important;
+}
+.container-span [class^="span"] {
+	margin: 0 1% 20px;
+}
+.container-span .span1,
+.container-span .span2,
+.container-span .span3,
+.container-span .span4 {
+    float: left;
+}
+.container-span .span1 {
+    width: 23%;
+}
+.container-span .span2 {
+    width: 48%;
+}
+.container-span .span4 {
+    width: 98%;
+}
+
+/* 排版样式 */
+.text-center{
+	text-align: center!important;
+}
+
+.text-right{
+	text-align: right!important;
+}
+
+.text-left{
+	text-align: left!important;
+}

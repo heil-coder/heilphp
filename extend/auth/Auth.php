@@ -112,10 +112,11 @@ class Auth{
         }
         $list = array(); //保存验证通过的规则名
         if ($mode=='url') {
-            $REQUEST = unserialize( strtolower(serialize($_REQUEST)) );
+            $REQUEST = unserialize( strtolower(serialize(input('param.'))) );
         }
         foreach ( $authList as $auth ) {
             $query = preg_replace('/^.+\?/U','',$auth);
+			//如果是Url模式 && $auth的?后有参数
             if ($mode=='url' && $query!=$auth ) {
                 parse_str($query,$param); //解析规则中的param
                 $intersect = array_intersect_assoc($REQUEST,$param);

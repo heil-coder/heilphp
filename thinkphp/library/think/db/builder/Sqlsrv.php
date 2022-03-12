@@ -14,6 +14,7 @@ namespace think\db\builder;
 use think\db\Builder;
 use think\db\Expression;
 use think\db\Query;
+use think\Exception;
 
 /**
  * Sqlsrv数据库驱动
@@ -40,8 +41,6 @@ class Sqlsrv extends Builder
             return ' ORDER BY rand()';
         }
 
-        $array = [];
-
         foreach ($order as $key => $val) {
             if ($val instanceof Expression) {
                 $array[] = $val->getValue();
@@ -54,12 +53,17 @@ class Sqlsrv extends Builder
                     $sort = $val;
                 }
 
-                $sort    = in_array(strtolower($sort), ['asc', 'desc'], true) ? ' ' . $sort : '';
-                $array[] = $this->parseKey($query, $key, true) . $sort;
+                if (preg_match('/^[\w\.]+$/', $key)) {
+                    $sort    = strtoupper($sort);
+                    $sort    = in_array($sort, ['ASC', 'DESC'], true) ? ' ' . $sort : '';
+                    $array[] = $this->parseKey($query, $key, true) . $sort;
+                } else {
+                    throw new Exception('order express error:' . $key);
+                }
             }
         }
 
-        return ' ORDER BY ' . implode(',', $array);
+        return empty($array) ? '' : ' ORDER BY ' . implode(',', $array);
     }
 
     /**
@@ -77,14 +81,16 @@ class Sqlsrv extends Builder
      * 字段和表名处理
      * @access public
      * @param  Query     $query     查询对象
-     * @param  string    $key       字段名
+     * @param  mixed     $key       字段名
      * @param  bool      $strict   严格检测
      * @return string
      */
     public function parseKey(Query $query, $key, $strict = false)
     {
-        if (is_int($key)) {
+        if (is_numeric($key)) {
             return $key;
+        } elseif ($key instanceof Expression) {
+            return $key->getValue();
         }
 
         $key = trim($key);
@@ -102,6 +108,10 @@ class Sqlsrv extends Builder
             if (isset($alias[$table])) {
                 $table = $alias[$table];
             }
+        }
+
+        if ($strict && !preg_match('/^[\w\.\*]+$/', $key)) {
+            throw new Exception('not support data:' . $key);
         }
 
         if ('*' != $key && ($strict || !preg_match('/[,\'\"\*\(\)\[.\s]/', $key))) {
