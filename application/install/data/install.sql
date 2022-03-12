@@ -11,7 +11,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `heilphp_config`;
 CREATE TABLE `heilphp_config` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '配置ID',
-  `name` varchar(30) NOT NULL DEFAULT '' COMMENT '配置名称',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '配置名称',
   `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '配置类型',
   `title` varchar(50) NOT NULL DEFAULT '' COMMENT '配置说明',
   `group` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '配置分组',
@@ -39,7 +39,7 @@ INSERT INTO `heilphp_config` VALUES ('9', 'WEB_SITE_ICP', '1', '网站备案号'
 INSERT INTO `heilphp_config` VALUES ('10', 'CONFIG_TYPE_LIST', '3', '配置类型列表', '4', '', '主要用于数据解析和页面表单的生成', '1378898976', '1379235348', '1', '0:数字\r\n1:字符\r\n2:文本\r\n3:数组\r\n4:枚举', '2');
 INSERT INTO `heilphp_config` VALUES ('11', 'DOCUMENT_POSITION', '3', '文档推荐位', '2', '', '文档推荐位，推荐到多个位置KEY值相加即可', '1379053380', '1379235329', '1', '1:列表推荐\r\n2:频道推荐\r\n4:首页推荐', '3');
 INSERT INTO `heilphp_config` VALUES ('12', 'DOCUMENT_DISPLAY', '3', '文档可见性', '2', '', '文章可见性仅影响前台显示，后台不收影响', '1379056370', '1379235322', '1', '0:所有人可见\r\n1:仅注册会员可见\r\n2:仅管理员可见', '4');
-INSERT INTO `heilphp_config` VALUES ('20', 'CONFIG_GROUP_LIST', '3', '配置分组', '4', '', '配置分组', '1379228036', '1384418383', '1', '1:基本\r\n2:内容\r\n3:用户\r\n4:系统', '4');
+INSERT INTO `heilphp_config` VALUES ('20', 'CONFIG_GROUP_LIST', '3', '配置分组', '4', '', '配置分组', '1379228036', '1384418383', '1', '1:基本\r\n2:内容\r\n3:用户\r\n4:系统\r\n5:开发', '4');
 INSERT INTO `heilphp_config` VALUES ('21', 'HOOKS_TYPE', '3', '钩子的类型', '4', '', '类型 1-用于扩展显示内容，2-用于扩展业务处理', '1379313397', '1379313407', '1', '1:视图\r\n2:控制器', '6');
 INSERT INTO `heilphp_config` VALUES ('23', 'OPEN_DRAFTBOX', '4', '是否开启草稿功能', '2', '0:关闭草稿功能\r\n1:开启草稿功能\r\n', '新增文章时的草稿功能配置', '1379484332', '1379484591', '1', '1', '1');
 INSERT INTO `heilphp_config` VALUES ('24', 'DRAFT_AOTOSAVE_INTERVAL', '0', '自动保存草稿时间', '2', '', '自动保存草稿的时间间隔，单位：秒', '1379484574', '1386143323', '1', '60', '2');
@@ -54,6 +54,9 @@ INSERT INTO `heilphp_config` VALUES ('32', 'DEVELOP_MODE', '4', '开启开发者
 INSERT INTO `heilphp_config` VALUES ('33', 'ALLOW_VISIT', '3', '不受限控制器方法', '0', '', '', '1386644047', '1386644741', '1', '0:article/draftbox\r\n1:article/mydocument\r\n2:Category/tree\r\n3:Index/verify\r\n4:file/upload\r\n5:file/download\r\n6:user/updatePassword\r\n7:user/updateNickname\r\n8:user/submitPassword\r\n9:user/submitNickname\r\n10:file/uploadpicture', '0');
 INSERT INTO `heilphp_config` VALUES ('34', 'DENY_VISIT', '3', '超管专限控制器方法', '0', '', '仅超级管理员可访问的控制器方法', '1386644141', '1386644659', '1', '0:Addons/addhook\r\n1:Addons/edithook\r\n2:Addons/delhook\r\n3:Addons/updateHook\r\n4:Admin/getMenus\r\n5:Admin/recordList\r\n6:Authmanager/updateRules\r\n7:Authmanager/tree', '0');
 INSERT INTO `heilphp_config` VALUES ('36', 'ADMIN_ALLOW_IP', '2', '后台允许访问IP', '4', '', '多个用逗号分隔，如果不配置表示不限制IP访问', '1387165454', '1387165553', '1', '', '12');
+INSERT INTO `heilphp_config` VALUES ('41', 'WECHAT_OPEN_PLATFORM_CONFIG', '3', '微信开放平台配置', '5', '', 'appId,秘钥,加密key', '1518215910', '1518215910', '1', 'appId:appId\r\nappSecret:appSecret\r\ntoken:token\r\nencodingAesKey:encodingAesKey', '0');
+INSERT INTO `heilphp_config` VALUES ('42', 'WECHAT_OPEN_PLATFORM_VERIFY_TICKET', '1', '微信开放平台component_verify_ticket', '5', '', '微信开放平台验证ticket', '1518215910', '1518215910', '1', '', '0');
+INSERT INTO `heilphp_config` VALUES ('43', 'WECHAT_OPEN_PLATFORM_ACCESS_TOKEN', '3', '微信第三方平台接口调用凭据', '5', '', 'token,有效时长,更新时间', '1518215910', '1518215910', '1', '', '0');
 
 
 -- -----------------------------
@@ -748,6 +751,7 @@ CREATE TABLE `heilphp_ucenter_setting` (
 
 
 --
+<<<<<<< HEAD
 -- 表的结构 `heilphp_picture`
 --
 
@@ -857,4 +861,40 @@ CREATE TABLE IF NOT EXISTS `heilphp_ad` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COMMENT = '广告位表';
 
+=======
+-- 表的结构 `heilphp_api_wechat`
+--
+
+DROP TABLE IF EXISTS `heilphp_api_wechat`;
+CREATE TABLE IF NOT EXISTS `heilphp_api_wechat` (
+  `id` int(8) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL COMMENT '用户ID',
+  `is_connect` tinyint(1) NOT NULL COMMENT '是否连接',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0' COMMENT '默认公众号',
+  `token` varchar(32) NOT NULL COMMENT 'TOKEN',
+  `access_token` varchar(1000) NOT NULL COMMENT 'ACCESS_TOKEN',
+  `encodingaeskey` varchar(255) NOT NULL COMMENT 'AESKEY',
+  `jsapi_ticket` varchar(1000) NOT NULL COMMENT 'jsapi_ticket',
+  `type` tinyint(2) NOT NULL COMMENT '类型 1 普通订阅号 2 普通服务号 3 认证的订阅号 4 认证服务号/认证媒体/政府订阅号',
+  `name` varchar(30) NOT NULL COMMENT '名称',
+  `wechat` varchar(30) NOT NULL COMMENT '微信号',
+  `original` varchar(50) NOT NULL COMMENT '原始ID',
+  `country` varchar(10) NOT NULL COMMENT '国家',
+  `province` varchar(3) NOT NULL COMMENT '省',
+  `city` varchar(15) NOT NULL COMMENT '市',
+  `username` varchar(30) NOT NULL COMMENT '用户名',
+  `password` varchar(32) NOT NULL COMMENT '密码',
+  `update_time` bigint(10) NOT NULL COMMENT '更新时间',
+  `appid` varchar(50) NOT NULL COMMENT 'appId',
+  `secret` varchar(50) NOT NULL COMMENT 'appSecret',
+  `version` tinyint(2) NOT NULL COMMENT '商户版本',
+  `mchid` int(11) NOT NULL COMMENT '商户ID',
+  `mchsecret` varchar(50) NOT NULL COMMENT '商户密钥',
+  `subscribeurl` varchar(120) NOT NULL COMMENT '快速关注网址',
+  `is_bind` tinyint(1) DEFAULT NUll COMMENT '是否为微信开放平台绑定账号',
+  `authorizer_refresh_token` varchar(255) NOT NULL COMMENT '授权公众号的接口调用凭据刷新令牌',
+  `info` text NOT NULL COMMENT 'base64信息',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
+>>>>>>> origin/v0.1_api版
 

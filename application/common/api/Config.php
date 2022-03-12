@@ -34,6 +34,9 @@ class Config {
     private static function parse($type, $value){
         switch ($type) {
             case 3: //解析数组
+				if(empty($value)){
+					break;	
+				}
                 $array = preg_split('/[,;\r\n]+/', trim($value, ",;\r\n"));
                 if(strpos($value,':')){
                     $value  = array();
