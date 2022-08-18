@@ -253,7 +253,7 @@ class UcenterMember extends Model{
 	 * 更新用户登录信息
 	 * @param  integer $uid 用户ID
 	 */
-	protected function updateLogin($uid){
+	public function updateLogin($uid){
 		$data = array(
 			'id'              => $uid,
 			'last_login_time' => app()->getBeginTime(),

@@ -1,0 +1,49 @@
+{extend name="public/base" /}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+//导航高亮
+highlight_subnav('{:Url('use/welcome')}');
+$(function(){
+	//点击排序
+	$('.list_sort').click(function(){
+		var url = $(this).attr('url');
+		var ids = $('.ids:checked');
+		var param = '';
+		if(ids.length > 0){
+			var str = new Array();
+			ids.each(function(){
+				str.push($(this).val());
+			});
+			param = str.join(',');
+		}
+
+		if(url != undefined && url != ''){
+			window.location.href = url + '/ids/' + param;
+		}
+	});
+})
+</script>
+{/block}
