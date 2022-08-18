@@ -12,6 +12,7 @@ use app\admin\controller\Admin;
 use Request;
 use app\admin\model\AuthGroup;
 use app\admin\model\AuthRule;
+use think\Db;
 
 /**
  * 权限管理控制器
@@ -36,9 +37,7 @@ class Authmanage extends Admin{
 		$id = Request::param('id/d',null);
 		//如果没有传入id
 		if(empty($id)){
-			if ( empty($this->auth_group) ) {
-				$this->assign('auth_group',array('title'=>null,'id'=>null,'description'=>null,'rules'=>null,));//排除notice信息
-			}
+            $this->assign('auth_group',array('title'=>null,'id'=>null,'description'=>null,'rules'=>null,));//排除notice信息
 			$actionName = '新增';
 		}
 		//如果传入id
@@ -108,8 +107,8 @@ class Authmanage extends Admin{
      * 访问授权页面
      */
     public function access(){
-        $this->updateRules();
-		$auth_group = db('AuthGroup')->where([
+        model("AuthRuleService", "service")->updateRules();
+		$auth_group = Db::name('AuthGroup')->where([
 			['status','>=',0]
 			,['module','=','admin']
 			,['type','=',AuthGroup::TYPE_ADMIN] 			
@@ -118,11 +117,17 @@ class Authmanage extends Admin{
         $node_list   = $this->returnNodes();
 		$map         = [];
 		$map[]		 = ['module','=','admin'];
-		$map['type']		 = ['type','=',AuthRule::RULE_MAIN];
 		$map[]		 = ['status','=',1];
-        $main_rules  = db('AuthRule')->where($map)->column('name,id');
-		$map['type'] = ['type','=',AuthRule::RULE_URL];
-        $child_rules = db('AuthRule')->where($map)->column('name,id');
+        $main_rules  = Db::name('AuthRule')->where($map)
+                                           ->where([
+                                               ['type','=',AuthRule::RULE_MAIN]
+                                           ])
+                                           ->column('name,id');
+        $child_rules = Db::name('AuthRule')->where($map)
+                                           ->where([
+                                               ['type','=',AuthRule::RULE_URL]
+                                           ])
+                                           ->column('name,id');
 
         $this->assign('main_rules', $main_rules);
         $this->assign('auth_rules', $child_rules);
@@ -133,82 +138,17 @@ class Authmanage extends Admin{
         return view('managegroup');
     }
     /**
-     * 后台节点配置的url作为规则存入auth_rule
-     * 执行新节点的插入,已有节点的更新,无效规则的删除三项任务
-     * @author 朱亚杰 <zhuyajie@topthink.net>
-     */
-    public function updateRules(){
-        //需要新增的节点必然位于$nodes
-        $nodes    = $this->returnNodes(false);
-
-        $AuthRule = model('AuthRule');
-        $map      = [['module','=','admin'],['type','in','1,2']];//status全部取出,以进行更新
-        //需要更新和删除的节点必然位于$rules
-        $rules    = $AuthRule->where($map)->order('name')->select();
-
-        //构建insert数据
-        $data     = array();//保存需要插入和更新的新节点
-        foreach ($nodes as $value){
-            $temp['name']   = $value['url'];
-            $temp['title']  = $value['title'];
-            $temp['module'] = 'admin';
-            if($value['pid'] >0){
-                $temp['type'] = AuthRule::RULE_URL;
-            }else{
-                $temp['type'] = AuthRule::RULE_MAIN;
-            }
-            $temp['status']   = 1;
-            $data[strtolower($temp['name'].$temp['module'].$temp['type'])] = $temp;//去除重复项
-        }
-
-        $update = array();//保存需要更新的节点
-        $ids    = array();//保存需要删除的节点的id
-        foreach ($rules as $index=>$rule){
-            $key = strtolower($rule['name'].$rule['module'].$rule['type']);
-            if ( isset($data[$key]) ) {//如果数据库中的规则与配置的节点匹配,说明是需要更新的节点
-                $data[$key]['id'] = $rule['id'];//为需要更新的节点补充id值
-                $update[] = $data[$key];
-                unset($data[$key]);
-                unset($rules[$index]);
-                unset($rule['condition']);
-                $diff[$rule['id']]=$rule;
-            }elseif($rule['status']==1){
-                $ids[] = $rule['id'];
-            }
-        }
-        if ( count($update) ) {
-            foreach ($update as $k=>$row){
-                if ( $row!=$diff[$row['id']] ) {
-                    $AuthRule->where(array('id'=>$row['id']))->find()->save($row);
-                }
-            }
-        }
-        if ( count($ids) ) {
-            $AuthRule->where( array( 'id'=>array('IN',implode(',',$ids)) ) )->select()->save(array('status'=>-1));
-            //删除规则是否需要从每个用户组的访问授权表中移除该规则?
-        }
-        if( count($data) ){
-            $AuthRule->saveAll(array_values($data));
-        }
-        if ( $AuthRule->getConnection()->getError() ) {
-            trace('['.__METHOD__.']:'.$AuthRule->getConnection()->getError());
-            return false;
-        }else{
-            return true;
-        }
-    }
-    /**
      * 将分类添加到用户组的编辑页面
      */
     public function category(){
-		$auth_group     =   db('AuthGroup')->where([
+		$auth_group     =   Db::name('AuthGroup')->where([
 													['status','>=','0']
 													,['module','=','admin']
 													,['type','=',AuthGroup::TYPE_ADMIN]
 												])
             ->column('id,id,title,rules');
         $group_list     =   model('Category')->getTree();
-        $authed_group   =   db('AuthExtend')->where('group_id',Request::param('group_id'))->column('extend_id');
+        $authed_group   =   Db::name('AuthExtend')->where('group_id',Request::param('group_id'))->column('extend_id');
         $this->assign('authed_group',   implode(',',(array)$authed_group));
         $this->assign('group_list',     $group_list);
         $this->assign('auth_group',     $auth_group);
@@ -252,7 +192,7 @@ class Authmanage extends Admin{
             $this->error('参数错误');
         }
 
-		$auth_group = db('AuthGroup')->where([
+		$auth_group = Db::name('AuthGroup')->where([
 										['status','>=','0']
 										,['module','=','admin']
 										,['type','=',AuthGroup::TYPE_ADMIN]
@@ -261,7 +201,7 @@ class Authmanage extends Admin{
         $prefix   = config('database.prefix');
         $l_table  = $prefix.(AuthGroup::MEMBER);
         $r_table  = $prefix.(AuthGroup::AUTH_GROUP_ACCESS);
-        $model    = db(AuthGroup::MEMBER)->alias('m')->join ( $r_table.' a','m.uid=a.uid' );
+        $model    = Db::name(AuthGroup::MEMBER)->alias('m')->join ( $r_table.' a','m.uid=a.uid' );
 		$_REQUEST = array();
 		$list = $this->getListing($model
 			,[
@@ -311,7 +251,7 @@ class Authmanage extends Admin{
             if ( is_administrator($uid) ) {
                 $this->error('该用户为超级管理员');
             }
-            if( !db('Member')->where('uid',$uid)->find() ){
+            if( !Db::name('Member')->where('uid',$uid)->find() ){
                 $this->error('用户不存在');
             }
         }

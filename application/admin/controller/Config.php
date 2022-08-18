@@ -25,6 +25,13 @@ use Request;
 class Config extends Admin{
 
     /**
+     * 欢迎页
+     * @author Jason <1878566968@qq.com>
+     */
+    public function welcome(){
+        return view();
+    }
+    /**
      * 配置管理
      * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      * @modify Jason	<1878566968@qq.com>

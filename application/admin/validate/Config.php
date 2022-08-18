@@ -15,7 +15,7 @@ class Config extends Validate
     protected $rule = [
 		'name'  =>  [
 			'require'														//不能为空
-			,'alpha'														//只能是字母
+			,'alphaDash'														//只能是字母
 			,'length'				=> '3,30'								//长度不合法
 			,'unique'				=> 'config,name'				//被占用
 		]
@@ -33,7 +33,7 @@ class Config extends Validate
 
     protected $message  =   [
 		'name.require'						=> '配置名称不能为空'
-		,'name.alpha'						=> '配置名称只能为字母'
+		,'name.alphaDash'					=> '配置名称只能为字母、数字、-、_'
 		,'name.length'						=> '配置名称长度需在3～30个字符之间'
 		,'name.unique'						=> '配置名称已存在'
 

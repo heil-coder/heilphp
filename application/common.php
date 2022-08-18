@@ -72,6 +72,32 @@ function addons_url($url, $param = array()){
 	return Url('index/addons/execute', $params);
 }
 /**
+ * 从缓存获取图片
+ * @return info 图片信息数组
+ */
+
+function get_cover_form_cache($id){
+    if (empty($id)){
+        return null;
+    }
+    $image = cache("image_cache_id_" . $id);
+    if ($image != null){
+        return $image;
+    }
+
+    $info = Db::name('Picture')->where([
+        ['status','=',1]
+        ,['id','=',$id]
+    ])->field("id, path")->find();
+
+    if (is_null($info)){
+        return null;
+    }
+    cache("image_cache_id_" . $id, $info, 60 * 60 * 24 * 30);
+
+    return  $info;
+}
+/**
  * 时间戳格式化
  * @param int $time			时间字符串或时间戳
  * @param string $format	时间格式
@@ -201,7 +227,7 @@ function get_nickname($uid = 0){
 	if(isset($list[$key])){ //已缓存，直接使用
 		$name = $list[$key];
 	} else { //调用接口获取用户信息
-		$info = db('Member')->field('nickname')->find($uid);
+		$info = Db::name('Member')->field('nickname')->where("uid",$uid)->find();
 		if($info !== false && $info['nickname'] ){
 			$nickname = $info['nickname'];
 			$name = $list[$key] = $nickname;
@@ -330,7 +356,7 @@ function get_document_model($id = null, $field = null){
 	/* 获取模型名称 */
 	if(empty($list)){
 		$map   = [['status','=',1],['extend','=',1]];
-		$model = db('Model')->where($map)->field(true)->select();
+		$model = Db::name('Model')->where($map)->field(true)->select();
 		foreach ($model as $value) {
 			$list[$value['id']] = $value;
 		}
@@ -422,7 +448,7 @@ function get_category($id, $field = null){
 
 	/* 获取分类名称 */
 	if(!isset($list[$id])){
-		$cate = db('Category')->find($id);
+		$cate = Db::name('Category')->find($id);
 		if(!$cate || 1 != $cate['status']){ //不存在分类，或分类被禁用
 			return '';
 		}
@@ -443,7 +469,7 @@ function get_table_name($model_id = null){
 	if(empty($model_id)){
 		return false;
 	}
-	$Model = db('Model');
+	$Model = Db::name('Model');
 	$name = '';
 	$info = $Model->getById($model_id);
 	if($info['extend'] != 0){
@@ -467,7 +493,7 @@ function get_table_field($value = null, $condition = 'id', $field = null, $table
 
 	//拼接参数
 	$map[$condition] = $value;
-	$info = db(ucfirst($table))->where($map);
+	$info = Db::name(ucfirst($table))->where($map);
 	if(empty($field)){
 		$info = $info->field(true)->find();
 	}else{
@@ -491,14 +517,14 @@ function get_model_attribute($model_id, $group = true,$fields=true){
 
 	/* 获取属性 */
 	if(!isset($list[$model_id])){
-		$extend = db('Model')->getFieldById($model_id,'extend');
+		$extend = Db::name('Model')->getFieldById($model_id,'extend');
 		if($extend){
 			$map[] = ['model_id','in', [$model_id,$extend]];
 		}
 		else{
 			$map[] = ['model_id','=',$model_id];
 		}
-		$info = db('Attribute')->where($map)->field($fields)->select();
+		$info = Db::name('Attribute')->where($map)->field($fields)->select();
 		$list[$model_id] = $info;
 	}
 
@@ -507,7 +533,7 @@ function get_model_attribute($model_id, $group = true,$fields=true){
 		foreach ($list[$model_id] as $value) {
 			$attr[$value['id']] = $value;
 		}
-		$model     = db("Model")->field("field_sort,attribute_list,attribute_alias")->find($model_id);
+		$model     = Db::name("Model")->field("field_sort,attribute_list,attribute_alias")->find($model_id);
 		$attribute = explode(",", $model['attribute_list']);
 		if (empty($model['field_sort'])) { //未排序
 			$group = array(1 => array_merge($attr));
@@ -690,7 +716,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
 	}
 
 	//查询行为,判断是否执行
-	$action_info = db('Action')->getByName($action);
+	$action_info = Db::name('Action')->getByName($action);
 	if($action_info['status'] != 1){
 		return '该行为被禁用或删除';
 	}
@@ -728,7 +754,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
 		$data['remark']     =   '操作url：'.$_SERVER['REQUEST_URI'];
 	}
 
-	db('ActionLog')->insert($data);
+	Db::name('ActionLog')->insert($data);
 
 	if(!empty($action_info['rule'])){
 		//解析行为
@@ -767,7 +793,7 @@ function parse_action($action = null, $self){
 	}
 
 	//查询行为信息
-	$info = db('Action')->where($map)->find();
+	$info = Db::name('Action')->where($map)->find();
 	if(!$info || $info['status'] != 1){
 		return false;
 	}
@@ -815,13 +841,13 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
 		$map = [['action_id','=',$action_id]
 			,['user_id','=',$user_id]];
 		$map[] = ['create_time','>', app()->getBeginTime() - intval($rule['cycle']) * 3600];
-		$exec_count = db('ActionLog')->where($map)->count();
+		$exec_count = Db::name('ActionLog')->where($map)->count();
 		if($exec_count > $rule['max']){
 			continue;
 		}
 
 		//执行数据库操作
-		$Model = db(ucfirst($rule['table']));
+		$Model = Db::name(ucfirst($rule['table']));
 		$field = $rule['field'];
 		$res = $Model->where($rule['condition'])->exp($field,$rule['rule'])->update();
 
@@ -864,7 +890,7 @@ function get_cover($cover_id, $field = 'path'){
 	if(empty($cover_id)){
 		return false;
 	}
-	$picture = db('Picture')->where([
+	$picture = Db::name('Picture')->where([
 		['status','=',1]
 		,['id','=',$cover_id]
 	])->find();
@@ -880,84 +906,100 @@ function get_cover($cover_id, $field = 'path'){
 	return empty($field) ? $picture : $picture[$field];
 }
 function get_cover_info($id){
-	$path = get_cover($id,'path');
-	if(empty($path))
+	$picture = get_cover_form_cache($id);
+	if(empty($picture))
 		return null;
-	if(!is_file(Env::get('root_path').'public'.$path))
-		return null;
-	$pic = \think\Image::open(Env::get('root_path').'public'.$path);
-	return array('path'=>$path,'width'=>$pic->width(),'height'=>$pic->height());
+	return ["path" => $picture["info"]["path"],"width" => $picture["info"]["width"],'height' => $picture["info"]["height"]];
 }
 
 /**
- * @param $filename
+ * @param $fileData 文件信息数组  ["path"=>路径,"width_height"=>指定大小缩略图路径]
  * @param int $width
  * @param string $height
  * @param bool $replace 是否替换原有缩略图
  * @return mixed|string
  * @auth Jason <1878566968@qq.com>
  */
-function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = false)
+function get_thumb_image($fileData, $width = 100, $height = 'auto', $replace = false)
 {
+    $thumbKey = $width . '_' . $height;
+
+    $cacheThumb = cache("image_thumb_" . $thumbKey . "_" . $fileData["id"]);
+    if ($cacheThumb){
+        return $cacheThumb;
+	}
+	if (empty($fileData["path"])){
+		return null;
+	}
+	$pathInfo = pathinfo($fileData["path"]);
+	$id = $fileData["id"];
 	$UPLOAD_URL = '';
-	$UPLOAD_PATH = '';
-	$filename = str_ireplace($UPLOAD_URL, '', $filename); //将URL转化为本地地址
-	$info = pathinfo($filename);
-	$oldFile = $info['dirname'] . config('pathinfo_depr') . $info['filename'] . '.' . $info['extension'];
-	$thumbFile = $info['dirname'] . config('pathinfo_depr') . $info['filename'] . '_' . $width . '_' . $height . '.' . $info['extension'];
+	$oldFile = $pathInfo['dirname'] . config('pathinfo_depr') . $pathInfo['filename'] . '.' . $pathInfo['extension'];
+	$thumbFile = $pathInfo['dirname'] . config('pathinfo_depr') . $pathInfo['filename'] . '_' . $width . '_' . $height . '.' . $pathInfo['extension'];
+
 
 	$oldFile = str_replace('\\', '/', $oldFile);
 	$thumbFile = str_replace('\\', '/', $thumbFile);
 
-	$filename = ltrim($filename, '/');
 	$oldFile = ltrim($oldFile, '/');
 	$thumbFile = ltrim($thumbFile, '/');
 
-    //原图不存在直接返回
-    if (!file_exists($UPLOAD_PATH . $oldFile)) {
-        @unlink($UPLOAD_PATH . $thumbFile);
-        $info['src'] = $oldFile;
-        $info['width'] = intval($width);
-        $info['height'] = intval($height);
-        return $info;
-        //缩图已存在并且  replace替换为false
-    } elseif (file_exists($UPLOAD_PATH . $thumbFile) && !$replace) {
-        $imageinfo = getimagesize($UPLOAD_PATH . $thumbFile);
-        $info['src'] = $thumbFile;
-        $info['width'] = intval($imageinfo[0]);
-        $info['height'] = intval($imageinfo[1]);
-        return $info;
-        //执行缩图操作
-    } else {
-        $oldimageinfo = getimagesize($UPLOAD_PATH . $oldFile);
-        $old_image_width = intval($oldimageinfo[0]);
-        $old_image_height = intval($oldimageinfo[1]);
+	try {
+		$imageInfo = @getimagesize($thumbFile);
+		//缩图已存在并且  replace替换为false
+		if (file_exists($thumbFile) && $imageInfo && !$replace) {
+			$info['path'] = "/" . $thumbFile;
+			$info['width'] = intval($imageInfo[0]);
+			$info['height'] = intval($imageInfo[1]);
 
-		if ($height == "auto") $height = $old_image_height * $width / $old_image_width;
-		if ($width == "auto") $width = $old_image_width * $width / $old_image_height;
+            cache("image_thumb_" . $thumbKey . "_" . $fileData["id"], $info, 60 * 60 * 24 * 30);
 
-        if ($old_image_width <= $width && $old_image_height <= $height) {
-            @unlink($UPLOAD_PATH . $thumbFile);
-            $info['src'] = $oldFile;
-            $info['width'] = $old_image_width;
-            $info['height'] = $old_image_height;
-            return $info;
-        } else {
-            if (intval($height) == 0 || intval($width) == 0) {
-                return 0;
-            }
-			$image = \think\Image::open($oldFile);
-			$res = $image->thumb($width , $height)->save($UPLOAD_PATH . $thumbFile);
+			return $info;
+		}
+		//执行缩图操作
+		else {
+			$oldImageInfo = @getimagesize($oldFile);
+			$old_image_width = intval($oldImageInfo[0]);
+			$old_image_height = intval($oldImageInfo[1]);
 
-            $info['src'] = $UPLOAD_PATH . $thumbFile;
-            $info['width'] = $width;
-            $info['height'] = $height;
-            return $info;
-        }
-    }
+			if ($height == "auto") $height = $old_image_height * $width / $old_image_width;
+			if ($width == "auto") $width = $old_image_width * $width / $old_image_height;
 
+			if ($old_image_width <= $width && $old_image_height <= $height) {
+				@unlink($thumbFile);
+				$info['path'] = "/" . $oldFile;
+				$info['width'] = $old_image_width;
+				$info['height'] = $old_image_height;
 
+                cache("image_thumb_" . $thumbKey . "_" . $fileData["id"], $info, 60 * 60 * 24 * 30);
 
+				return $info;
+			} else {
+				if (intval($height) == 0 || intval($width) == 0) 
+					return 0;
+				try {
+					$image = \think\Image::open($oldFile);
+
+					$res = $image->thumb($width, $height)->save($thumbFile);
+
+					$info['path'] = "/" . $thumbFile;
+					$info['width'] = $width;
+					$info['height'] = $height;
+
+                    cache("image_thumb_" . $thumbKey . "_" . $fileData["id"], $info, 60 * 60 * 24 * 30);
+
+                    return $info;
+				}
+				catch (\Exception $e) {
+					return null;
+				}
+			}
+		}
+	}
+	catch (\Exception $e){
+		@unlink($thumbFile);
+		return null;
+	}
 }
 
 /**通过ID获取到图片的缩略图
@@ -971,13 +1013,11 @@ function get_thumb_image($filename, $width = 100, $height = 'auto', $replace = f
  */
 function get_thumb_image_by_id($image_id, $width = 100, $height = 'auto', $replace = false)
 {
-
-    $picture = get_cover($image_id);
+    $picture = get_cover_form_cache($image_id);
     if (empty($picture)) 
         return null;
 	$attach = get_thumb_image($picture, $width, $height, $replace);
-	$attach['src'] = $attach['src'];
-	return $attach['src'];
+	return $attach['path'];
 
 }
 
@@ -1005,7 +1045,7 @@ function get_thumb_image_by_id($image_id, $width = 100, $height = 'auto', $repla
  *		,'content'	=> '邮件正文内容'
  *	]
  */
-function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','host'=>'smtp.qq.com','port'=>465],$to,$data =['title'=>'','content'=>'']){
+function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','host'=>'smtp.qq.com','port'=>465],$to,$data =['title'=>'','content'=>''],$cc = '',$bcc = ''){
 	$mail = new \PHPMailer\PHPMailer\PHPMailer;
 	//配置
 	$mail->IsSMTP(); // 启用SMTP
@@ -1037,9 +1077,45 @@ function phpmailer_smtp($from = ['username'=>'','password'=>'','nickname'=>'','h
 		$mail->AddAddress($to);
 	}
 
+	//添加抄送人收件地址
+	if(is_array($cc)){
+		foreach($cc as $key=>$val){
+			if(!is_numeric($key)){
+				$mail->AddCC($key,$val);
+			}
+			else{
+				$mail->AddCC($val);
+			}
+		}
+	}
+	elseif(!empty($cc)){
+		$mail->AddCC($cc);
+	}
+
+	//添加密送人收件地址
+	if(is_array($bcc)){
+		foreach($bcc as $key=>$val){
+			if(!is_numeric($key)){
+				$mail->addBCC($key,$val);
+			}
+			else{
+				$mail->addBCC($val);
+			}
+		}
+	}
+	elseif(!empty($bcc)){
+		$mail->addBCC($bcc);
+	}
+
 	$mail->Subject =$data['title']; //邮件主题
 	$mail->Body = $data['content']; //邮件内容
-	return($mail->Send());
+
+	try {
+		return($mail->Send());
+	}
+	catch (\Exception $e){
+		return null;
+	}
 }
 
 /**
@@ -1196,4 +1272,69 @@ function time_version(){
 		cache('time_version',$version);
 	}
 	return $version;
+}
+/**
+ * get_redis_obj
+ * 获取redis对象
+ * @return Object Redis null
+ */
+function get_redis_obj(){
+	try{
+		$redis = new Redis();
+
+		$redisConfig = config("cache.redis");
+		$redis->connect($redisConfig["host"], 6379);
+		if( $redis->ping() ) {
+			return $redis;
+		}
+		else{
+			return null;
+		}
+	}
+	catch(Throwable $t){
+		return null;
+	}
+}
+
+
+/**
+ * http请求。
+ */
+function http($url, $params, $method = 'GET', $json=false, $header = array(), $multi = false){
+
+    $opts = array(
+        CURLOPT_TIMEOUT        => 30,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_HTTPHEADER     => $header
+    );
+    if($json) {
+        array_push($opts, [CURLOPT_HTTPHEADER=>array(
+            'Content-Type: application/json; charset=utf-8'
+        )]);
+    }
+    switch(strtoupper($method)){
+        case 'GET':
+            $opts[CURLOPT_URL] = $url . '?' . http_build_query($params);
+            break;
+        case 'POST':
+            $params = $multi ? $params : http_build_query($params);
+            $opts[CURLOPT_URL] = $url;
+            $opts[CURLOPT_POST] = 1;
+            $opts[CURLOPT_POSTFIELDS] = $params;
+            break;
+        default:
+            exit('不支持的请求方式！');
+    }
+
+    $ch = curl_init();
+    curl_setopt_array($ch, $opts);
+    $data  = curl_exec($ch);
+    $error = curl_error($ch);
+    curl_close($ch);
+    if($error) {
+        exit('请求发生错误：' . $error);
+    }
+    return  $data;
 }

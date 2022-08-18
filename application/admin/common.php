@@ -101,7 +101,7 @@ function get_action_type($type, $all = false){
 }
 // 获取模型名称
 function get_model_by_id($id){
-    return $model = db('Model')->getFieldById($id,'title');
+    return $model = Db::name('Model')->getFieldById($id,'title');
 }
 
 /**
@@ -184,7 +184,7 @@ function get_model_field($value = null, $condition = 'id', $field = null){
 
     //拼接参数
     $map[$condition] = $value;
-    $info = db('Model')->where($map);
+    $info = Db::name('Model')->where($map);
     if(empty($field)){
         $info = $info->field(true)->find();
     }else{
@@ -245,7 +245,7 @@ function get_parent_category($cid){
     if(empty($cid)){
         return false;
     }
-    $cates  =   db('Category')->where('status',1)->field('id,title,pid')->order('sort')->select();
+    $cates  =   Db::name('Category')->where('status',1)->field('id,title,pid')->order('sort')->select();
     $child  =   get_category($cid); //获取参数分类的信息
     $pid    =   $child['pid'];
     $temp   =   array();
@@ -340,7 +340,7 @@ function get_cate($cate_id = null){
     if(empty($cate_id)){
         return false;
     }
-    $cate   =   db('Category')->where('id',$cate_id)->value('title');
+    $cate   =   Db::name('Category')->where('id',$cate_id)->value('title');
     return $cate;
 }
 /**
@@ -354,7 +354,7 @@ function get_type_bycate($id = null){
         return false;
     }
     $type_list  =   config('heilphp.DOCUMENT_MODEL_TYPE');
-    $model_type =   db('Category')->getFieldById($id, 'type');
+    $model_type =   Db::name('Category')->getFieldById($id, 'type');
     $model_type =   explode(',', $model_type);
     foreach ($type_list as $key=>$value){
         if(!in_array($key, $model_type)){
@@ -363,3 +363,75 @@ function get_type_bycate($id = null){
     }
     return $type_list;
 }
+
+/**
+ * get_user_pid 
+ * 获取用户pid
+ * @param int $uid  账号id
+ * @return int 父级账号id,如果没有父级账号则返回自身的id
+ * @author Jason <1878566968@qq.com>
+ */
+function get_user_pid($uid){
+	$uid = (int)$uid;
+	if(empty($uid)) return false;
+	$SubMember = Db::name('SubMember');
+	$map = [];
+	$map[] = ['uid','=',$uid];
+	$user = $SubMember->where($map)->find();
+	if(empty($user)){
+		return $uid;
+	}
+	else{
+		return $user['pid'];
+	}
+}
+
+/**
+ * get_user_shop_id
+ * @param int $uid 用户id
+ * @return int|null 用户或父级用户绑定的商户id，如没有绑定商户则返回null
+ */
+function get_user_shop_id($uid){
+	$uid = get_user_pid($uid);
+	if(empty($uid)) return null;
+
+	$shop = Db('Shop')->where('uid',$uid)->find();
+	if(is_null($shop))
+		return null;
+	return $shop['id'];
+}
+
+/**
+ * keyword_filter
+ * 搜索词过滤 去除多余空字符,重复词
+ * @param string $key 搜索词
+ * @return array 过滤后测搜索词数组 如空则返回null 
+ * @author Jason <1878566968@qq.com>
+ */
+function keyword_filter($key){
+	$key = preg_replace("/(\n)|(\s)+|(\t)|(\')|(')|(，)|(\.)|(　)+/",' ',$key);
+	$key = preg_replace("/(\n)|(\s)+|(\t)|(\')|(')|(，)|(\.)|(　)+/",' ',$key);
+	if(!empty($key)){
+		$keyArr = explode(' ',$key);
+		//数组去重
+		$keyArr = array_unique($keyArr);
+		return $keyArr;
+	}
+
+	return null;
+}
+
+
+/**
+ * check_variable_value
+ * 检查两个变量是否相等
+ * @param var $value1 变量1
+ * @param var $value2 变量2
+ */
+function check_variable_value($value1,$value2){
+	if($value1 === $value2)
+		return 0;
+	return $value1 > $value2 ? 1 : -1;
+}
+
+

@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 
 namespace app\common\api;
+use think\Db;
 
 class Config {
     /**
@@ -15,7 +16,7 @@ class Config {
      * @return array 配置数组
      */
     public static function getListing(){
-        $data   = db('Config')->where('status','=',1)->field('type,name,value')->select();
+        $data   = Db::name('Config')->where('status','=',1)->field('type,name,value')->select();
         
         $config = array();
         if($data && is_array($data)){

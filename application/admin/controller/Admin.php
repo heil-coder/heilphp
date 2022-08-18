@@ -17,7 +17,7 @@
 
 namespace app\admin\controller;
 use think\Controller;
-use Db;
+use think\Db;
 use Config;
 use Request;
 use app\admin\model\AuthRule;
@@ -28,6 +28,8 @@ use app\admin\model\AuthRule;
  * @modify Jason <1878566968@qq.com>
  */
 class Admin extends Controller {
+    //列表行数
+    protected $listRows = null;
     /**
      * 后台控制器初始化
      */
@@ -56,6 +58,7 @@ class Admin extends Controller {
                 $this->error('403:禁止访问');
             }
         }
+        $this->assign('__MENU__', $this->getMenus());
         // 检测系统权限
         if(!IS_ROOT){
             $access =   $this->accessControl();
@@ -75,7 +78,15 @@ class Admin extends Controller {
                 }
             }
         }     
-        $this->assign('__MENU__', $this->getMenus());
+
+        $this->setListRows();
+    }
+    /**
+     * 欢迎页
+     * @author Jason <1878566968@qq.com>
+     */
+    public function welcome(){
+        return view();
     }
     /**
      * 检测是否是需要动态判断的权限
@@ -133,9 +144,8 @@ class Admin extends Controller {
         $options    =   array();
         $REQUEST    =   (array)Request::param();
         if(is_string($Db)){
-            $Db =   Db::name($Db);
+            $Db =   model($Db);
         }
-		$tmpDb = $Db;
 
 		$tableFields = $Db->getTableFields();
 		//如果存在软删除字段
@@ -164,23 +174,25 @@ class Admin extends Controller {
 		if(!empty($tmpOptions['where']['AND'])){
 			if(in_array('delete_time',$tmpOptions['where']['AND'])){
 				$hasSoftDeleteCondition = true;
-			}
-			foreach($tmpOptions['where']['AND'] as $val){
-				if(is_array($val) && in_array('delete_time',$val)){
-					$hasSoftDeleteCondition = true;
-					break;
+				//break;
+			} else {
+				foreach($tmpOptions['where']['AND'] as $val){
+					if(is_array($val) && in_array('delete_time',$val)){
+						$hasSoftDeleteCondition = true;
+						break;
+					}
 				}
 			}
 		}
 		$options      =   array_merge( $Db->getOptions(), $options );
 
-        $listRows = Config('LIST_ROWS') > 0 ? Config('LIST_ROWS') : 10;
+        $listRows = cookie("list_rows");
 		!empty($tmpOptions['where']) && $Db = $Db->setOption('where',$tmpOptions['where']);
 		if(!$isSoftDelete || ($isSoftDelete && $hasSoftDeleteCondition)){
-			$listing = $Db->where($options['where'])->field($field)->order($options['order'])->paginate($listRows);
+			$listing = $Db->where($options['where'])->field($field)->order($options['order'])->paginate($listRows,false,['type'=>'\page\Page']);
 		}
 		else{
-			$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->paginate($listRows);
+			$listing = $Db->where($options['where'])->useSoftDelete('delete_time')->field($field)->order($options['order'])->paginate($listRows,false,['type'=>'\page\Page']);
 		}
 		$this->assign('_page', $listing->render());
 		$this->assign('_total', $listing->total());
@@ -302,7 +314,7 @@ class Admin extends Controller {
             return $tree_nodes[$tree];
         }
         if((int)$tree){
-            $list = db('Menu')->field('id,pid,title,url,tip,hide')->order('sort asc')->select();
+            $list = Db::name('Menu')->field('id,pid,title,url,tip,hide')->order('sort asc,id asc')->select();
             foreach ($list as $key => $value) {
                 if( stripos($value['url'],Request::module())!==0 ){
                     $list[$key]['url'] = Request::module().'/'.$value['url'];
@@ -316,7 +328,7 @@ class Admin extends Controller {
                 }
             }
         }else{
-            $nodes = db('Menu')->field('title,url,tip,pid')->order('sort asc')->select();
+            $nodes = Db::name('Menu')->field('title,url,tip,pid')->order('sort asc,id asc')->select();
             foreach ($nodes as $key => $value) {
                 if( stripos($value['url'],Request::module())!==0 ){
                     $nodes[$key]['url'] = Request::module().'/'.$value['url'];
@@ -360,91 +372,91 @@ class Admin extends Controller {
      */
     final public function getMenus($controller=''){
 		empty($controller) && $controller = Request::controller();
-        $menus  =   session('ADMIN_MENU_LIST.'.$controller);
-		//暂时解决 部分主菜单下子菜单不能读取问题
-        if(empty($menus)){
-            // 获取主菜单
-            $where['pid']   =   0;
-            $where['hide']  =   0;
+
+        // 获取主菜单
+        $where['pid']   =   0;
+        $where['hide']  =   0;
+        if(!config('DEVELOP_MODE')){ // 是否开发者模式
+            $where['is_dev']    =   0;
+        }
+        $menus['main']  =   Db::name('Menu')->where($where)->order('sort asc,id asc')->field('id,title,url')->select();
+        $menus['child'] =   array(); //设置子节点
+        foreach ($menus['main'] as $key => $item) {
+            // 判断主菜单权限
+            if ( !is_administrator() && !$this->checkRule(strtolower(Request::module().'/'.$item['url']),AuthRule::RULE_MAIN,null) ) {
+                unset($menus['main'][$key]);
+                continue;//继续循环
+            }
+            if(strtolower(Request::controller().'/'.Request::action())  == strtolower($item['url'])){
+                $menus['main'][$key]['class']='current';
+            }
+        }
+
+        // 查找当前子菜单
+        $currentMenu = Db::name('Menu')->where("url like '%{$controller}/".Request::action()."%'")->field('id, pid')->find();
+        if (empty($currentMenu)){
+            return $menus;
+        }
+        $pid = $currentMenu["pid"] ?: $currentMenu["id"];
+        // 查找当前主菜单
+        $nav =  Db::name('Menu')->find($pid);
+
+        foreach ($menus['main'] as $key => $item) {
+            // 获取当前主菜单的子菜单项
+            if($item["id"] != $nav["pid"] && $item["id"] != $nav["id"]){
+                continue;
+            }
+            $menus['main'][$key]['class']='current';
+            //生成child树
+            $groups = Db::name('Menu')->where([
+                ['group','<>','']
+                ,['pid','=',$item['id']]
+            ])
+            ->order('sort asc,id asc')->column("group");
+            $groups = array_unique($groups);
+
+            //获取二级分类的合法url
+            $where          =   array();
+            $where[]   =   ['pid','=',$item['id']];
+            $where[]  =   ['hide','=',0];
             if(!config('DEVELOP_MODE')){ // 是否开发者模式
-                $where['is_dev']    =   0;
+                $where[]    =   ['is_dev','=',0];
             }
-            $menus['main']  =   db('Menu')->where($where)->order('sort asc')->field('id,title,url')->select();
-            $menus['child'] =   array(); //设置子节点
-            foreach ($menus['main'] as $key => $item) {
-                // 判断主菜单权限
-                if ( !is_administrator() && !$this->checkRule(strtolower(Request::module().'/'.$item['url']),AuthRule::RULE_MAIN,null) ) {
-                    unset($menus['main'][$key]);
-                    continue;//继续循环
-                }
-                if(strtolower(Request::controller().'/'.Request::action())  == strtolower($item['url'])){
-                    $menus['main'][$key]['class']='current';
+            $second_urls = Db::name('Menu')->where($where)->order('sort asc,id asc')->column('id,url');
+
+            if(!is_administrator()){
+                // 检测菜单权限
+                $to_check_urls = array();
+                foreach ($second_urls as $key=>$to_check_url) {
+                    if( stripos($to_check_url,Request::module())!==0 ){
+                        $rule = Request::module().'/'.$to_check_url;
+                    }else{
+                        $rule = $to_check_url;
+                    }
+                    if($this->checkRule($rule, AuthRule::RULE_URL,null))
+                        $to_check_urls[] = $to_check_url;
                 }
             }
-
-            // 查找当前子菜单
-            $pid = db('Menu')->where("pid !=0 AND url like '%{$controller}/".Request::action()."%'")->value('pid');
-            if($pid){
-                // 查找当前主菜单
-                $nav =  db('Menu')->find($pid);
-                if($nav['pid']){
-                    $nav    =   db('Menu')->find($nav['pid']);
-                }
-                foreach ($menus['main'] as $key => $item) {
-                    // 获取当前主菜单的子菜单项
-                    if($item['id'] == $nav['id']){
-                        $menus['main'][$key]['class']='current';
-                        //生成child树
-						$groups = db('Menu')->where([
-													['group','<>','']
-													,['pid','=',$item['id']]
-												])->distinct(true)->column("group");
-                        //获取二级分类的合法url
-                        $where          =   array();
-                        $where[]   =   ['pid','=',$item['id']];
-                        $where[]  =   ['hide','=',0];
-                        if(!config('DEVELOP_MODE')){ // 是否开发者模式
-                            $where[]    =   ['is_dev','=',0];
-                        }
-                        $second_urls = db('Menu')->where($where)->column('id,url');
-
-                        if(!is_administrator()){
-                            // 检测菜单权限
-                            $to_check_urls = array();
-                            foreach ($second_urls as $key=>$to_check_url) {
-                                if( stripos($to_check_url,Request::module())!==0 ){
-                                    $rule = Request::module().'/'.$to_check_url;
-                                }else{
-                                    $rule = $to_check_url;
-                                }
-                                if($this->checkRule($rule, AuthRule::RULE_URL,null))
-                                    $to_check_urls[] = $to_check_url;
-                            }
-                        }
-                        // 按照分组生成子菜单树
-                        foreach ($groups as $g) {
-							$map = [];
-                            $map[] = ['group','=',$g];
-                            if(isset($to_check_urls)){
-                                if(empty($to_check_urls)){
-                                    // 没有任何权限
-                                    continue;
-                                }else{
-                                    $map[] = ['url','in',$to_check_urls];
-                                }
-                            }
-                            $map[]     =   ['pid','=',$item['id']];
-                            $map[]    =   ['hide','=',0];
-                            if(!config('DEVELOP_MODE')){ // 是否开发者模式
-								$map[] = ['is_dev','=',0];
-                            }
-                            $menuList = db('Menu')->where($map)->field('id,pid,title,url,tip')->order('sort asc')->select();
-                            $menus['child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
-                        }
+            // 按照分组生成子菜单树
+            foreach ($groups as $g) {
+                $map = [];
+                $map[] = ['group','=',$g];
+                if(isset($to_check_urls)){
+                    if(empty($to_check_urls)){
+                        // 没有任何权限
+                        continue;
+                    }else{
+                        $map[] = ['url','in',$to_check_urls];
                     }
                 }
+                $map[]     =   ['pid','=',$item['id']];
+                $map[]    =   ['hide','=',0];
+                if(!config('DEVELOP_MODE')){ // 是否开发者模式
+                    $map[] = ['is_dev','=',0];
+                }
+                $menuList = Db::name('Menu')->where($map)->field('id,pid,title,url,tip')->order('sort asc,id asc')->select();
+                $menus['child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
             }
-            session('ADMIN_MENU_LIST.'.$controller,$menus);
         }
         return $menus;
     }
@@ -459,7 +471,7 @@ class Admin extends Controller {
         if (!$Auth) {
             $Auth       =   new \auth\Auth();
         }
-        if(!$Auth->check($rule,UID,$type,$mode)){
+        if(!$Auth->check($rule, UID, $type, $mode)){
             return false;
         }
         return true;
@@ -497,5 +509,76 @@ class Admin extends Controller {
             }
         }
         return $list;
+    }
+	/**
+	 * checkShopAtuh
+	 * @return boolen true 完全权利 可以享有所在权限组的全部权限  false限制权利 没有权限或只能编辑自己商户的资料
+	 * @author Jason <1878566968@qq.com>
+	 */
+	protected function checkShopAtuh(){
+		$shopId = get_user_shop_id(UID);
+		if(!empty($shopId)){
+			return false;
+		}
+		return true;
+	}
+    /**
+     * 操作错误跳转的快捷方法
+     * @access protected
+     * @param  mixed     $msg 提示信息
+     * @param  string    $url 跳转的URL地址
+     * @param  mixed     $data 返回的数据
+     * @param  integer   $wait 跳转等待时间
+     * @param  array     $header 发送的Header信息
+     * @return void
+     */
+    protected function error($msg = '', $url = null, $data = '', $wait = 3, array $header = [])
+    {
+        $type = $this->getResponseType();
+        if (is_null($url)) {
+            $url = $this->app['request']->isAjax() ? '' : 'javascript:history.back(-1);';
+        } elseif ('' !== $url) {
+            $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : $this->app['url']->build($url);
+        }
+
+        $result = [
+            'code' => 0,
+            'msg'  => $msg,
+            'data' => $data,
+            'url'  => $url,
+            'wait' => $wait,
+        ];
+
+        if ('html' == strtolower($type)) {
+            $type = 'jump';
+        }
+
+		view_base($this->app['config']->get('dispatch_error_tmpl'));
+        $response = Response()->create($result, $type)->header($header)->options(['jump_template' => $this->app['config']->get('dispatch_error_tmpl')]);
+
+        throw new \think\exception\HttpResponseException($response);
+    }
+    /**
+     * 设置列表页每页行数
+     * @author Jason <1878566968@qq.com>
+     */
+    protected function setListRows(){
+        $this->listRows = input("param.listRows/d", null);
+
+        if (is_null($this->listRows)){
+            $this->listRows = cookie("list_rows");
+            if(empty($this->listRows)){
+                $this->listRows = config("LIST_ROWS") > 0 ? config("LIST_ROWS") : 10;
+                cookie("list_rows", $this->listRows);
+            }
+            return $this->listRows;
+        }
+        
+        $this->listRows > 200 && $this->listRows = 200;
+        $this->listRows < 1 && $this->listRows = 1;
+
+        cookie("list_rows", $this->listRows);
+
+        return $this->listRows;
     }
 }

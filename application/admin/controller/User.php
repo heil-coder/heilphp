@@ -201,7 +201,7 @@ class User extends Admin{
 			$Api    =   new UserApi();
 			$res    =   $Api->updateInfo(UID, $password, $data);
 			if($res['status']){
-				$this->success('修改密码成功！');
+				$this->success('修改密码成功！', 'admin/index/index');
 			}else{
 				$this->error($res['info']);
 			}
