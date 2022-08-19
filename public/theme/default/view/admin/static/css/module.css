@@ -435,9 +435,6 @@ label.textarea ~ .check-tips {
 
 /* = 面包屑导航
 ------------------------------------------ */
-.breadcrumb {
-	color: #999;
-}
 .breadcrumb .home {
 	display: inline-block;
 	text-align: center;

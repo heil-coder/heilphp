@@ -1,0 +1,92 @@
+{extend name="public/base" /}
+{block name="style_before"}
+  <link rel="stylesheet" href="__STATIC__/AdminLTE/plugins/select2/select2.min.css">
+{/block}
+
+{block name="style"}
+<style>
+.wrapper{
+	overflow:hidden;
+}
+.content-wrapper{
+	margin:0;
+}
+.content-wrapper>.content {
+	padding: 0;
+}
+.container-fluid {
+	padding:0;
+}
+</style>
+{/block}
+
+{block name="style"}
+{block name="navbar"}	
+{/block}
+{block name="main-sidebar"}
+{/block}
+{block name="content-top-header"}
+{/block}
+{block name="content-header"}
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+				<div class="system-message">
+					<div class="content text-center">
+						<h1 class="bg-white">
+							<i class="fa fa-warning text-danger"></i>
+							{$msg}
+						</h1>
+					</div>
+				</div>
+
+			</div>
+		</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+{block name="footer"}
+{/block}
+{block name='js'}
+{/block}
+{block name='script'}
+<script src="__STATIC__/AdminLTE/plugins/select2/select2.full.min.js"></script>
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+//导航高亮
+highlight_subnav('{:Url('index')}');
+//Initialize Select2 Elements
+$('.select2').select2(
+	{
+		placeholder:'请选择快递公司'
+		,allowClear:true 
+		,ajax: {
+			url: '{:url('shop/search')}'
+			,data: function (params) {
+				var query = {
+					type:'agent'
+					,key: params.term
+				}
+				// Query parameters will be ?search=[term]&type=public
+				return query;
+			}
+			,processResults: function (data) {
+				return {
+					results: data.data
+				};
+			}
+		}
+	}	
+)
+
+</script>
+{/block}

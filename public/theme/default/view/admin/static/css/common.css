@@ -24,3 +24,69 @@
 	color:#999999;
 }
 
+/* 高级搜索 */
+.search-form .adv-sch-pannel {
+	margin-right: 0;
+}
+.search-form .input-group-prepend.adv-sch-pannel {
+	margin-left:2px;
+}
+
+.search-form .adv-sch-pannel .dropdown {
+	right: 0;
+	left: auto;
+	padding: 15px 0 15px 15px;
+	white-space: nowrap;
+}
+.search-form .dropdown-menu{
+	margin:0;
+}
+.search-form .adv-sch-pannel .pannel{
+	width:36rem;
+	padding:0 2rem;
+}
+.adv-sch-pannel .row {
+    display: inline-block;
+    *display: inline;
+    margin-right: 15px;
+}
+.adv-sch-pannel label{
+    width:5rem;
+    display:inline-block;
+}
+.adv-sch-pannel .row{
+    margin-bottom:6px;
+}
+.adv-sch-pannel .row .input-2x{
+	width:10rem;
+}
+#top-alert{
+	z-index:3;
+	position:fixed;
+	min-width:300px;
+}
+#top-alert .close{
+	color:#ffffff;
+	opacity:1;
+}
+
+.page.fixed{
+    height: 2.6125rem;
+    width: 100%;
+    padding:10px;
+    border-top: #ffffff 1px solid;
+}
+.page.fixed .pagination{
+    position:fixed;
+    width: 100%;
+    bottom:0;left:0;
+    padding: 0.4rem;
+    border-radius: 0;
+    border-top: #dddddd 1px solid;
+    background:#ffffff;
+}
+
+.empty{
+    text-align:center;
+    margin:80px auto 0;
+}

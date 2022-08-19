@@ -1,6 +1,13 @@
 //dom加载完成后执行的js
 ;$(function(){
-
+	//分页链接点击时页面栈替换
+    $(document).on('click','.pagination .page-item .page-link',function(){
+        var url = $(this).attr('href');
+        if (url){
+            location.replace(url);
+        }
+        return false;
+    })
 	//全选的实现
 	$(".check-all").click(function(){
 		$(".ids").prop("checked", this.checked);
@@ -116,7 +123,12 @@
                     setTimeout(function(){
                     	$(that).removeClass('disabled').prop('disabled',false);
                         if (data.url) {
-                            location.href=data.url;
+							if($(that).data('back') < 0){
+								history.go($(that).data('back'));
+							}
+							else{
+								location.href=data.url;
+							}
                         }else if( $(that).hasClass('no-refresh')){
                             $('#top-alert').find('button').click();
                         }else{
@@ -268,5 +280,35 @@ function showBtn() {
 
 //导航高亮
 function highlight_subnav(url){
-    $('.nav-sidebar .nav-treeview').find('a.nav-link[href="'+url+'"]').addClass('active');
+    $navLink = $('.nav-sidebar .nav-treeview').find('a.nav-link[href="'+url+'"]');
+    $navLink.addClass('active');
+    $navLink.parents(".nav-item").addClass('menu-open');
+}
+
+
+Date.prototype.format = function(format){
+    var o =  {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(), //day
+        "h+" : this.getHours(), //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+        "S" : this.getMilliseconds() //millisecond
+    };
+    if(/(y+)/.test(format)){
+        format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    }
+    for(var k in o)  {
+        if(new RegExp("("+ k +")").test(format)){
+            format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+        }
+    }
+    return format;
+};
+
+function dataTimeFormat(value, pattern) {
+    if (value==null) return null;
+    var now = new Date(value);
+    return now.format(pattern);
 }

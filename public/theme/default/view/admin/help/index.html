@@ -1,0 +1,59 @@
+{extend name="public/base" /}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="card card-content-nav">
+			<div class="card-header">
+				<div class="row">
+					<div class="col-sm-12">
+						<ol class="breadcrumb float-sm-left">
+							<li>您当前的位置：</li>
+							<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+							<li class="breadcrumb-item active">帮助中心</li>
+						</ol>
+					</div><!-- /.col -->
+				</div><!-- /.row -->
+			</div><!-- /.card-header -->
+		</div><!-- /.card -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+        <div class="row">
+            {notEmpty name="fileList"}
+            {volist name="fileList" id="file"}
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <a class="card text-center p-3" target="_blank" href="/uploads/help/{$file}">
+                    <p></p>
+                    <i class="fa fa-file-o" style="font-size:36px;"></i>
+                    <div class="card-heading"><strong>{$file}</strong></div>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-danger"><i class="fa fa-download"></i>下载</button>
+                    </div>
+                </a>
+            </div>
+            {/volist}
+            {/notEmpty}
+        </div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+//导航高亮
+highlight_subnav('{:Url('help/index')}');
+</script>
+{/block}
