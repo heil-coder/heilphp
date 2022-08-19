@@ -59,13 +59,14 @@
 									<dd class="bd">
 									{present name="node['child']"}
 									{volist name="node['child']" id="child" }
-                                        {notempty name="auth_rules[$child['url']]"}
 									<div class="rule_check">
+                                        {notempty name="auth_rules[$child['url']]"}
 										<div>
 											<label class="checkbox" {notempty name="child['tip']"}title='{$child.tip}'{/notempty}>
                                                 <input class="auth_rules rules_row" type="checkbox" name="rules[]" value="{$auth_rules[$child['url']]}"/>{$child.title}
 											</label>
 										</div>
+                                        {/notempty}
 										{notempty name="child['operator']"}
                                         {volist name="child['operator']" id="op"}
                                         {notempty name="auth_rules[$op['url']]"}
@@ -80,7 +81,6 @@
                                         {/volist}
                                         {/notempty}
 									</div>
-                                        {/notempty}
 									{/volist}
 									{/present}
 									</dd>
