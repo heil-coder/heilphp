@@ -1,0 +1,77 @@
+{extend name="public/base" /}
+{block name="style"}
+<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/module.css?v={:time_version()}">
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1 class="m-0 text-dark">
+					<h1>用户组授权</h1>
+				</h1>
+			</div><!-- /.col -->
+			<div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+					<li class="breadcrumb-item"><a href="{:Url('index/index')}">首页</a></li>
+					<li class="breadcrumb-item"><a href="{:Url('user/index')}">用户</a></li>
+					<li class="breadcrumb-item active">用户组授权</li>
+				</ol>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+				<div id="auth_groups">
+					<form class="form-horizontal" action="{:Url('addToGroup')}" method="post" enctype="application/x-www-form-urlencoded" >
+						<label class="item-label">{$nickname} 所属的用户组列表</label>
+						{volist name="auth_groups" id="vo"}
+						<label class="checkbox">
+							<input class="auth_groups" type="checkbox" name="group_id[]" value="{$vo.id}">{$vo.title}
+						</label>
+						{/volist}
+						<input type="hidden" name="uid" value="{:input('uid')}">
+						<input type="hidden" name="batch" value="true">
+						<div style="margin-top: 10px;">
+							<button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+							<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript">
+$(function(){
+	var group = [{$user_groups}];
+	$('.auth_groups').each(function(){
+		if( $.inArray( parseInt(this.value,10),group )>-1 ){
+			$(this).prop('checked',true);
+		}
+	});
+});
+// 导航高亮
+highlight_subnav('{:Url('User/index')}');
+</script>
+{/block}

@@ -13,7 +13,7 @@ CREATE TABLE `heilphp_config` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '配置ID',
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '配置名称',
   `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '配置类型',
-  `title` varchar(50) NOT NULL DEFAULT '' COMMENT '配置说明',
+  `title` varchar(50) NOT NULL DEFAULT '' COMMENT '配置标题',
   `group` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '配置分组',
   `extra` varchar(255) NOT NULL DEFAULT '' COMMENT '配置值',
   `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '配置说明',
@@ -80,7 +80,33 @@ CREATE TABLE `heilphp_member` (
   `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`uid`),
   KEY `status` (`status`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='会员表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='会员表';
+
+
+-- -----------------------------
+-- Table structure for `heilphp_sub_member`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_sub_member`;
+CREATE TABLE `heilphp_sub_member` (
+  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '父级用户ID',
+  `nickname` char(30) NOT NULL DEFAULT '' COMMENT '昵称',
+  `sex` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别(0:未知/保密 1:男 2:女)',
+  `birthday` date NOT NULL DEFAULT '1000-01-01' COMMENT '生日',
+  `qq` char(15) NOT NULL DEFAULT '' COMMENT 'qq号',
+  `score` mediumint(8) NOT NULL DEFAULT '0' COMMENT '用户积分',
+  `login` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '登录次数',
+  `reg_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
+  `reg_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '注册IP',
+  `last_login_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
+  `last_login_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '最后登录IP',
+  `update_time` bigint(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '会员状态',
+  `delete_time` bigint(10) unsigned DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`uid`),
+  KEY `status` (`status`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='子会员表';
+
 
 
 -- -----------------------------
@@ -131,6 +157,35 @@ CREATE TABLE `heilphp_auth_group_access` (
   KEY `group_id` (`group_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+-- -----------------------------
+-- Table structure for `heilphp_sub_auth_group`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_sub_auth_group`;
+CREATE TABLE `heilphp_sub_auth_group` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户组id,自增主键',
+  `uid` int(10) UNSIGNED NOT NULL COMMENT '主账号ID',
+  `module` varchar(30) NOT NULL DEFAULT '' COMMENT '用户组所属模块',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '组类型',
+  `title` char(30) NOT NULL DEFAULT '' COMMENT '用户组中文名称',
+  `description` varchar(80) NOT NULL DEFAULT '' COMMENT '描述信息',
+  `rules` text COMMENT '用户组拥有的规则id，多个规则 , 隔开',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户组状态 0:禁用 1:可用',
+  `delete_time` bigint(10) UNSIGNED DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='子账号用户组';
+
+-- -----------------------------
+-- Table structure for `heilphp_sub_auth_group_access`
+-- -----------------------------
+DROP TABLE IF EXISTS `heilphp_sub_auth_group_access`;
+CREATE TABLE `heilphp_sub_auth_group_access` (
+  `uid` int(10) unsigned NOT NULL COMMENT '用户id',
+  `group_id` mediumint(8) unsigned NOT NULL COMMENT '子账号用户组id',
+  UNIQUE KEY `uid_group_id` (`uid`,`group_id`),
+  KEY `uid` (`uid`),
+  KEY `group_id` (`group_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='子账号用户组授权关系表';
+
 
 -- -----------------------------
 -- Table structure for `heilphp_auth_rule`
@@ -172,8 +227,8 @@ CREATE TABLE `heilphp_menu` (
 -- Records of `heilphp_menu`
 -- -----------------------------
 INSERT INTO `heilphp_menu` VALUES ('1', '首页', '0', '1', 'Index/index', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('2', '内容', '0', '2', 'Article/index', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('3', '文档列表', '2', '0', 'article/index', '1', '', '内容', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('2', '内容', '0', '102', 'Article/index', '0', '', '', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('3', '文档列表', '1022', '0', 'article/index', '1', '', '内容', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('4', '新增', '3', '0', 'article/add', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('5', '编辑', '3', '0', 'article/edit', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('6', '改变状态', '3', '0', 'article/setStatus', '0', '', '', '0','1');
@@ -186,14 +241,14 @@ INSERT INTO `heilphp_menu` VALUES ('12', '导入', '3', '0', 'article/batchOpera
 INSERT INTO `heilphp_menu` VALUES ('13', '回收站', '2', '0', 'article/recycle', '1', '', '内容', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('14', '还原', '13', '0', 'article/permit', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('15', '清空', '13', '0', 'article/clear', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('16', '用户', '0', '3', 'User/index', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('16', '用户', '0', '103', 'User/welcome', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('17', '用户信息', '16', '0', 'User/index', '0', '', '用户管理', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('18', '新增用户', '17', '0', 'User/add', '0', '添加新用户', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('19', '用户行为', '16', '0', 'User/action', '0', '', '行为管理', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('20', '新增用户行为', '19', '0', 'User/addaction', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('21', '编辑用户行为', '19', '0', 'User/editaction', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('22', '保存用户行为', '19', '0', 'User/saveAction', '0', '\"用户->用户行为\"保存编辑和新增的用户行为', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('23', '变更行为状态', '19', '0', 'User/setStatus', '0', '\"用户->用户行为\"中的启用,禁用和删除权限', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('19', '用户行为', '16', '0', 'User/action', '0', '', '行为管理', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('20', '新增用户行为', '19', '0', 'User/addaction', '0', '', '', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('21', '编辑用户行为', '19', '0', 'User/editaction', '0', '', '', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('22', '保存用户行为', '19', '0', 'User/saveAction', '0', '\"用户->用户行为\"保存编辑和新增的用户行为', '', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('23', '变更行为状态', '19', '0', 'User/setStatus', '0', '\"用户->用户行为\"中的启用,禁用和删除权限', '', '1','1');
 INSERT INTO `heilphp_menu` VALUES ('24', '禁用会员', '17', '0', 'User/changeStatus?method=forbidUser', '0', '\"用户->用户信息\"中的禁用', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('25', '启用会员', '17', '0', 'User/changeStatus?method=resumeUser', '0', '\"用户->用户信息\"中的启用', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('26', '删除会员', '17', '0', 'User/changeStatus?method=deleteUser', '0', '\"用户->用户信息\"中的删除', '', '0','1');
@@ -213,8 +268,8 @@ INSERT INTO `heilphp_menu` VALUES ('39', '分类授权', '27', '0', 'Authmanage/
 INSERT INTO `heilphp_menu` VALUES ('40', '保存分类授权', '27', '0', 'Authmanage/addToCategory', '0', '\"分类授权\"页面的\"保存\"按钮', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('41', '模型授权', '27', '0', 'Authmanage/modelauth', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"模型授权\"操作按钮', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('42', '保存模型授权', '27', '0', 'Authmanage/addToModel', '0', '\"分类授权\"页面的\"保存\"按钮', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('43', '扩展', '0', '7', 'Addons/index', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('44', '插件管理', '43', '1', 'Addons/index', '0', '', '扩展', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('43', '扩展', '0', '107', 'Addons/index', '0', '', '', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('44', '插件管理', '43', '1', 'Addons/index', '0', '', '扩展', '1','1');
 INSERT INTO `heilphp_menu` VALUES ('45', '创建', '44', '0', 'Addons/create', '0', '服务器上创建插件结构向导', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('46', '检测创建', '44', '0', 'Addons/checkForm', '0', '检测插件是否可以创建', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('47', '预览', '44', '0', 'Addons/preview', '0', '预览插件定义类文件', '', '0','1');
@@ -227,7 +282,7 @@ INSERT INTO `heilphp_menu` VALUES ('53', '卸载', '44', '0', 'Addons/uninstall'
 INSERT INTO `heilphp_menu` VALUES ('54', '更新配置', '44', '0', 'Addons/saveconfig', '0', '更新插件配置处理', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('55', '插件后台列表', '44', '0', 'Addons/adminList', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('56', 'URL方式访问插件', '44', '0', 'Addons/execute', '0', '控制是否有权限通过url访问插件控制器方法', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('57', '钩子管理', '43', '2', 'Addons/hooks', '0', '', '扩展', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('57', '钩子管理', '43', '2', 'Addons/hooks', '0', '', '扩展', '1','1');
 INSERT INTO `heilphp_menu` VALUES ('58', '模型管理', '68', '3', 'modelmanage/index', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('59', '新增', '58', '0', 'modelmanage/add', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('60', '编辑', '58', '0', 'modelmanage/edit', '0', '', '', '0','1');
@@ -238,19 +293,19 @@ INSERT INTO `heilphp_menu` VALUES ('64', '新增', '63', '0', 'Attribute/add', '
 INSERT INTO `heilphp_menu` VALUES ('65', '编辑', '63', '0', 'Attribute/edit', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('66', '改变状态', '63', '0', 'Attribute/setStatus', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('67', '保存数据', '63', '0', 'Attribute/update', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('68', '系统', '0', '4', 'Config/group', '0', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('68', '系统', '0', '104', 'Config/welcome', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('69', '网站设置', '68', '1', 'Config/group', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('70', '配置管理', '68', '4', 'Config/index', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('71', '编辑', '70', '0', 'Config/edit', '0', '新增编辑和保存配置', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('72', '删除', '70', '0', 'Config/del', '0', '删除配置', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('73', '新增', '70', '0', 'Config/add', '0', '新增配置', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('74', '保存', '70', '0', 'Config/save', '0', '保存配置', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('75', '菜单管理', '68', '5', 'Menu/index', '0', '', '系统设置', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('76', '导航管理', '68', '6', 'Channel/index', '0', '', '系统设置', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('75', '菜单管理', '68', '5', 'Menu/index', '0', '', '系统设置', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('76', '导航管理', '68', '6', 'Channel/index', '0', '', '系统设置', '1','1');
 INSERT INTO `heilphp_menu` VALUES ('77', '新增', '76', '0', 'Channel/add', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('78', '编辑', '76', '0', 'Channel/edit', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('79', '删除', '76', '0', 'Channel/del', '0', '', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('80', '分类管理', '68', '2', 'Category/index', '0', '', '系统设置', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('80', '分类管理', '68', '2', 'Category/index', '0', '', '系统设置', '1','1');
 INSERT INTO `heilphp_menu` VALUES ('81', '编辑', '80', '0', 'Category/edit', '0', '编辑和保存栏目分类', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('82', '新增', '80', '0', 'Category/add', '0', '新增栏目分类', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('83', '删除', '80', '0', 'Category/remove', '0', '删除栏目分类', '', '0','1');
@@ -260,9 +315,9 @@ INSERT INTO `heilphp_menu` VALUES ('86', '备份数据库', '68', '0', 'Datamana
 INSERT INTO `heilphp_menu` VALUES ('87', '备份', '86', '0', 'Datamanage/export', '0', '备份数据库', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('88', '优化表', '86', '0', 'Datamanage/optimize', '0', '优化数据表', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('89', '修复表', '86', '0', 'Datamanage/repair', '0', '修复数据表', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('90', '还原数据库', '68', '0', 'Datamanage/index?type=import', '0', '', '数据备份', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('91', '恢复', '90', '0', 'Datamanage/import', '0', '数据库恢复', '', '0','1');
-INSERT INTO `heilphp_menu` VALUES ('92', '删除', '90', '0', 'Datamanage/del', '0', '删除备份文件', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('90', '还原数据库', '68', '0', 'Datamanage/index?type=import', '0', '', '数据备份', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('91', '恢复', '90', '0', 'Datamanage/import', '0', '数据库恢复', '', '1','1');
+INSERT INTO `heilphp_menu` VALUES ('92', '删除', '90', '0', 'Datamanage/del', '0', '删除备份文件', '', '1','1');
 INSERT INTO `heilphp_menu` VALUES ('93', '其他', '0', '5', 'other', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('96', '新增', '75', '0', 'Menu/add', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('98', '编辑', '75', '0', 'Menu/edit', '0', '', '', '0','1');
@@ -284,6 +339,15 @@ INSERT INTO `heilphp_menu` VALUES ('121', '排序', '76', '0', 'Channel/sort', '
 INSERT INTO `heilphp_menu` VALUES ('122', '数据列表', '58', '0', 'think/lists', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('123', '审核列表', '3', '0', 'Article/examine', '1', '', '', '0','1');
 
+INSERT INTO `heilphp_menu` VALUES ('130', '子账号权限管理', '16', '0', 'SubAuthManage/index', '0', '', '用户管理', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('131', '编辑', '130', '0', 'SubAuthmanage/editGroup', '0', '编辑子账号用户组名称和描述', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('132', '保存用户组', '130', '0', 'SubAuthManage/writeGroup', '0', '新增和编辑用户组的\"保存\"按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('133', '访问授权', '130', '0', 'SubAuthManage/access', '0', '\"后台 \\ 用户 \\ 子账号\\权限管理\"列表页的\"访问授权\"操作按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('134', '成员授权', '130', '0', 'SubAuthManage/user', '0', '\"后台 \\ 用户 \\ 权限管理\"列表页的\"子账号成员授权\"操作按钮', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('135', '删除', '130', '0', 'SubAuthmanage/changeStatus?method=deleteGroup', '0', '删除用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('136', '禁用', '130', '0', 'SubAuthmanage/changeStatus?method=forbidGroup', '0', '禁用用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('137', '恢复', '130', '0', 'SubAuthmanage/changeStatus?method=resumeGroup', '0', '恢复已禁用的用户组', '', '0','1');
+
 INSERT INTO `heilphp_menu` VALUES ('10001', 'SEO设置', '68', '10001', 'seo/index', '0', '', '系统设置', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10002', '新增', '10001', '0', 'seo/add', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10003', '编辑', '10001', '0', 'seo/edit', '0', '', '', '0','1');
@@ -300,7 +364,7 @@ INSERT INTO `heilphp_menu` VALUES ('10105', '禁用', '10101', '0', 'adPosition/
 INSERT INTO `heilphp_menu` VALUES ('10106', '删除', '10101', '0', 'adPosition/changeStatus?method=delete', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10107', '排序', '10101', '0', 'adPosition/sort', '1', '', '', '0','1');
 
-INSERT INTO `heilphp_menu` VALUES ('10201', '广告', '68', '0', 'ad/index', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('10201', '广告', '68', '10201', 'ad/index', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10202', '新增', '10201', '0', 'ad/add', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10203', '编辑', '10201', '0', 'ad/edit', '0', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10204', '启用', '10201', '0', 'ad/changeStatus?method=resume', '1', '', '', '0','1');
@@ -308,6 +372,15 @@ INSERT INTO `heilphp_menu` VALUES ('10205', '禁用', '10201', '0', 'ad/changeSt
 INSERT INTO `heilphp_menu` VALUES ('10206', '删除', '10201', '0', 'ad/changeStatus?method=delete', '1', '', '', '0','1');
 INSERT INTO `heilphp_menu` VALUES ('10207', '排序', '10201', '0', 'ad/sort', '1', '', '', '0','1');
 
+INSERT INTO `heilphp_menu` VALUES ('20001', '子账号', '16', '0', 'SubUser/index', '0', '', '用户管理', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('20002', '新增', '20001', '0', 'SubUser/add', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('20004', '启用', '20001', '0', 'SubUser/changeStatus?method=resume', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('20005', '禁用', '20001', '0', 'SubUser/changeStatus?method=forbid', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('20006', '删除', '20001', '0', 'SubUser/changeStatus?method=delete', '1', '', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('20007', '子账号授权', '20001', '0', 'SubAuthManage/group', '0', '\"后台 \\ 用户 \\ 子账号 \\ 用户信息\"列表页的\"授权\"操作按钮,用于设置用户所属用户组', '', '0','1');
+INSERT INTO `heilphp_menu` VALUES ('20008', '子账号授权保存', '20001', '0', 'SubAuthManage/addToGroup', '0', '\"子账号用户信息\"列表页\"授权\"时的\"保存\"按钮和\"成员授权\"里右上角的\"添加\"按钮)', '', '0','1');
+
+INSERT INTO `heilphp_menu` VALUES ('20900', '帮助中心', '68', '0', 'help/index', '0', '', '帮助中心', '0','1');
 -- -----------------------------
 -- Table structure for `heilphp_addons`
 -- -----------------------------
@@ -736,7 +809,7 @@ CREATE TABLE `heilphp_ucenter_member` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `mobile` (`mobile`),
   KEY `status` (`status`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- -----------------------------
 -- Table structure for `heilphp_ucenter_setting`

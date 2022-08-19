@@ -1,5 +1,4 @@
 {extend name="public/base" /}
-
 {block name="content-header"}
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -21,7 +20,7 @@
 			<div class="card-header pb-1 pt-1">
 				<div class="row mb-1 mt-1">
 					<div class="col-sm-6 p-0">
-						<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-info"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;返回</button></a>
+						<a href="javascript:history.go(-1);"><button type="button" class="btn btn-sm btn-custom"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;返回</button></a>
 					</div>
 				</div><!-- /.row -->
 			</div><!-- /.card-header -->
@@ -93,9 +92,9 @@
 						<div class="col-md-12">
 							<input type="hidden" name="id" value="{:input('param.id/d',1)}" />
 							{notPresent name="list"}<button type="submit" disabled class="btn submit-btn disabled" target-form="form-horizontal">确 定</button>
-							{else/}<button type="submit" class="btn btn-sm btn-danger submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+							{else/}<button type="submit" class="btn btn-sm btn-custom submit-btn ajax-post" target-form="form-horizontal">确 定</button>
 							{/notPresent}
-							<button class="btn btn-sm btn-info btn-return" onclick="javascript:history.go(-1);return false;">返 回</button>
+							<button class="btn btn-sm btn-return" onclick="javascript:history.go(-1);return false;">返 回</button>
 						</div>
 					</div><!-- /.card-footer -->
 				</div><!-- /.card -->
@@ -111,7 +110,7 @@
 {/block}
 
 {block name='script'}
-<script src="__THEME__/default/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script src="__THEME__/__TEMPLATE__/view/admin/static/js/common.js?v={:time_version()}"></script>
 <script type="text/javascript" charset="utf-8">
 	//导航高亮
 	highlight_subnav('{:Url('Config/group')}');

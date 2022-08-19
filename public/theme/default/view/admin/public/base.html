@@ -14,9 +14,12 @@
 		<!-- Font Awesome Icons -->
 		<link rel="stylesheet" href="__STATIC__/AdminLTE/plugins/font-awesome/css/font-awesome.min.css">
 		<!-- Theme style -->
+
 		<link rel="stylesheet" href="__STATIC__/AdminLTE/dist/css/adminlte.min.css">
 		<link rel="stylesheet" href="__STATIC__/layui/css/layui.css">
+
 		<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/common.css?v={:time_version()}">
+		<link rel="stylesheet" href="__THEME__/default/view/admin/static/css/custom.css?v={:time_version()}">
 		<!-- Google Font: Source Sans Pro -->
 		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 		<!--[if lt IE 9]>
@@ -27,7 +30,16 @@
 	  <!--<![endif]-->
 	  <!-- 页面header钩子，一般用于加载插件CSS文件和代码 -->
 	  {block name="style"}
-	  {/block}
+      {/block}
+      <script>
+          var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?3862ea984bf533b8bcbac94401360ac2";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+})();
+      </script>
 	</head>
 	<body class="hold-transition sidebar-mini {if $Request.module == 'admin' && $Request.controller == 'Index' && $Request.action == 'index'}sidebar-collapse{/if}">
 		<div class="wrapper">

@@ -1,0 +1,89 @@
+:root{
+	--common-orange:#f1952c;
+	--common-white:#ffffff;
+}
+.card-content-nav{
+	margin-bottom:0.5rem!important;
+}
+.card-content-nav:last-child{
+	margin-bottom:0!important;
+}
+.card-content-nav:first-child{
+	margin-bottom:0.5rem!important;
+}
+.card-content-nav .card-header{
+	padding-top:0.25rem!important;
+	padding-bottom:0.25rem!important;
+}
+.btn.btn-custom{
+	background:var(--common-orange);
+	color:var(--common-white);
+}
+.btn.btn-custom:hover{
+	opacity:0.9;
+	background:var(--common-orange);
+	color:var(--common-white);
+}
+.navbar-light .navbar-nav .active>.nav-link, .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .nav-link.show, .navbar-light .navbar-nav .show>.nav-link{
+	color:var(--common-orange);
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link{
+	background:var(--common-orange);
+}
+
+.padding-none{
+	padding:0!important;
+}
+.margin-none{
+	margin:0!important;
+}
+.clear{
+	clear:both!important;
+}
+
+.form-group p.tips{
+	margin-top:0.3rem;
+	color:#999999;
+}
+
+.page-link{
+	color:var(--common-orange);
+}
+.page-link:hover{
+	color:var(--common-orange);
+}
+.page-item.active .page-link {
+    color: var(--common-white);
+    background-color: var(--common-orange);
+    border-color: var(--common-orange);
+}
+.page-item.disabled .page-link {
+	color:var(--common-orange);
+	opacity:0.9;
+}
+.pagination form{
+    display:flex;
+    line-height:2;
+    color:var(--common-orange);
+    font-weight:700;
+    margin-left: 1rem;
+}
+
+.pagination form input{
+    display:inline;
+    text-align:center;
+    width:2.5rem;;
+    line-height:1.5;
+    color:var(--common-orange);
+    margin: 0 0.25rem;
+}
+.pagination form button{
+    margin-left: 0.25rem;
+}
+
+/**
+ * 以下是为修复AdminLTE的UI异常增加的样式重写
+ */
+.nav-pills .show .nav-link:not(.active):hover {
+	color:var(--common-white);
+}

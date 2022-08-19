@@ -253,7 +253,7 @@ class UcenterMember extends Model{
 	 * 更新用户登录信息
 	 * @param  integer $uid 用户ID
 	 */
-	protected function updateLogin($uid){
+	public function updateLogin($uid){
 		$data = array(
 			'id'              => $uid,
 			'last_login_time' => app()->getBeginTime(),
@@ -286,7 +286,11 @@ class UcenterMember extends Model{
 		$validate = new \app\admin\validate\UcenterMember;
 		
 		if($validate->scene('updateUserFields')->check($data)){
-			return $this->get($uid)->save($data);
+            $res = $this->get($uid)->save($data);
+            if ($res){
+                return true;
+            }
+            $this->error = "新数据与原数据一致";
 		}
 		else{
 			$this->error = $validate->getError();

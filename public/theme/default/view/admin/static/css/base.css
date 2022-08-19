@@ -1,4 +1,5 @@
 /** 
+ * 分类列表页引用
  * 描述：重置页面元素并基础样式
  * 作用范围： 全局
  */
@@ -48,6 +49,9 @@ input::-moz-focus-inner {
 }
 .fr{
 	float: right!important;
+}
+.clear{
+	clear:both;
 }
 .hidden {
 	display: none;

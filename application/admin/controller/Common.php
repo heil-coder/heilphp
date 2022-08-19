@@ -9,8 +9,9 @@
 
 namespace app\admin\controller;
 use think\Controller;
-use app\user\api\UserApi;
+use app\user\model\UcenterMember;
 use Request;
+use think\captcha\Captcha;
 
 /**
  * 后台登录控制器
@@ -21,6 +22,7 @@ class Common extends Controller {
      * 后台用户登录
      */
     public function login($username = null, $password = null, $captcha = null){
+		$sub = input('param.sub/d');
         if(Request::isPost()){
             /* 检测验证码 TODO: */
             if(!captcha_check($captcha)){
@@ -28,11 +30,32 @@ class Common extends Controller {
             }
 
             /* 调用UC登录接口登录 */
-            $User = new UserApi;
-            $res = $User->login($username, $password);
-            if(0 < $res){ //登录成功
+            $ucenterMemberModel = new UcenterMember;
+            $map = [
+                ["username", "=", $username],
+                ["mobile", "=", $username]
+            ];
+            $user = $ucenterMemberModel->where([
+                ["status", "=", 1]
+            ])->where(function($query) use ($map){
+                $query->whereOr($map);
+            })->find();
+
+            if(!empty($user) && $user['status']){
+                /* 验证用户密码 */
+                if(encrypt_password($password, $user['salt']) === $user['password']){
+                    $ucenterMemberModel->updateLogin($user['id']); //更新用户登录信息
+                    $res = $user['id']; //登录成功，返回用户ID
+                } else {
+                    $res = -2; //密码错误
+                }
+            } else {
+                $res = -1; //用户不存在或被禁用
+            }
+            
+            if(0 < $res || 0 < $res){ //登录成功
                 /* 登录用户 */
-                $Member = model('Member');
+                $Member = model($sub ? 'SubMember' :'UcenterMember');
                 if($Member->login($res)){ //登录用户
                     //TODO:跳转到登录前页面
                     $this->success('登录成功！', Url('Index/index'));
@@ -73,10 +96,19 @@ class Common extends Controller {
             $this->redirect('login');
         }
     }
-
-    public function verify(){
-        $verify = new \think\Verify();
-        $verify->entry(1);
+    /**
+     * 获取验证码图片路径
+     */
+    public function captcha(){
+        $config =    [
+            'imageW' => '140',
+            'imageH' => '56',
+            'length' => 4,
+            'fontSize' => 20,
+            "useCurve" => false,
+            'bg' => [255,255,255] 
+        ];
+        $captcha = new Captcha($config);
+        return $captcha->entry();   
     }
-
 }

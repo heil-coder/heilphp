@@ -58,9 +58,6 @@ a:hover{
 
 
 /* (暂未使用) 面包屑导航 */
-.breadcrumb {
-	color: #999;
-}
 .tags-crumb li {
 	background-color: #e0e0e0;
 }
@@ -106,8 +103,8 @@ a:hover{
 ------------------------------------------ */
 .category .hd {
 	border-bottom-color: #d4d4d4;
-	color:#fff;
-	background-color: #353535;
+	color:#333;
+	background-color: #ffffff;
 }
 .category .cate-item dt {
 	border-bottom-color: #E7E7E7;
@@ -231,6 +228,17 @@ select {
 .btn:hover {
     color: #ffffff;
     background-color: #4cdb00;
+}
+.btn-info{
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    box-shadow: 0 1px 1px rgba(0,0,0,.075);
+}
+.btn-info:hover {
+    color: #fff;
+    background-color: #138496;
+    border-color: #117a8b;
 }
 
 /* 表单返回按钮 */

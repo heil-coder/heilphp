@@ -9,6 +9,7 @@
 // | Author: luofei614 <weibo.com/luofei614>　
 // +----------------------------------------------------------------------
 namespace auth;
+use think\Db;
 /**
  * 权限认证类
  * 功能特性：
@@ -70,12 +71,15 @@ class Auth{
 
     //默认配置
     protected $_config = array(
-        'AUTH_ON'           => true,                      // 认证开关
-        'AUTH_TYPE'         => 1,                         // 认证方式，1为实时认证；2为登录认证。
-        'AUTH_GROUP'        => 'auth_group',        // 用户组数据表名
+        'AUTH_ON' => true,                      // 认证开关
+        'AUTH_TYPE' => 1,                         // 认证方式，1为实时认证；2为登录认证。
+        'AUTH_GROUP' => 'auth_group',        // 用户组数据表名
+        'SUB_AUTH_GROUP' => 'sub_auth_group',        // 用户组数据表名
         'AUTH_GROUP_ACCESS' => 'auth_group_access', // 用户-用户组关系表
-        'AUTH_RULE'         => 'auth_rule',         // 权限规则表
-        'AUTH_USER'         => 'member'             // 用户信息表
+        'SUB_AUTH_GROUP_ACCESS' => 'sub_auth_group_access', // 子账号用户-用户组关系表
+        'AUTH_RULE' => 'auth_rule',         // 权限规则表
+        'AUTH_USER' => 'member',             // 用户信息表
+        'SUB_AUTH_USER' => 'sub_member'             // 子账号用户信息表
     );
 
     public function __construct() {
@@ -101,7 +105,18 @@ class Auth{
     public function check($name, $uid, $type=1, $mode='url', $relation='or') {
         if (!$this->_config['AUTH_ON'])
             return true;
-        $authList = $this->getAuthList($uid,$type); //获取用户需要验证的所有有效规则列表
+
+        $pid = get_user_pid($uid);
+
+        if ($pid != $uid){
+            $authList = $this->getAuthList($pid,$type); //获取用户需要验证的所有有效规则列表
+            $subAuthList = $this->getSubAuthList($uid, $type); //获取子账号用户需要验证的所有有效规则列表
+            $authList = array_intersect($authList, $subAuthList);
+        }
+        else{
+            $authList = $this->getAuthList($uid, $type); //获取用户需要验证的所有有效规则列表
+        }
+
         if (is_string($name)) {
             $name = strtolower($name);
             if (strpos($name, ',') !== false) {
@@ -119,7 +134,12 @@ class Auth{
 			//如果是Url模式 && $auth的?后有参数
             if ($mode=='url' && $query!=$auth ) {
                 parse_str($query,$param); //解析规则中的param
-                $intersect = array_intersect_assoc($REQUEST,$param);
+				if(request()->module() == 'admin'){
+					$intersect = array_uintersect_assoc($REQUEST,$param,'check_variable_value');
+				}
+				else{
+					$intersect = array_intersect_assoc($REQUEST,$param);
+				}
                 $auth = preg_replace('/\?.*$/U','',$auth);
                 if ( in_array($auth,$name) && $intersect==$param ) {  //如果节点相符且url参数满足
                     $list[] = $auth ;
@@ -149,8 +169,7 @@ class Auth{
         static $groups = array();
         if (isset($groups[$uid]))
             return $groups[$uid];
-        $user_groups = db()
-            ->table($this->_config['AUTH_GROUP_ACCESS'] . ' a')
+        $user_groups = Db::table($this->_config['AUTH_GROUP_ACCESS'] . ' a')
             ->where("a.uid='$uid' and g.status='1'")
             ->join($this->_config['AUTH_GROUP'].' g','a.group_id=g.id')
             ->field('rules')->select();
@@ -181,7 +200,7 @@ class Auth{
         }
         $ids = array_unique($ids);
         if (empty($ids)) {
-            $_authList[$uid.$t] = array();
+            $_authList[$uid.$t] = get_user_pidarray();
             return array();
         }
 
@@ -191,7 +210,7 @@ class Auth{
             ,['status','=',1]
         );
         //读取用户组所有权限规则
-        $rules = db()->table($this->_config['AUTH_RULE'])->where($map)->field('condition,name')->select();
+        $rules = Db::table($this->_config['AUTH_RULE'])->where($map)->field('condition,name')->select();
 
         //循环规则，判断结果。
         $authList = array();   //
@@ -224,9 +243,92 @@ class Auth{
     protected function getUserInfo($uid) {
         static $userinfo=array();
         if(!isset($userinfo[$uid])){
-             $userinfo[$uid]=db()->where(array('uid'=>$uid))->table($this->_config['AUTH_USER'])->find();
+             $userinfo[$uid]= Db::where(array('uid'=>$uid))->table($this->_config['AUTH_USER'])->find();
         }
         return $userinfo[$uid];
     }
 
+    /**
+     * 获取子账号权限列表
+     */
+    protected function getSubAuthList($uid, $type){
+        $_subAuthList = array(); //保存用户验证通过的权限列表
+        $t = implode(',',(array)$type);
+        if (isset($_subAuthList[$uid.$t])) {
+            return $_subAuthList[$uid.$t];
+        }
+        if( $this->_config['AUTH_TYPE']==2 && isset($_SESSION['_SUB_AUTH_LIST_'.$uid.$t])){
+            return $_SESSION['_AUTH_LIST_'.$uid.$t];
+        }
+
+        //读取子账号用户所属用户组
+        $groups = $this->getSubGroups($uid);
+        $ids = array();//保存用户所属用户组设置的所有权限规则id
+        foreach ($groups as $g) {
+            $ids = array_merge($ids, explode(',', trim($g['rules'], ',')));
+        }
+        $ids = array_unique($ids);
+        if (empty($ids)) {
+            $_subAuthList[$uid.$t] = array();
+            return array();
+        }
+
+        $map=array(
+            ['id','in',$ids]
+            ,'type'=>is_array($type) ? $type : ['type','in',$type]
+            ,['status','=',1]
+        );
+        //读取用户组所有权限规则
+        $rules = Db::table($this->_config['AUTH_RULE'])->where($map)->field('condition,name')->select();
+
+        //循环规则，判断结果。
+        $authList = array();   //
+        foreach ($rules as $rule) {
+            if (!empty($rule['condition'])) { //根据condition进行验证
+                $user = $this->getUserInfo($uid);//获取用户信息,一维数组
+
+                $command = preg_replace('/\{(\w*?)\}/', '$user[\'\\1\']', $rule['condition']);
+                //dump($command);//debug
+                @(eval('$condition=(' . $command . ');'));
+                if ($condition) {
+                    $authList[] = strtolower($rule['name']);
+                }
+            } else {
+                //只要存在就记录
+                $authList[] = strtolower($rule['name']);
+            }
+        }
+        $_subAuthList[$uid.$t] = $authList;
+        if($this->_config['AUTH_TYPE']==2){
+            //规则列表结果保存到session
+            $_SESSION['_SUB_AUTH_LIST_'.$uid.$t]=$authList;
+        }
+        return array_unique($authList);
+    }
+    /**
+     * 获取子账号用户组
+     */
+    protected function getSubGroups($uid){
+        static $subGroups = array();
+        if (isset($subGroups[$uid]))
+            return $subGroups[$uid];
+        $user_groups = Db::name($this->_config['SUB_AUTH_GROUP_ACCESS'])
+            ->alias('a')
+            ->where("a.uid='$uid' and g.status='1'")
+            ->join($this->_config['SUB_AUTH_GROUP'].' g','a.group_id=g.id')
+            ->field('rules')->select();
+        $subGroups[$uid]=$user_groups?:array();
+        return $subGroups[$uid];
+    }
+
+    /**
+     * 获得子账号用户资料,根据自己的情况读取数据库
+     */
+    protected function getSubUserInfo($uid) {
+        static $userinfo=array();
+        if(!isset($userinfo[$uid])){
+             $userinfo[$uid]= Db::where(array('uid'=>$uid))->table($this->_config['AUTH_USER'])->find();
+        }
+        return $userinfo[$uid];
+    }
 }

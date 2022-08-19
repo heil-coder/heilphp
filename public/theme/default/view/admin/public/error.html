@@ -1,0 +1,78 @@
+{extend name="public/base" /}
+{block name="style"}
+<style type="text/css">
+.system-message .content h1{
+	margin:2rem auto;
+	font-size:30px;
+}
+.system-message .content .jump a{
+	color:#f1952c;
+}
+</style>
+{/block}
+
+{block name="content-header"}
+<!-- Content Header (Page header) -->
+<div class="content-header pt-2 pb-2">
+	<div class="container-fluid">
+	</div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+{/block}
+
+{block name="content-content"}
+<!-- Main content -->
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+
+				<div class="system-message">
+					<div class="content text-center">
+						<h1>
+							{switch code}
+							{case 1}
+							<i class="fa fa-check text-success"></i>
+							{/case}
+							{default /}
+							<i class="fa fa-warning text-danger"></i>
+							{/switch}
+							{$msg}
+						</h1>
+
+						<p class="jump">
+						页面自动 <a id="href" href="<?php echo($url);?>">跳转</a> 等待时间： <b id="wait"><?php echo($wait);?></b>
+						</p>
+					</div>
+				</div>
+
+			</div>
+		</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+<!-- Main content -->
+<!-- /.content -->
+{/block}
+
+{block name='script'}
+<script src="__THEME__/__TEMPLATE__/view/admin/static/js/common.js?v={:time_version()}"></script>
+<script type="text/javascript" charset="utf-8">
+</script>
+
+<script type="text/javascript">
+	(function(){
+		var wait = document.getElementById('wait'),
+			href = document.getElementById('href').href;
+		var interval = setInterval(function(){
+			var time = --wait.innerHTML;
+			if(time <= 0) {
+				location.href = href;
+				clearInterval(interval);
+			};
+		}, 1000);
+	})();
+</script>
+
+
+{/block}

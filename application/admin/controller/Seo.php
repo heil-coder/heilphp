@@ -125,7 +125,7 @@ class Seo extends Admin {
             $list = db('Seo')->where($map)->field('id,title')->order('sort asc,id asc')->select();
 
             $this->assign('list', $list);
-            $this->assign('meta_title','导航排序');
+            $this->assign('meta_title','排序');
 			return view();
         }elseif (Request()->isPost()){
             $ids = Input('post.ids');
